@@ -24,6 +24,7 @@ export const SERVICE_CATEGORIES: {
       },
       { name: "BRIDAL MAKE UP", image: "/bridal make up.png" },
       { name: "BLOW DRY", image: "/keratin.jpg" },
+      { name: "BRAIDS", image: "/BRAIDS.mp4" },
       { name: "HAIR STYLING", image: "/hair style.png" },
       { name: "HAIR EXTENSION", image: "/hair extension.png" },
     ],
@@ -31,7 +32,7 @@ export const SERVICE_CATEGORIES: {
   {
     category: "Nails",
     items: [
-      { name: "MANICURE", image: "/pedi and mani.jpeg" },
+      { name: "MANICURE", image: "/MANICURE.mp4" },
       { name: "GEL EXTENSIONS", image: u("photo-1632345031435-8727f6897d53") },
       { name: "PEDICURE", image: u("photo-1610992015732-2449b76344bc") },
     ],
@@ -40,7 +41,6 @@ export const SERVICE_CATEGORIES: {
     category: "Makeup",
     items: [
       { name: "EYE LASH", image: "/eye lash.mp4" },
-      { name: "EVENT MAKEUP", image: u("photo-1503236823255-94609f598e71") },
       { name: "BROW LIFT & TINTING", image: "/lashes and brows.jpg" },
     ],
   },
@@ -116,7 +116,7 @@ export const TEAM = [
 ];
 
 export const HERO_IMAGE = u("photo-1560869713-7d0954430a87", 1800);
-export const ABOUT_IMAGE = u("photo-1522337360788-8b13dee7a37e", 1200);
+export const ABOUT_IMAGE = "/about.mp4";
 
 // 6-tile hero mosaic — beauty / hair / hands / face
 export const HERO_TILES: { src: string; alt: string }[] = [
