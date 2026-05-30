@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export const About = () => {
-  const aboutTitle = "About Front Row Beauty Salon";
+  const aboutTitle = "About Ultimate Blend Ladies Salon";
   const aboutImageSrc = "/about image.png";
   const [typedAboutTitle, setTypedAboutTitle] = useState("");
 
@@ -57,7 +57,7 @@ export const About = () => {
         <div className="space-y-5 text-muted-foreground text-base leading-relaxed max-w-xl">
           <p>
             Where beauty meets precision, with a signature touch of luxury.
-            Front Row Beauty Salon is a sanctuary where craft meets care. Our stylists,
+            Ultimate Blend Ladies Salon is a sanctuary where craft meets care. Our stylists,
             colorists, and artists collaborate with each guest to create looks
             that feel honest, modern, and entirely their own.
           </p>
@@ -88,7 +88,7 @@ export const About = () => {
           <div className="space-y-5 text-muted-foreground text-base leading-relaxed max-w-xl">
             <p>
               Where beauty meets precision, with a signature touch of luxury.
-              Front Row Beauty Salon is a sanctuary where craft meets care. Our stylists,
+              Ultimate Blend Ladies Salon is a sanctuary where craft meets care. Our stylists,
               colorists, and artists collaborate with each guest to create looks
               that feel honest, modern, and entirely their own.
             </p>

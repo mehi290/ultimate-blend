@@ -58,7 +58,7 @@ export const TESTIMONIALS = [
     name: "joseph cordray",
     rating: 5,
     quote:
-      "I just wanted to express my gratitude for the staff at Front Row Beauty Salon — City Centre Doris. The staff working with Maamar who did so much for me was very genuine, warm and passionate about the work they do. I received a great hair cut, hair dye, beard shave, facial, plus manicure and pedicure.",
+      "I just wanted to express my gratitude for the staff at Ultimate Blend Ladies Salon — City Centre Doris. The staff working with Maamar who did so much for me was very genuine, warm and passionate about the work they do. I received a great hair cut, hair dye, beard shave, facial, plus manicure and pedicure.",
   },
   {
     name: "shariq khan",
