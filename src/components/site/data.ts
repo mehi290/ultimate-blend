@@ -18,22 +18,16 @@ export const SERVICE_CATEGORIES: {
     items: [
       { name: "HAIR CUT", image: "/hair cut.png" },
       { name: "COLOR & BALAYAGE", image: "/hair color.png" },
-      {
-        name: "Nanoplastic",
-        image: "/nano.png",
-      },
-      { name: "BRIDAL MAKE UP", image: "/bridal make up.png" },
       { name: "BLOW DRY", image: "/keratin.jpg" },
       { name: "BRAIDS", image: "/BRAIDS.mp4" },
-      { name: "HAIR STYLING", image: "/hair style.png" },
-      { name: "HAIR EXTENSION", image: "/hair extension.png" },
+      { name: "Small Knotless Braids", image: "/Small Knotless Braids.mp4" },
+      { name: "French Curls", image: "/French Curls.mp4" },
     ],
   },
   {
     category: "Nails",
     items: [
       { name: "MANICURE", image: "/MANICURE.mp4" },
-      { name: "GEL EXTENSIONS", image: u("photo-1632345031435-8727f6897d53") },
       { name: "PEDICURE", image: u("photo-1610992015732-2449b76344bc") },
     ],
   },
@@ -48,7 +42,6 @@ export const SERVICE_CATEGORIES: {
     category: "Skin",
     items: [
       { name: "SIGNATURE FACIAL", image: u("photo-1570172619644-dfd03ed5d881") },
-      { name: "ADVANCED SKINCARE", image: u("photo-1512290923902-8a9f81dc236c") },
     ],
   },
 ];

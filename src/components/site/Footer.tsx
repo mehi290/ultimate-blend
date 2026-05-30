@@ -45,8 +45,8 @@ export const Footer = () => {
 
           <div className="w-full">
             <iframe
-              title="Tres Beauty Lounge map"
-              src="https://www.google.com/maps?q=G11-G12+Ground+Floor+AL+DANA+CENTER+Al+Maktoum+Rd+Dubai+UAE&output=embed"
+              title="Ultimate Blend Ladies Salon map"
+              src="https://www.google.com/maps?q=city+stay+premium+hotel+building+-+Shop+4+-+Naif+-+Deira+-+Dubai+-+UAE&output=embed"
               className="w-full h-[340px] md:h-[380px] border border-background/20"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

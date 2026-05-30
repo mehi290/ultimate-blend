@@ -132,21 +132,28 @@ export const Services = () => {
       (entries) => {
         entries.forEach((entry) => {
           const el = entry.target as HTMLVideoElement;
-          if (entry.intersectionRatio >= 0.5) {
-            if (el.paused) {
-              const playPromise = el.play();
-              if (playPromise && typeof playPromise.catch === "function") playPromise.catch(() => {});
+          if (entry.isIntersecting) {
+            const dataSrc = el.getAttribute("data-src");
+            if (dataSrc && !el.src.endsWith(dataSrc)) {
+              el.src = dataSrc;
+              el.load();
+            }
+            if (entry.intersectionRatio >= 0.5) {
+              if (el.paused) {
+                const playPromise = el.play();
+                if (playPromise && typeof playPromise.catch === "function") playPromise.catch(() => {});
+              }
             }
           } else {
             if (!el.paused) el.pause();
           }
         });
       },
-      { root: null, rootMargin: "0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+      { root: null, rootMargin: "200px 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
     );
 
     videos.forEach((v) => {
-      v.pause();
+      if (v.src) v.pause();
       observer.observe(v);
     });
 
@@ -209,9 +216,9 @@ export const Services = () => {
               >
                 {isVideoFile(item.image) ? (
                   <video
-                    src={item.image}
+                    data-src={item.image}
                     data-autoplay
-                    preload="metadata"
+                    preload="none"
                     loop
                     muted
                     playsInline

@@ -28,20 +28,27 @@ export const About = () => {
     const sel = document.querySelector('#about video[data-autoplay]') as HTMLVideoElement | null;
     if (!sel) return;
 
-    sel.pause();
+    if (sel.src) sel.pause();
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const el = entry.target as HTMLVideoElement;
-          if (entry.intersectionRatio >= 0.5) {
-            const p = el.play();
-            if (p && typeof p.catch === 'function') p.catch(() => {});
+          if (entry.isIntersecting) {
+            const dataSrc = el.getAttribute("data-src");
+            if (dataSrc && !el.src.endsWith(dataSrc)) {
+              el.src = dataSrc;
+              el.load();
+            }
+            if (entry.intersectionRatio >= 0.5) {
+              const p = el.play();
+              if (p && typeof p.catch === 'function') p.catch(() => {});
+            }
           } else {
             if (!el.paused) el.pause();
           }
         });
       },
-      { threshold: [0, 0.25, 0.5, 0.75, 1] }
+      { rootMargin: "200px 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
     );
 
     obs.observe(sel);
@@ -151,9 +158,9 @@ export const About = () => {
         <div className="w-full md:max-w-lg md:justify-self-end">
           <div className="relative aspect-[4/5] w-full overflow-hidden">
             <video
-              src={aboutImageSrc}
+              data-src={aboutImageSrc}
               data-autoplay
-              preload="metadata"
+              preload="none"
               aria-label="About video"
               className="w-full h-full object-cover"
               muted
