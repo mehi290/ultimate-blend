@@ -133,27 +133,20 @@ export const Services = () => {
         entries.forEach((entry) => {
           const el = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) {
-            const dataSrc = el.getAttribute("data-src");
-            if (dataSrc && !el.src.endsWith(dataSrc)) {
-              el.src = dataSrc;
-              el.load();
-            }
-            if (entry.intersectionRatio >= 0.5) {
-              if (el.paused) {
-                const playPromise = el.play();
-                if (playPromise && typeof playPromise.catch === "function") playPromise.catch(() => {});
-              }
+            if (el.paused) {
+              const playPromise = el.play();
+              if (playPromise && typeof playPromise.catch === "function") playPromise.catch(() => {});
             }
           } else {
             if (!el.paused) el.pause();
           }
         });
       },
-      { root: null, rootMargin: "200px 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+      { root: null, rootMargin: "200px 0px", threshold: 0 }
     );
 
     videos.forEach((v) => {
-      if (v.src) v.pause();
+      v.pause();
       observer.observe(v);
     });
 
@@ -212,13 +205,14 @@ export const Services = () => {
             {loop.map((item, idx) => (
               <article
                 key={`${item.category}-${item.name}-${idx}`}
-                className="shrink-0 w-[82vw] sm:w-[60vw] md:w-[44vw] lg:w-[34vw] xl:w-[28vw] aspect-square relative overflow-hidden cursor-pointer"
+                className="shrink-0 w-[82vw] sm:w-[60vw] md:w-[44vw] lg:w-[34vw] xl:w-[28vw] aspect-square relative overflow-hidden cursor-pointer bg-neutral-900"
               >
                 {isVideoFile(item.image) ? (
                   <video
-                    data-src={item.image}
+                    src={item.image}
                     data-autoplay
-                    preload="none"
+                    preload="metadata"
+                    autoPlay
                     loop
                     muted
                     playsInline
