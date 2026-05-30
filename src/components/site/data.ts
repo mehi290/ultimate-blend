@@ -40,7 +40,7 @@ export const SERVICE_CATEGORIES: {
   {
     category: "Makeup",
     items: [
-      { name: "EYE LASH", image: "/eye lash.mp4" },
+      { name: "EYE LASH", image: "/eyelash.mp4" },
       { name: "BROW LIFT & TINTING", image: "/lashes and brows.jpg" },
     ],
   },

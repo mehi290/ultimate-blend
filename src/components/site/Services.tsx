@@ -120,6 +120,41 @@ export const Services = () => {
   const selectedPrice = selectedService ? getRandomPrice(selectedService) : "";
   const isVideoFile = (src: string) => /\.(mp4|webm|mov|m4v)$/i.test(src);
 
+  useEffect(() => {
+    const root = scrollRef.current ?? document;
+    const videos: HTMLVideoElement[] = Array.from(
+      (root as Element).querySelectorAll?.("video[data-autoplay]") || []
+    );
+
+    if (!videos.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target as HTMLVideoElement;
+          if (entry.intersectionRatio >= 0.5) {
+            if (el.paused) {
+              const playPromise = el.play();
+              if (playPromise && typeof playPromise.catch === "function") playPromise.catch(() => {});
+            }
+          } else {
+            if (!el.paused) el.pause();
+          }
+        });
+      },
+      { root: null, rootMargin: "0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    videos.forEach((v) => {
+      v.pause();
+      observer.observe(v);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [filter, loop]);
+
   return (
     <>
       <section id="services" className="bg-lavender py-20 md:py-28">
@@ -175,7 +210,8 @@ export const Services = () => {
                 {isVideoFile(item.image) ? (
                   <video
                     src={item.image}
-                    autoPlay
+                    data-autoplay
+                    preload="metadata"
                     loop
                     muted
                     playsInline

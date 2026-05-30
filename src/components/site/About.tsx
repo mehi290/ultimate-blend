@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { ABOUT_PORTRAIT } from "./data";
 
 export const About = () => {
   const aboutTitle = "About Ultimate Blend Ladies Salon";
-  const aboutImageSrc = "/about image.png";
+  const aboutImageSrc = "/about.mp4";
+  const [mobilePlaying, setMobilePlaying] = useState(false);
   const [typedAboutTitle, setTypedAboutTitle] = useState("");
 
   useEffect(() => {
@@ -21,6 +23,30 @@ export const About = () => {
       if (timeoutId) window.clearTimeout(timeoutId);
     };
   }, []);
+
+  useEffect(() => {
+    const sel = document.querySelector('#about video[data-autoplay]') as HTMLVideoElement | null;
+    if (!sel) return;
+
+    sel.pause();
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target as HTMLVideoElement;
+          if (entry.intersectionRatio >= 0.5) {
+            const p = el.play();
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          } else {
+            if (!el.paused) el.pause();
+          }
+        });
+      },
+      { threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    obs.observe(sel);
+    return () => obs.disconnect();
+  }, [mobilePlaying]);
 
   return (
     <section
@@ -45,12 +71,35 @@ export const About = () => {
 
         <div className="mb-8">
           <div className="relative aspect-[4/5] w-full overflow-hidden">
-            <img
-              src={aboutImageSrc}
-              alt="[PHOTO About section]"
-              loading="eager"
-              className="w-full h-full object-cover"
-            />
+            {mobilePlaying ? (
+              <video
+                src={aboutImageSrc}
+                aria-label="About video"
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            ) : (
+              <button
+                onClick={() => setMobilePlaying(true)}
+                className="w-full h-full block relative"
+                aria-label="Play about video"
+              >
+                <img
+                  src={ABOUT_PORTRAIT}
+                  alt="About poster"
+                  loading="eager"
+                  className="w-full h-full object-cover"
+                />
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <span className="w-14 h-14 bg-white/80 rounded-full drop-shadow flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-7 h-7 text-[#9F3F5C]"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                  </span>
+                </span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -101,11 +150,15 @@ export const About = () => {
 
         <div className="w-full md:max-w-lg md:justify-self-end">
           <div className="relative aspect-[4/5] w-full overflow-hidden">
-            <img
+            <video
               src={aboutImageSrc}
-              alt="[PHOTO About section]"
-              loading="lazy"
+              data-autoplay
+              preload="metadata"
+              aria-label="About video"
               className="w-full h-full object-cover"
+              muted
+              loop
+              playsInline
             />
           </div>
         </div>
