@@ -37,13 +37,20 @@ export const Sidebar = () => {
     <>
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 sm:px-5 h-[calc(3.5rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] bg-background/85 backdrop-blur border-b border-border">
-        <button
-          onClick={() => handleNav("home")}
-          className="font-display font-bold text-xl tracking-tight"
-          aria-label="Ultimate Blend Ladies Salon home"
-        >
-          Ultimate Blend Ladies Salon
-        </button>
+        <div className="flex items-center gap-2">
+          <img
+            src="/ULTIMATE_LOGO-removebg-preview.png"
+            alt="Logo"
+            className="w-10 h-10 object-contain"
+          />
+          <button
+            onClick={() => handleNav("home")}
+            className="font-display font-bold text-sm tracking-tight text-left leading-tight"
+            aria-label="Ultimate Blend Ladies Beauty Salon home"
+          >
+            Ultimate Blend
+          </button>
+        </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => window.dispatchEvent(new Event("open-booking-flow"))}
@@ -89,7 +96,14 @@ export const Sidebar = () => {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 z-40 w-[88px] flex-col items-center justify-center py-8 border-r border-border bg-background">
+      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 z-40 w-[88px] flex-col items-center justify-between py-8 border-r border-border bg-background">
+        <div className="mb-4">
+          <img
+            src="/ULTIMATE_LOGO-removebg-preview.png"
+            alt="Logo"
+            className="w-16 h-16 object-contain mx-auto"
+          />
+        </div>
         {/* Vertical rotated nav */}
         <nav className="flex-1 flex flex-col items-center justify-center gap-10">
           {NAV_LINKS.map((l) => (

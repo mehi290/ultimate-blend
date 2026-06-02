@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ABOUT_PORTRAIT } from "./data";
 
 export const About = () => {
-  const aboutTitle = "About Ultimate Blend Ladies Salon";
+  const aboutTitle = "About Ultimate Blend Ladies Beauty Salon";
   const aboutImageSrc = "/about.mp4";
   const [mobilePlaying, setMobilePlaying] = useState(false);
   const [typedAboutTitle, setTypedAboutTitle] = useState("");
@@ -35,7 +35,7 @@ export const About = () => {
           const el = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) {
             const p = el.play();
-            if (p && typeof p.catch === 'function') p.catch(() => {});
+            if (p && typeof p.catch === 'function') p.catch(() => { });
           } else {
             if (!el.paused) el.pause();
           }
@@ -55,7 +55,7 @@ export const About = () => {
     >
       <div className="max-w-7xl mx-auto md:hidden">
         <h2 className="inline-block mb-8">
-          <span className="font-display font-black text-[#9F3F5C] text-2xl tracking-tight normal-case">
+          <span className="font-display font-black text-[#9F3F5C] text-2xl md:text-4xl tracking-tight normal-case">
             {typedAboutTitle}
             {typedAboutTitle.length < aboutTitle.length ? (
               <span className="inline-block w-[0.08em] h-[0.95em] ml-[0.08em] bg-[#9F3F5C] align-[-0.08em] animate-pulse" />
@@ -95,7 +95,7 @@ export const About = () => {
                 />
                 <span className="absolute inset-0 flex items-center justify-center">
                   <span className="w-14 h-14 bg-white/80 rounded-full drop-shadow flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-7 h-7 text-[#9F3F5C]"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-7 h-7 text-[#9F3F5C]"><path fill="currentColor" d="M8 5v14l11-7z" /></svg>
                   </span>
                 </span>
               </button>
@@ -106,7 +106,7 @@ export const About = () => {
         <div className="space-y-5 text-muted-foreground text-base leading-relaxed max-w-xl">
           <p>
             Where beauty meets precision, with a signature touch of luxury.
-            Ultimate Blend Ladies Salon is a sanctuary where craft meets care. Our stylists,
+            Ultimate Blend Ladies Beauty Salon is a sanctuary where craft meets care. Our stylists,
             colorists, and artists collaborate with each guest to create looks
             that feel honest, modern, and entirely their own.
           </p>
@@ -137,11 +137,11 @@ export const About = () => {
           <div className="space-y-5 text-muted-foreground text-base leading-relaxed max-w-xl">
             <p>
               Where beauty meets precision, with a signature touch of luxury.
-              Ultimate Blend Ladies Salon is a sanctuary where craft meets care. Our stylists,
+              Ultimate Blend Ladies Beauty Salon is a sanctuary where craft meets care. Our stylists,
               colorists, and artists collaborate with each guest to create looks
               that feel honest, modern, and entirely their own.
             </p>
-            </div>
+          </div>
 
           <button className="mt-8 px-8 py-4 bg-[#9F3F5C] text-white font-display text-sm tracking-[0.06em] hover:bg-[#8E3852] transition-colors">
             Book a Visit

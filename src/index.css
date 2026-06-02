@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Ultimate Blend Ladies Salon brand tokens */
+    /* Ultimate Blend Ladies Beauty Salon brand tokens */
     --background: 0 0% 100%;
     --foreground: 240 12% 12%;
 
@@ -129,25 +129,36 @@ All colors MUST be HSL.
     font-weight: 500;
     letter-spacing: -0.02em;
   }
+
   .font-display {
     font-family: 'Inter', system-ui, sans-serif;
     letter-spacing: 0.18em;
     text-transform: uppercase;
   }
+
   .font-script {
     font-family: 'Allura', 'Great Vibes', cursive;
     font-weight: 400;
     letter-spacing: 0;
     text-transform: none;
   }
+
   .text-shadow-hero {
     text-shadow: 0 2px 18px hsl(240 30% 10% / 0.45);
   }
+
   .glass-label {
     background: hsl(0 0% 100% / 0.65);
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
   }
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

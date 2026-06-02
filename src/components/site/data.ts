@@ -3,6 +3,7 @@ export const NAV_LINKS = [
   { id: "about", label: "About" },
   { id: "services", label: "Services" },
   { id: "testimonials", label: "Testimonials" },
+  { id: "our-work", label: "Our Work" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -16,12 +17,28 @@ export const SERVICE_CATEGORIES: {
   {
     category: "Hair",
     items: [
-      { name: "HAIR CUT", image: "/hair cut.png" },
       { name: "COLOR & BALAYAGE", image: "/hair color.png" },
-      { name: "BLOW DRY", image: "/keratin.jpg" },
+      { name: "BLOW DRY & IRON", image: "/keratin.jpg" },
       { name: "BRAIDS", image: "/BRAIDS.mp4" },
-      { name: "Small Knotless Braids", image: "/Small Knotless Braids.mp4" },
+      { name: "BOX BRAIDS", image: u("photo-1647891938250-754ad796f67a") },
+      { name: "CORNROWS", image: u("photo-1595959183075-c1d09e57343d") },
+      { name: "CROCHET", image: u("photo-1562322140-8baeececf3df") },
+      { name: "PONYTAIL", image: u("photo-1522337360788-8b13dee7a37e") },
+      { name: "BOHO BRAIDS", image: u("photo-1605497746444-ac9da58d7ad5") },
+      { name: "STITCH BRAIDS", image: u("photo-1582095133179-bfd08e2fc6b3") },
+      { name: "Knotless Braids", image: "/Small Knotless Braids.mp4" },
       { name: "French Curls", image: "/French Curls.mp4" },
+      { name: "Boho French Curls", image: "/boho frenchcurls.mp4" },
+      { name: "Fulani Twist Braid", image: "/Fulani Twist Braid.mp4" },
+      { name: "Finger Wave", image: "/Finger Wave.mp4" },
+      { name: "DREADLOCKS", image: u("photo-1595959183075-c1d09e57343d") },
+      { name: "REVAMPING OF HUMAN HAIR", image: u("photo-1562322140-8baeececf3df") },
+      { name: "HAIR EXTENSIONS", image: "/HAIR EXTENSIONS.mp4" },
+      { name: "WIG INSTALLATIONS", image: "/Wig installations.jpeg" },
+      { name: "HAIR RELAXING", image: u("photo-1560869713-7d0954430a87") },
+      { name: "HAIR STYLING", image: "/hair styling.mp4" },
+      { name: "HAIR TREATMENT", image: u("photo-1522337360788-8b13dee7a37e") },
+      { name: "CHILDREN HAIRSTYLING", image: u("photo-1503919545889-aef636e10ad4") },
     ],
   },
   {
@@ -34,8 +51,8 @@ export const SERVICE_CATEGORIES: {
   {
     category: "Makeup",
     items: [
-      { name: "EYE LASH", image: "/eyelash.mp4" },
-      { name: "BROW LIFT & TINTING", image: "/lashes and brows.jpg" },
+      { name: "EYE LASH EXTENSIONS", image: "/eyelash.mp4" },
+      { name: "MAKE UP", image: "/make up.jpeg" },
     ],
   },
   {
@@ -51,7 +68,7 @@ export const TESTIMONIALS = [
     name: "joseph cordray",
     rating: 5,
     quote:
-      "I just wanted to express my gratitude for the staff at Ultimate Blend Ladies Salon — City Centre Doris. The staff working with Maamar who did so much for me was very genuine, warm and passionate about the work they do. I received a great hair cut, hair dye, beard shave, facial, plus manicure and pedicure.",
+      "I just wanted to express my gratitude for the staff at Ultimate Blend Ladies Beauty Salon — City Centre Doris. The staff working with Maamar who did so much for me was very genuine, warm and passionate about the work they do. I received a great hair cut, hair dye, beard shave, facial, plus manicure and pedicure.",
   },
   {
     name: "shariq khan",
