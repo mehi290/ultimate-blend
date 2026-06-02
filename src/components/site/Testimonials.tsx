@@ -49,7 +49,7 @@ export const Testimonials = () => {
                   key={idx}
                   className="w-[85vw] max-w-[300px] md:w-[360px] shrink-0 rounded-xl border border-white/15 bg-black/40 backdrop-blur-md p-6 md:p-7 flex flex-col items-center text-center"
                 >
-                  <h3 className="text-white text-lg font-medium tracking-wide lowercase">
+                  <h3 className="text-white text-lg font-medium tracking-wide capitalize">
                     {t.name}
                   </h3>
                   <div className="flex gap-1 mt-3 mb-4">

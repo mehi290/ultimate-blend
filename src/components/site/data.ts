@@ -14,114 +14,91 @@ export const SERVICE_CATEGORIES: {
   category: string;
   items: { name: string; image: string }[];
 }[] = [
-  {
-    category: "Hair",
-    items: [
-      { name: "COLOR & BALAYAGE", image: "/hair color.png" },
-      { name: "BLOW DRY & IRON", image: "/keratin.jpg" },
-      { name: "BRAIDS", image: "/BRAIDS.mp4" },
-      { name: "BOX BRAIDS", image: u("photo-1647891938250-754ad796f67a") },
-      { name: "CORNROWS", image: u("photo-1595959183075-c1d09e57343d") },
-      { name: "CROCHET", image: u("photo-1562322140-8baeececf3df") },
-      { name: "PONYTAIL", image: u("photo-1522337360788-8b13dee7a37e") },
-      { name: "BOHO BRAIDS", image: u("photo-1605497746444-ac9da58d7ad5") },
-      { name: "STITCH BRAIDS", image: u("photo-1582095133179-bfd08e2fc6b3") },
-      { name: "Knotless Braids", image: "/Small Knotless Braids.mp4" },
-      { name: "French Curls", image: "/French Curls.mp4" },
-      { name: "Boho French Curls", image: "/boho frenchcurls.mp4" },
-      { name: "Fulani Twist Braid", image: "/Fulani Twist Braid.mp4" },
-      { name: "Finger Wave", image: "/Finger Wave.mp4" },
-      { name: "DREADLOCKS", image: u("photo-1595959183075-c1d09e57343d") },
-      { name: "REVAMPING OF HUMAN HAIR", image: u("photo-1562322140-8baeececf3df") },
-      { name: "HAIR EXTENSIONS", image: "/HAIR EXTENSIONS.mp4" },
-      { name: "WIG INSTALLATIONS", image: "/Wig installations.jpeg" },
-      { name: "HAIR RELAXING", image: u("photo-1560869713-7d0954430a87") },
-      { name: "HAIR STYLING", image: "/hair styling.mp4" },
-      { name: "HAIR TREATMENT", image: u("photo-1522337360788-8b13dee7a37e") },
-      { name: "CHILDREN HAIRSTYLING", image: u("photo-1503919545889-aef636e10ad4") },
-    ],
-  },
-  {
-    category: "Nails",
-    items: [
-      { name: "MANICURE", image: "/MANICURE.mp4" },
-      { name: "PEDICURE", image: u("photo-1610992015732-2449b76344bc") },
-    ],
-  },
-  {
-    category: "Makeup",
-    items: [
-      { name: "EYE LASH EXTENSIONS", image: "/eyelash.mp4" },
-      { name: "MAKE UP", image: "/make up.jpeg" },
-    ],
-  },
-  {
-    category: "Skin",
-    items: [
-      { name: "SIGNATURE FACIAL", image: u("photo-1570172619644-dfd03ed5d881") },
-    ],
-  },
+    {
+      category: "Hair",
+      items: [
+        { name: "COLOR & BALAYAGE", image: "/hair color.png" },
+        { name: "BLOW DRY & IRON", image: "/keratin.jpg" },
+        { name: "BRAIDS", image: "/BRAIDS.mp4" },
+        { name: "BOX BRAIDS", image: u("photo-1647891938250-754ad796f67a") },
+        { name: "CORNROWS", image: u("photo-1595959183075-c1d09e57343d") },
+        { name: "CROCHET", image: u("photo-1562322140-8baeececf3df") },
+        { name: "PONYTAIL", image: u("photo-1522337360788-8b13dee7a37e") },
+        { name: "BOHO BRAIDS", image: u("photo-1605497746444-ac9da58d7ad5") },
+        { name: "STITCH BRAIDS", image: u("photo-1582095133179-bfd08e2fc6b3") },
+        { name: "Knotless Braids", image: "/Small Knotless Braids.mp4" },
+        { name: "French Curls", image: "/French Curls.mp4" },
+        { name: "Boho French Curls", image: "/boho frenchcurls.mp4" },
+        { name: "Fulani Twist Braid", image: "/Fulani Twist Braid.mp4" },
+        { name: "Finger Wave", image: "/Finger Wave.mp4" },
+        { name: "DREADLOCKS", image: u("photo-1595959183075-c1d09e57343d") },
+        { name: "REVAMPING OF HUMAN HAIR", image: u("photo-1562322140-8baeececf3df") },
+        { name: "HAIR EXTENSIONS", image: "/HAIR EXTENSIONS.mp4" },
+        { name: "WIG INSTALLATIONS", image: "/Wig installations.jpeg" },
+        { name: "HAIR RELAXING", image: u("photo-1560869713-7d0954430a87") },
+        { name: "HAIR STYLING", image: "/hair styling.mp4" },
+        { name: "HAIR TREATMENT", image: u("photo-1522337360788-8b13dee7a37e") },
+        { name: "CHILDREN HAIRSTYLING", image: "/children boho  braids.mp4" },
+      ],
+    },
+    {
+      category: "Nails",
+      items: [
+        { name: "MANICURE", image: "/MANICURE.mp4" },
+        { name: "PEDICURE", image: u("photo-1610992015732-2449b76344bc") },
+      ],
+    },
+    {
+      category: "Makeup",
+      items: [
+        { name: "EYE LASH EXTENSIONS", image: "/eyelash.mp4" },
+        { name: "MAKE UP", image: "/make up.jpeg" },
+      ],
+    },
+    {
+      category: "Skin",
+      items: [
+        { name: "SIGNATURE FACIAL", image: u("photo-1570172619644-dfd03ed5d881") },
+      ],
+    },
 ];
 
 export const TESTIMONIALS = [
   {
-    name: "joseph cordray",
+    name: "Bons Arte",
     rating: 5,
     quote:
-      "I just wanted to express my gratitude for the staff at Ultimate Blend Ladies Beauty Salon — City Centre Doris. The staff working with Maamar who did so much for me was very genuine, warm and passionate about the work they do. I received a great hair cut, hair dye, beard shave, facial, plus manicure and pedicure.",
+      "I had my old braids removed, my hair washed, blow-dryed and re-braided. I have very thick, long hair. But the stylists made sure enough people were working on my hair at once that the process was the fastest I've had since moving to Dubai!! All of the staff were very welcoming and kind, I'm super happy with my braids and the service!! I will be back very soon. Services: Shampoo & conditioning, Braids, Hairstyling",
   },
   {
-    name: "shariq khan",
+    name: "Tonia Chris",
     rating: 5,
     quote:
-      "Great place to pamper yourself, very hard on, courteous and professional staff and climate expectations are managed above and beyond.",
+      "I had an amazing experience at Ultimate Blend Salon! The atmosphere was warm and welcoming, and my knotless braids came out absolutely beautiful. A special shout out to Chioma  she was so gentle, patient, and incredibly skilled. I love my hair and will definitely be coming back!",
   },
   {
-    name: "jonas sergio",
+    name: "Shereen Chambers",
     rating: 5,
     quote:
-      "The staff has an excellent customer service and the haircut is amazing. I highly recommend this to my family and friends.",
+      "I had my hair braided by Ennie and I couldn't be happier! I booked a house call, and she arrived on time, was super friendly, and made me feel so comfortable. She worked quickly but with so much attention to detail, my braids look amazing and neat! Such a professional and lovely experience from start to finish. Highly recommend her if you're looking for beautiful braids and great service.",
   },
   {
-    name: "kenjis0308",
+    name: "Tolu Sky",
     rating: 5,
     quote:
-      "It was my first time to call this place and they had an opening on the same day. The stylist provided the haircut style I wanted. Highly recommend this salon.",
+      "I had a great time making my hair, the customer service is top-notch and my hair was so beautiful. Great service at fair price. You'll get your money quality.",
   },
   {
-    name: "amelia rose",
+    name: "Ojogri Akpevwe Avemaria",
     rating: 5,
     quote:
-      "Every visit feels considered, from the lighting to the final touch. This is beauty as it should be — a calm, editorial experience.",
+      "I really loved my experience here. From the ambience to the customer service. The best I've had in Dubai. I hope to come again soon.",
   },
   {
-    name: "noah bennett",
+    name: "Deborah Mustafa",
     rating: 5,
     quote:
-      "The team listens, guides and creates. I leave looking like the best version of myself every single time. Highly recommended.",
-  },
-];
-
-export const TEAM = [
-  {
-    name: "[STYLIST NAME]",
-    role: "[CREATIVE DIRECTOR]",
-    image: u("photo-1580489944761-15a19d654956", 700),
-  },
-  {
-    name: "[STYLIST NAME]",
-    role: "[SENIOR COLORIST]",
-    image: u("photo-1544005313-94ddf0286df2", 700),
-  },
-  {
-    name: "[STYLIST NAME]",
-    role: "[NAIL ARTIST]",
-    image: u("photo-1494790108377-be9c29b29330", 700),
-  },
-  {
-    name: "[STYLIST NAME]",
-    role: "[MAKEUP ARTIST]",
-    image: u("photo-1438761681033-6461ffad8d80", 700),
+      "I had an amazing time at the salon. I went to make nails there and they give me the best customer service i've ever experienced since i came to dubai, i will highly recommend.",
   },
 ];
 

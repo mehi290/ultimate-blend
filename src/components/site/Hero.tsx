@@ -36,24 +36,21 @@ export const Hero = () => {
   return (
     <section
       id="home"
-      className="relative w-full min-h-[100svh] min-h-[100dvh] md:min-h-[640px] overflow-hidden bg-background"
+      className="relative w-full min-h-[100svh] min-h-[100dvh] md:min-h-[640px] overflow-hidden bg-black"
     >
-      {/* 6-tile mosaic: 3x2 desktop, 2x3 mobile */}
-      <div className="absolute inset-0 grid grid-cols-2 grid-rows-3 md:grid-cols-3 md:grid-rows-2 gap-0">
-        {HERO_TILES.map((tile, i) => (
-          <div key={i} className="relative overflow-hidden">
-            <img
-              src={tile.src}
-              alt={tile.alt}
-              loading={i < 4 ? "eager" : "lazy"}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
-        ))}
-      </div>
+      {/* Full-screen background video */}
+      <video
+        src="/hero ultiamte.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        aria-hidden="true"
+      />
 
-      {/* subtle dark overlay so the tagline reads on every tile */}
-      <div className="absolute inset-0 bg-foreground/15 pointer-events-none" />
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
 
       {/* Desktop top-right booking strip */}
       <div className="hidden md:flex fixed top-0 right-0 z-50 h-16 min-w-[320px] bg-transparent">
@@ -65,13 +62,13 @@ export const Hero = () => {
         </button>
       </div>
 
-      {/* Tagline centered across the horizontal seam */}
+      {/* Tagline centered */}
       <div className="absolute inset-0 flex items-center justify-center px-5 sm:px-6 pointer-events-none">
-        <div className="text-center text-background text-shadow-hero max-w-5xl">
+        <div className="text-center text-white text-shadow-hero max-w-5xl">
           <h1 className="font-display font-black md:font-bold leading-[1.15] text-[21px] sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl">
             {typedTitle}
             {typedTitle.length < title.length ? (
-              <span className="inline-block w-[0.08em] h-[0.95em] ml-[0.08em] bg-background align-[-0.08em] animate-pulse" />
+              <span className="inline-block w-[0.08em] h-[0.95em] ml-[0.08em] bg-white align-[-0.08em] animate-pulse" />
             ) : null}
           </h1>
           <p className="mt-3 sm:mt-4 font-editorial font-semibold md:font-normal text-[#FFE6F1] [text-shadow:0_2px_14px_rgba(0,0,0,0.75)] text-3xl sm:text-3xl md:text-5xl lg:text-6xl max-w-[18ch] mx-auto leading-[1.2]">
