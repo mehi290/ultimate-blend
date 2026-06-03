@@ -90,7 +90,10 @@ export const About = () => {
           </p>
         </div>
 
-        <button className="mt-8 px-8 py-4 bg-[#9F3F5C] text-white font-display text-sm tracking-[0.06em] hover:bg-[#8E3852] transition-colors">
+        <button
+          onClick={() => window.dispatchEvent(new Event("open-booking-flow"))}
+          className="mt-8 px-8 py-4 bg-[#9F3F5C] text-white font-display text-sm tracking-[0.06em] hover:bg-[#8E3852] transition-colors"
+        >
           Book a Visit
         </button>
       </div>
@@ -121,7 +124,10 @@ export const About = () => {
             </p>
           </div>
 
-          <button className="mt-8 px-8 py-4 bg-[#9F3F5C] text-white font-display text-sm tracking-[0.06em] hover:bg-[#8E3852] transition-colors">
+          <button
+            onClick={() => window.dispatchEvent(new Event("open-booking-flow"))}
+            className="mt-8 px-8 py-4 bg-[#9F3F5C] text-white font-display text-sm tracking-[0.06em] hover:bg-[#8E3852] transition-colors"
+          >
             Book a Visit
           </button>
         </div>
