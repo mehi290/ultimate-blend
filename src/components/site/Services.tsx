@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X, Ticket, Calendar, CheckCircle2 } from "lucide-react";
 import { SERVICES_FLAT, SERVICE_FILTERS } from "./data";
+import { supabase } from "@/lib/supabase";
+import { format, addDays, parse, isSameDay } from "date-fns";
+
 
 const MAIN_SERVICES = [
   {
@@ -390,10 +393,131 @@ export const Services = () => {
     { name: "Aisha Khan", role: "Makeup Artist", avatar: "AK" },
     { name: "Nina Chen", role: "Nail Artist", avatar: "NC" },
   ];
-  const availableDates = ["03 Jun", "04 Jun", "05 Jun", "06 Jun"];
-  const availableTimes = ["9:00 AM", "10:30 AM", "12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM", "6:00 PM", "7:30 PM", "9:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"];
+
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
+  const [availableTimes, setAvailableTimes] = useState<string[]>([]);
+  const [dateMap, setDateMap] = useState<Record<string, Date>>({});
+
+  // Dynamic Date List Setup
+  useEffect(() => {
+    const tempDates: string[] = [];
+    const tempMap: Record<string, Date> = {};
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(new Date(), i + 1);
+      const label = format(d, "dd MMM");
+      tempDates.push(label);
+      tempMap[label] = d;
+    }
+    setAvailableDates(tempDates);
+    setDateMap(tempMap);
+    if (tempDates.length > 0) {
+      setSelectedDate(tempDates[0]);
+    }
+  }, []);
+
+  // Dynamic Time List calculation based on booking capacities
+  useEffect(() => {
+    if (!selectedDate || !dateMap[selectedDate]) return;
+
+    async function calculateSlots() {
+      try {
+        const dateObj = dateMap[selectedDate];
+        const dateStr = format(dateObj, "yyyy-MM-dd");
+
+        let opening = "09:00:00";
+        let closing = "23:30:00";
+        let interval = 60;
+        let defaultCapacity = 4;
+
+        const { data: rulesData } = await supabase
+          .from("availability_rules")
+          .select("*")
+          .limit(1)
+          .maybeSingle();
+
+        if (rulesData) {
+          opening = rulesData.opening_time;
+          closing = rulesData.closing_time;
+          interval = rulesData.slot_interval_mins;
+          defaultCapacity = rulesData.default_max_capacity;
+        }
+
+        const slots: string[] = [];
+        let current = parse(opening, "HH:mm:ss", new Date());
+        const end = parse(closing, "HH:mm:ss", new Date());
+
+        while (current <= end) {
+          slots.push(format(current, "HH:mm"));
+          current = new Date(current.getTime() + interval * 60 * 1000);
+        }
+
+        const { data: bookingsData } = await supabase
+          .from("bookings")
+          .select("booking_time, status")
+          .eq("booking_date", dateStr)
+          .neq("status", "Cancelled");
+
+        const { data: blockedData } = await supabase
+          .from("blocked_slots")
+          .select("*")
+          .filter("start_date", "lte", dateStr)
+          .filter("end_date", "gte", dateStr);
+
+        const computedAvailable: string[] = [];
+
+        for (const slot of slots) {
+          const slotTimeStr = slot + ":00";
+          if (slotTimeStr > "22:00:00") continue; // No booking is accepted after 10pm
+          let currentCapacity = defaultCapacity;
+          let isBlocked = false;
+
+          if (blockedData) {
+            for (const block of blockedData) {
+              if (block.block_type === "full_day") {
+                isBlocked = true;
+                break;
+              }
+              const blockStart = block.start_time;
+              const blockEnd = block.end_time;
+              if (blockStart && blockEnd) {
+                if (slotTimeStr >= blockStart && slotTimeStr <= blockEnd) {
+                  if (block.block_type === "reduced_capacity" && block.override_capacity !== null) {
+                    currentCapacity = block.override_capacity;
+                  } else {
+                    isBlocked = true;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+
+          if (isBlocked) continue;
+
+          const bookingCount = bookingsData
+            ? bookingsData.filter((b) => b.booking_time === slotTimeStr).length
+            : 0;
+
+          if (bookingCount < currentCapacity) {
+            const parsedTime = parse(slot, "HH:mm", new Date());
+            computedAvailable.push(format(parsedTime, "h:mm a").toUpperCase());
+          }
+        }
+        setAvailableTimes(computedAvailable);
+      } catch (err) {
+        const fallback = [
+          "9:00 AM", "10:30 AM", "12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM", "6:00 PM", "7:30 PM", "9:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"
+        ];
+        setAvailableTimes(fallback);
+      }
+    }
+
+    calculateSlots();
+  }, [selectedDate, dateMap]);
+
   const selectedPrice = selectedService ? getRandomPrice(selectedService) : "";
   const isVideoFile = (src: string) => /\.(mp4|webm|mov|m4v)$/i.test(src);
+
 
   useEffect(() => {
     const root = scrollRef.current ?? document;
@@ -429,6 +553,87 @@ export const Services = () => {
       observer.disconnect();
     };
   }, [filter, loop]);
+
+  const [bookingLoading, setBookingLoading] = useState(false);
+
+  const handleCreateBooking = async () => {
+    setBookingLoading(true);
+    try {
+      const fullName = `${firstName} ${lastName}`.trim();
+      let customerId = "";
+
+      const { data: existingCust } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("phone", phoneNumber)
+        .maybeSingle();
+
+      if (existingCust) {
+        customerId = existingCust.id;
+      } else {
+        const { data: newCust, error: createErr } = await supabase
+          .from("customers")
+          .insert({ name: fullName, phone: phoneNumber, email: null })
+          .select("id")
+          .single();
+        if (createErr) throw createErr;
+        if (newCust) customerId = newCust.id;
+      }
+
+      const dateObj = dateMap[selectedDate] || new Date();
+      const dateStr = format(dateObj, "yyyy-MM-dd");
+
+      const parsedTime = parse(selectedTime, "hh:mm a", new Date());
+      const time24Str = format(parsedTime, "HH:mm:ss");
+
+      let serviceId = null;
+      const { data: svcData } = await supabase
+        .from("services")
+        .select("id")
+        .eq("name", selectedService)
+        .maybeSingle();
+      if (svcData) serviceId = svcData.id;
+
+      const { error: bookingErr } = await supabase
+        .from("bookings")
+        .insert({
+          customer_id: customerId,
+          service_id: serviceId,
+          booking_date: dateStr,
+          booking_time: time24Str,
+          duration_minutes: 60,
+          status: "Pending",
+          customer_name: fullName,
+          customer_phone: phoneNumber,
+          notes: coupon ? `Coupon: ${coupon}` : null
+        });
+
+      if (bookingErr) throw bookingErr;
+    } catch (err) {
+      console.error("Booking db error: ", err);
+    } finally {
+      setBookingLoading(false);
+      setBookingStep(7);
+
+      const messageText = `Hi Ultimate Blend! I just booked an appointment:
+- Service: ${selectedService}
+- Date: ${selectedDate}
+- Time: ${selectedTime}
+- Phone: ${phoneNumber}
+
+Looking forward to my visit!`;
+      const whatsappUrl = `https://wa.me/971503234327?text=${encodeURIComponent(messageText)}`;
+      window.open(whatsappUrl, "_blank");
+    }
+  };
+
+  const handleNextStep = async () => {
+    if (bookingStep === 6) {
+      await handleCreateBooking();
+    } else {
+      setBookingStep((s) => s + 1);
+    }
+  };
 
   return (
     <>
@@ -890,7 +1095,7 @@ export const Services = () => {
 
                 {bookingStep < 7 ? (
                   <button
-                    onClick={() => setBookingStep((s) => s + 1)}
+                    onClick={handleNextStep}
                     disabled={
                       (bookingStep === 1 && !selectedMainService) ||
                       (bookingStep === 2 && !selectedService) ||
