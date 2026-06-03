@@ -502,16 +502,18 @@ export const Services = () => {
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
 
-                  <div className="absolute left-4 right-4 bottom-4 md:left-6 md:right-6 md:bottom-8 z-10 flex flex-col items-start">
-                    <p className="font-display normal-case tracking-normal font-bold text-sm md:text-lg leading-tight text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.8)] mb-2">
+                  <div className="absolute inset-0 z-10 flex flex-col justify-end p-5 md:p-8">
+                    <p className="font-display normal-case tracking-normal font-bold text-sm md:text-lg leading-snug text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.9)] mb-3">
                       {item.name}
                     </p>
-                    <button
-                      onClick={() => openBookingPanel(item.category, item.image, item.name)}
-                      className="px-4 py-2 bg-[#9F3F5C] text-white text-[11px] md:text-xs font-display font-semibold hover:bg-[#8E3852] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9F3F5C] focus-visible:ring-offset-2"
-                    >
-                      Book now
-                    </button>
+                    <div>
+                      <button
+                        onClick={() => openBookingPanel(item.category, item.image, item.name)}
+                        className="px-5 py-2.5 bg-[#9F3F5C] text-white text-[11px] md:text-xs font-display font-semibold hover:bg-[#8E3852] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9F3F5C] focus-visible:ring-offset-2"
+                      >
+                        Book now
+                      </button>
+                    </div>
                   </div>
                 </article>
               ))}
