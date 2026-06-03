@@ -44,7 +44,7 @@ export const About = () => {
 
     obs.observe(sel);
     return () => obs.disconnect();
-  }, [mobilePlaying]);
+  }, []);
 
   return (
     <section
