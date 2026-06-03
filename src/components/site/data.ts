@@ -58,7 +58,7 @@ export const SERVICE_CATEGORIES: {
     {
       category: "Skin",
       items: [
-        { name: "SIGNATURE FACIAL", image: u("photo-1570172619644-dfd03ed5d881") },
+        { name: "SIGNATURE FACIAL", image: "/signature facialis.mp4" },
       ],
     },
 ];
