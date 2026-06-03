@@ -22,7 +22,7 @@ export const SERVICE_CATEGORIES: {
         { name: "BRAIDS", image: "/BRAIDS.mp4" },
         { name: "BOX BRAIDS", image: u("photo-1647891938250-754ad796f67a") },
         { name: "CORNROWS", image: u("photo-1595959183075-c1d09e57343d") },
-        { name: "CROCHET", image: u("photo-1562322140-8baeececf3df") },
+        { name: "CROCHET", image: "/crochet.mp4" },
         { name: "PONYTAIL", image: u("photo-1522337360788-8b13dee7a37e") },
         { name: "BOHO BRAIDS", image: u("photo-1605497746444-ac9da58d7ad5") },
         { name: "STITCH BRAIDS", image: u("photo-1582095133179-bfd08e2fc6b3") },
