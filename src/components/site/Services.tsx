@@ -479,7 +479,7 @@ export const Services = () => {
               {loop.map((item, idx) => (
                 <article
                   key={`${item.category}-${item.name}-${idx}`}
-                  className="shrink-0 w-[82vw] sm:w-[60vw] md:w-[44vw] lg:w-[34vw] xl:w-[28vw] aspect-square relative overflow-hidden cursor-pointer bg-neutral-900"
+                  className="shrink-0 w-[82vw] sm:w-[60vw] md:w-[44vw] lg:w-[34vw] xl:w-[28vw] aspect-[4/5] relative overflow-hidden cursor-pointer bg-neutral-900"
                 >
                   {isVideoFile(item.image) ? (
                     <video
@@ -500,10 +500,9 @@ export const Services = () => {
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-l from-foreground/15 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
 
-                  {/* Service label moved lower, no background panel */}
-                  <div className="absolute left-6 right-6 bottom-6 md:bottom-8 max-w-[72%]">
+                  <div className="absolute left-6 right-6 bottom-6 md:bottom-8 z-10">
                     <p className="font-display normal-case tracking-normal font-bold text-base md:text-lg leading-tight text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.7)] mb-3">
                       {item.name}
                     </p>
