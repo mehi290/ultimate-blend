@@ -24,7 +24,7 @@ export const SERVICE_CATEGORIES: {
         { name: "CORNROWS", image: u("photo-1595959183075-c1d09e57343d") },
         { name: "CROCHET", image: "/crochet.mp4" },
         { name: "PONYTAIL", image: u("photo-1522337360788-8b13dee7a37e") },
-        { name: "BOHO BRAIDS", image: u("photo-1605497746444-ac9da58d7ad5") },
+        { name: "BOHO BRAIDS", image: "/boho braids.mp4" },
         { name: "STITCH BRAIDS", image: u("photo-1582095133179-bfd08e2fc6b3") },
         { name: "Knotless Braids", image: "/Small Knotless Braids.mp4" },
         { name: "French Curls", image: "/French Curls.mp4" },
