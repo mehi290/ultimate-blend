@@ -17,7 +17,7 @@ export const SERVICE_CATEGORIES: {
     {
       category: "Hair",
       items: [
-        { name: "COLOR & BALAYAGE", image: "/hair color.png" },
+        { name: "Goddess Twist Braid", image: "/goddess twist braid.mp4" },
         { name: "BLOW DRY & IRON", image: "/keratin.jpg" },
         { name: "BRAIDS", image: "/BRAIDS.mp4" },
         { name: "BOX BRAIDS", image: u("photo-1647891938250-754ad796f67a") },
