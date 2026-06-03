@@ -31,7 +31,7 @@ export const SERVICE_CATEGORIES: {
         { name: "Boho French Curls", image: "/boho frenchcurls.mp4" },
         { name: "Fulani Twist Braid", image: "/Fulani Twist Braid.mp4" },
         { name: "Finger Wave", image: "/Finger Wave.mp4" },
-        { name: "DREADLOCKS", image: u("photo-1595959183075-c1d09e57343d") },
+        { name: "DREADLOCKS", image: "/dread.mp4" },
         { name: "REVAMPING OF HUMAN HAIR", image: u("photo-1562322140-8baeececf3df") },
         { name: "HAIR EXTENSIONS", image: "/HAIR EXTENSIONS.mp4" },
         { name: "WIG INSTALLATIONS", image: "/Wig installations.jpeg" },
