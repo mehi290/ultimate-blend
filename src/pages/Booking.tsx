@@ -46,7 +46,7 @@ export default function Booking() {
   const [selectedServices, setSelectedServices] = useState<any[]>([]);
 
   // Date & Time State
-  const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1)); // Default to tomorrow
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date()); // Default to today
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("");
 
@@ -466,7 +466,7 @@ export default function Booking() {
               <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Select Date</p>
               <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
                 {Array.from({ length: 7 }).map((_, i) => {
-                  const d = addDays(new Date(), i + 1);
+                  const d = addDays(new Date(), i);
                   const active = isSameDay(selectedDate, d);
                   return (
                     <button

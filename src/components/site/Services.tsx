@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, X, Ticket, Calendar, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Ticket, Calendar, CheckCircle2, Check } from "lucide-react";
 import { SERVICES_FLAT, SERVICE_FILTERS } from "./data";
 import { supabase } from "@/lib/supabase";
 import { format, addDays, parse, isSameDay } from "date-fns";
@@ -219,7 +219,7 @@ export const Services = () => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
 
   // New customized states
-  const [selectedMainService, setSelectedMainService] = useState<any>(null);
+  const [selectedMainServices, setSelectedMainServices] = useState<any[]>([]);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [coupon, setCoupon] = useState("");
@@ -248,7 +248,7 @@ export const Services = () => {
     setBookingScope(category);
     setBookingImage(image);
     setSelectedServices([]);
-    setSelectedMainService(null);
+    setSelectedMainServices([]);
     setSelectedStylist("");
     setSelectedDate("");
     setSelectedTime("");
@@ -310,6 +310,7 @@ export const Services = () => {
     const others = MAIN_SERVICES.filter(s => s.id !== matchId);
     const ordered = matched ? [matched, ...others] : MAIN_SERVICES;
 
+    setSelectedMainServices(matched ? [matched] : []);
     setOrderedServices(ordered);
     setBookingStep(1);
     setBookingOpen(true);
@@ -320,7 +321,7 @@ export const Services = () => {
     setBookingScope("All");
     setBookingImage(SERVICES_FLAT[0]?.image ?? "");
     setSelectedServices([]);
-    setSelectedMainService(null);
+    setSelectedMainServices([]);
     setSelectedStylist("");
     setSelectedDate("");
     setSelectedTime("");
@@ -398,7 +399,7 @@ export const Services = () => {
     const tempDates: string[] = [];
     const tempMap: Record<string, Date> = {};
     for (let i = 0; i < 7; i++) {
-      const d = addDays(new Date(), i + 1);
+      const d = addDays(new Date(), i);
       const label = format(d, "dd MMM");
       tempDates.push(label);
       tempMap[label] = d;
@@ -802,7 +803,7 @@ export const Services = () => {
                     </button>
                   )}
                   {bookingStep === 1 && "Select Service"}
-                  {bookingStep === 2 && (selectedMainService ? selectedMainService.name : "Select Subservice")}
+                  {bookingStep === 2 && (selectedMainServices.length === 1 ? selectedMainServices[0].name : "Select Subservices")}
                   {bookingStep === 3 && "Select Date & Time"}
                   {bookingStep === 4 && "How Many People"}
                   {bookingStep === 5 && "User Details"}
@@ -833,20 +834,31 @@ export const Services = () => {
 
                   <div className="overflow-y-auto pr-1 md:pr-2 space-y-2 flex-1 min-h-0">
                     {orderedServices.map((svc) => {
-                      const active = selectedMainService?.id === svc.id;
+                      const active = selectedMainServices.some(s => s.id === svc.id);
                       return (
                         <button
                           key={`main-svc-${svc.id}`}
                           onClick={() => {
-                            setSelectedMainService(svc);
-                            setBookingStep(2);
+                            setSelectedMainServices(prev => {
+                              const exists = prev.find(s => s.id === svc.id);
+                              if (exists) {
+                                return prev.filter(s => s.id !== svc.id);
+                              } else {
+                                return [...prev, svc];
+                              }
+                            });
                           }}
                           className={`w-full text-left flex items-center justify-between px-4 py-4 border transition-colors ${active
                             ? "border-[#9F3F5C] bg-white/70"
                             : "border-foreground/15 bg-white/40 hover:bg-white/55"
                             }`}
                         >
-                          <span className="text-foreground font-medium text-sm">{svc.name}</span>
+                          <span className="text-foreground font-medium text-sm flex items-center gap-2">
+                            <span className={`w-4 h-4 border rounded flex items-center justify-center ${active ? "border-[#9F3F5C] bg-[#9F3F5C] text-white" : "border-foreground/30"}`}>
+                              {active && <Check className="w-3 h-3 stroke-[3px]" />}
+                            </span>
+                            {svc.name}
+                          </span>
                           <span className="text-foreground/40 text-sm font-display font-medium">({svc.count})</span>
                         </button>
                       );
@@ -861,46 +873,48 @@ export const Services = () => {
                     <p>Service</p>
                   </div>
 
-                  <div className="overflow-y-auto pr-1 md:pr-2 space-y-2 flex-1 min-h-0">
-                    {selectedMainService?.subservices.map((sub: any) => {
-                      const active = selectedServices.some(s => s.name === sub.name);
-                      return (
-                        <button
-                          key={`subservice-${sub.name}`}
-                          onClick={() => {
-                            setSelectedServices(prev => {
-                              const exists = prev.find(s => s.name === sub.name);
-                              if (exists) {
-                                return prev.filter(s => s.name !== sub.name);
-                              } else {
-                                return [...prev, { name: sub.name, price: sub.price }];
-                              }
-                            });
-                          }}
-                          className={`w-full text-left grid grid-cols-[1fr_auto] gap-4 px-4 py-4 border transition-colors ${active
-                            ? "border-[#9F3F5C] bg-white/70 font-semibold"
-                            : "border-foreground/15 bg-white/40 hover:bg-white/55"
-                            }`}
-                        >
-                          <span className="text-foreground text-sm flex items-center gap-2">
-                            <span className={`w-4 h-4 border rounded flex items-center justify-center ${active ? "border-[#9F3F5C] bg-[#9F3F5C] text-white" : "border-foreground/30"}`}>
-                              {active && <Check className="w-3 h-3 stroke-[3px]" />}
-                            </span>
-                            {sub.name}
-                          </span>
-                          {sub.price > 0 ? (
-                            <span className="text-foreground text-sm">AED {sub.price}</span>
-                          ) : (
-                            <span className="text-foreground/50 text-xs italic">Price varies based on size</span>
-                          )}
-                        </button>
-                      );
-                    })}
-                    {selectedMainService?.subservices.some((s: any) => s.price === 0) && (
-                      <p className="text-center text-xs text-[#9F3F5C] mt-4 font-bold italic">
-                        Prices vary based on size
-                      </p>
-                    )}
+                  <div className="overflow-y-auto pr-1 md:pr-2 space-y-4 flex-1 min-h-0">
+                    {selectedMainServices.map((mainSvc) => (
+                      <div key={`group-${mainSvc.id}`} className="space-y-2">
+                        <p className="font-display font-bold text-xs text-[#9F3F5C] uppercase tracking-wider px-1">
+                          {mainSvc.name}
+                        </p>
+                        {mainSvc.subservices.map((sub: any) => {
+                          const active = selectedServices.some(s => s.name === sub.name);
+                          return (
+                            <button
+                              key={`subservice-${sub.name}`}
+                              onClick={() => {
+                                setSelectedServices(prev => {
+                                  const exists = prev.find(s => s.name === sub.name);
+                                  if (exists) {
+                                    return prev.filter(s => s.name !== sub.name);
+                                  } else {
+                                    return [...prev, { name: sub.name, price: sub.price }];
+                                  }
+                                });
+                              }}
+                              className={`w-full text-left grid grid-cols-[1fr_auto] gap-4 px-4 py-4 border transition-colors ${active
+                                ? "border-[#9F3F5C] bg-white/70 font-semibold"
+                                : "border-foreground/15 bg-white/40 hover:bg-white/55"
+                                }`}
+                            >
+                              <span className="text-foreground text-sm flex items-center gap-2">
+                                <span className={`w-4 h-4 border rounded flex items-center justify-center ${active ? "border-[#9F3F5C] bg-[#9F3F5C] text-white" : "border-foreground/30"}`}>
+                                  {active && <Check className="w-3 h-3 stroke-[3px]" />}
+                                </span>
+                                {sub.name}
+                              </span>
+                              {sub.price > 0 ? (
+                                <span className="text-foreground text-sm">AED {sub.price}</span>
+                              ) : (
+                                <span className="text-foreground/50 text-xs italic">Price varies based on size</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -1136,12 +1150,12 @@ export const Services = () => {
                   <button
                     onClick={handleNextStep}
                     disabled={
-                      (bookingStep === 1 && !selectedMainService) ||
+                      (bookingStep === 1 && selectedMainServices.length === 0) ||
                       (bookingStep === 2 && selectedServices.length === 0) ||
                       (bookingStep === 3 && (!selectedDate || !selectedTime)) ||
                       (bookingStep === 5 && (!firstName.trim() || !lastName.trim() || !phoneNumber.trim()))
                     }
-                    className={`px-8 min-h-12 font-display text-xs transition-opacity ${(bookingStep === 1 && selectedMainService) ||
+                    className={`px-8 min-h-12 font-display text-xs transition-opacity ${(bookingStep === 1 && selectedMainServices.length > 0) ||
                       (bookingStep === 2 && selectedServices.length > 0) ||
                       (bookingStep === 3 && selectedDate && selectedTime) ||
                       bookingStep === 4 ||
