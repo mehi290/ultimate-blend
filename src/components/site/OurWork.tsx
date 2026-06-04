@@ -4,8 +4,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const WORK_ITEMS = [
   { name: "Loose Weave Boho Braid", video: "/loose%20weave%20boho%20braid.mp4" },
   { name: "Braid", video: "/cornrow%20braids%20our%20work.mp4" },
-  { name: "Knotless Box Braids", video: "/knotlessboxbraids%20dubai.mp4" },
+  { name: "Knotless Box Braids", video: "/knotlessboxbraids_dubai.mp4" },
   { name: "Boho Braids", video: "/boho%20raids%20middle.mp4" },
+  { name: "French Curls Boho Braids", video: "/French%20curls%20Boho%20braids.mp4" },
   { name: "Gel Extension", video: "/gelsih%20extension.mp4" },
 ];
 

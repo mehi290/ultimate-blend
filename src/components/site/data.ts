@@ -19,7 +19,7 @@ export const SERVICE_CATEGORIES: {
       items: [
         { name: "Goddess Twist Braid", image: "/goddess twist braid.mp4" },
         { name: "BLOW DRY & IRON", image: "/keratin.jpg" },
-        { name: "BRAIDS", image: "/BRAIDS.mp4" },
+        { name: "BRAIDS", image: "/Braids.mp4" },
         { name: "BOX BRAIDS", image: u("photo-1647891938250-754ad796f67a") },
         { name: "CORNROWS", image: u("photo-1595959183075-c1d09e57343d") },
         { name: "CROCHET", image: "/crochet.mp4" },
@@ -35,7 +35,7 @@ export const SERVICE_CATEGORIES: {
         { name: "REVAMPING OF HUMAN HAIR", image: u("photo-1562322140-8baeececf3df") },
         { name: "HAIR EXTENSIONS", image: "/HAIR EXTENSIONS.mp4" },
         { name: "WIG INSTALLATIONS", image: "/Wig installations.jpeg" },
-        { name: "HAIR RELAXING", image: u("photo-1560869713-7d0954430a87") },
+        { name: "Small Knotless Braids", image: "/smal%20knotles%20braid.mp4" },
         { name: "HAIR STYLING", image: "/hair styling.mp4" },
         { name: "HAIR TREATMENT", image: u("photo-1522337360788-8b13dee7a37e") },
         { name: "CHILDREN HAIRSTYLING", image: "/children boho  braids.mp4" },

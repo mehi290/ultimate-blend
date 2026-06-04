@@ -542,7 +542,7 @@ export const Services = () => {
     calculateSlots();
   }, [selectedDate, dateMap]);
 
-  const selectedPrice = selectedService ? getRandomPrice(selectedService) : "";
+  const selectedPrice = selectedServices.length > 0 ? getRandomPrice(selectedServices[0].name) : "";
   const isVideoFile = (src: string) => /\.(mp4|webm|mov|m4v)$/i.test(src);
 
 
