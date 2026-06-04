@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Check, Calendar as CalendarIcon, X, MessageSquare } from "lucide-react";
+import { Check, Calendar as CalendarIcon, X } from "lucide-react";
 
 export default function BookingConfirm() {
   const navigate = useNavigate();
@@ -13,18 +13,6 @@ export default function BookingConfirm() {
     timeStr: "10:30 AM",
     phone: "0503234327"
   };
-
-  const salonWhatsappNumber = "971503234327"; // Salon contact number in international format
-
-  // Create WhatsApp pre-filled message URL
-  const messageText = `Hi Ultimate Blend! I just booked an appointment:
-- Service: ${serviceName}
-- Date: ${dateStr}
-- Time: ${timeStr}
-- Phone: ${phone}
-
-Looking forward to my visit!`;
-  const whatsappUrl = `https://wa.me/${salonWhatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   // Auto redirect to WhatsApp if the user completes booking (useful secondary action/redirect)
   useEffect(() => {
@@ -111,16 +99,7 @@ Looking forward to my visit!`;
             </p>
           </div>
 
-          {/* WhatsApp Redirect Button */}
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 py-3 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold text-sm rounded-xl shadow-md transition-colors"
-          >
-            <MessageSquare className="w-4 h-4 fill-white" />
-            Send Details to WhatsApp (Free)
-          </a>
+
 
           {/* Action buttons */}
           <div className="grid grid-cols-2 gap-3 w-full pt-2">

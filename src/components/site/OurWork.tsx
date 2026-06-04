@@ -2,11 +2,11 @@ import { useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const WORK_ITEMS = [
-  { name: "Loose Weave Boho Braid", video: "/loose weave boho braid.mp4" },
-  { name: "Braid", video: "/cornrow braids our work.mp4" },
-  { name: "knotless box braids", video: "/knotlessboxbraids dubai.mp4" },
-  { name: "boho braids", video: "/boho raids middle.mp4" },
-  { name: "gel extension", video: "/gelsih extension.mp4" },
+  { name: "Loose Weave Boho Braid", video: "/loose%20weave%20boho%20braid.mp4" },
+  { name: "Braid", video: "/cornrow%20braids%20our%20work.mp4" },
+  { name: "Knotless Box Braids", video: "/knotlessboxbraids%20dubai.mp4" },
+  { name: "Boho Braids", video: "/boho%20raids%20middle.mp4" },
+  { name: "Gel Extension", video: "/gelsih%20extension.mp4" },
 ];
 
 export const OurWork = () => {

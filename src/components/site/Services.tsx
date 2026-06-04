@@ -92,9 +92,9 @@ const MAIN_SERVICES = [
     count: 3,
     category: "Hair",
     subservices: [
-      { name: "2 Cornrows with Extensions", price: 120 },
-      { name: "4 Cornrows with Extensions", price: 180 },
-      { name: "6+ Cornrows with Extensions", price: 250 }
+      { name: "Extension Cornrows - Small", price: 0 },
+      { name: "Extension Cornrows - Medium", price: 0 },
+      { name: "Extension Cornrows - Big", price: 0 }
     ]
   },
   {
@@ -167,28 +167,26 @@ const MAIN_SERVICES = [
     count: 4,
     category: "Hair",
     subservices: [
-      { name: "Dreadlocks Repair - Big", price: 170 },
-      { name: "Dreadlocks Repair - Medium", price: 200 },
-      { name: "Dreadlocks Repair - Small", price: 230 },
+      { name: "Dreadlocks - Big", price: 0 },
+      { name: "Dreadlocks - Medium", price: 0 },
+      { name: "Dreadlocks - Small", price: 0 },
       { name: "Dreadlocks Maintenance", price: 100 }
     ]
   },
   {
     id: "wigs-extensions",
     name: "Wigs & Hair Extensions",
-    count: 11,
+    count: 9,
     category: "Hair",
     subservices: [
-      { name: "Wig Installation - Big", price: 80 },
-      { name: "Wig Installation - Medium", price: 130 },
-      { name: "Wig Installation - Small", price: 180 },
-      { name: "Wig Fix - Big", price: 70 },
-      { name: "Wig Fix - Medium", price: 90 },
-      { name: "Wig Fix - Small", price: 120 },
-      { name: "Wig Wash & Style - Big", price: 70 },
-      { name: "Wig Wash & Style - Medium", price: 90 },
-      { name: "Wig Wash & Style - Small", price: 120 },
-      { name: "Revamping of Human Hair", price: 200 },
+      { name: "Wig Installation - Big", price: 100 },
+      { name: "Wig Fix - Big", price: 120 },
+      { name: "Wig Fix - Medium", price: 100 },
+      { name: "Wig Fix - Small", price: 70 },
+      { name: "Wig Wash & Style - Big", price: 120 },
+      { name: "Wig Wash & Style - Medium", price: 100 },
+      { name: "Wig Wash & Style - Small", price: 90 },
+      { name: "Revamping of Human Hair", price: 100 },
       { name: "Weave / Sew-in", price: 100 }
     ]
   },
@@ -198,7 +196,7 @@ const MAIN_SERVICES = [
     count: 1,
     category: "Skin",
     subservices: [
-      { name: "Signature Facial", price: 200 }
+      { name: "Signature Facial", price: 70 }
     ]
   }
 ];
@@ -602,7 +600,7 @@ export const Services = () => {
           booking_date: dateStr,
           booking_time: time24Str,
           duration_minutes: 60,
-          status: "Pending",
+          status: "Confirmed",
           customer_name: fullName,
           customer_phone: phoneNumber,
           notes: coupon ? `Coupon: ${coupon}` : null
@@ -614,16 +612,6 @@ export const Services = () => {
     } finally {
       setBookingLoading(false);
       setBookingStep(7);
-
-      const messageText = `Hi Ultimate Blend! I just booked an appointment:
-- Service: ${selectedService}
-- Date: ${selectedDate}
-- Time: ${selectedTime}
-- Phone: ${phoneNumber}
-
-Looking forward to my visit!`;
-      const whatsappUrl = `https://wa.me/971503234327?text=${encodeURIComponent(messageText)}`;
-      window.open(whatsappUrl, "_blank");
     }
   };
 
