@@ -211,7 +211,7 @@ export const Services = () => {
   const [bookingCategory, setBookingCategory] = useState<string>("");
   const [bookingScope, setBookingScope] = useState<string>("");
   const [bookingImage, setBookingImage] = useState<string>("");
-  const [selectedService, setSelectedService] = useState<string>("");
+  const [selectedServices, setSelectedServices] = useState<{ name: string; price: number }[]>([]);
   const [selectedStylist, setSelectedStylist] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
@@ -220,7 +220,6 @@ export const Services = () => {
 
   // New customized states
   const [selectedMainService, setSelectedMainService] = useState<any>(null);
-  const [selectedServicePrice, setSelectedServicePrice] = useState<number>(0);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [coupon, setCoupon] = useState("");
@@ -248,9 +247,8 @@ export const Services = () => {
     setBookingCategory(category);
     setBookingScope(category);
     setBookingImage(image);
-    setSelectedService("");
+    setSelectedServices([]);
     setSelectedMainService(null);
-    setSelectedServicePrice(0);
     setSelectedStylist("");
     setSelectedDate("");
     setSelectedTime("");
@@ -321,9 +319,8 @@ export const Services = () => {
     setBookingCategory("All Services");
     setBookingScope("All");
     setBookingImage(SERVICES_FLAT[0]?.image ?? "");
-    setSelectedService("");
+    setSelectedServices([]);
     setSelectedMainService(null);
-    setSelectedServicePrice(0);
     setSelectedStylist("");
     setSelectedDate("");
     setSelectedTime("");
@@ -421,6 +418,14 @@ export const Services = () => {
       try {
         const dateObj = dateMap[selectedDate];
         const dateStr = format(dateObj, "yyyy-MM-dd");
+        const todayStr = format(new Date(), "yyyy-MM-dd");
+        const isToday = dateStr === todayStr;
+
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinutes = now.getMinutes();
+        const nextHour = currentMinutes > 0 ? currentHour + 1 : currentHour;
+        const minHourForToday = nextHour + 1;
 
         let opening = "09:00:00";
         let closing = "23:30:00";
@@ -466,6 +471,13 @@ export const Services = () => {
         for (const slot of slots) {
           const slotTimeStr = slot + ":00";
           if (slotTimeStr > "22:00:00") continue; // No booking is accepted after 10pm
+
+          if (isToday) {
+            const slotHour = parseInt(slot.split(":")[0]);
+            if (slotHour < minHourForToday) {
+              continue;
+            }
+          }
           let currentCapacity = defaultCapacity;
           let isBlocked = false;
 
@@ -506,7 +518,24 @@ export const Services = () => {
         const fallback = [
           "9:00 AM", "10:30 AM", "12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM", "6:00 PM", "7:30 PM", "9:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"
         ];
-        setAvailableTimes(fallback);
+        const dateObj = dateMap[selectedDate];
+        const dateStr = dateObj ? format(dateObj, "yyyy-MM-dd") : "";
+        const todayStr = format(new Date(), "yyyy-MM-dd");
+        if (dateStr === todayStr) {
+          const now = new Date();
+          const currentHour = now.getHours();
+          const currentMinutes = now.getMinutes();
+          const nextHour = currentMinutes > 0 ? currentHour + 1 : currentHour;
+          const minHourForToday = nextHour + 1;
+
+          const filteredFallback = fallback.filter(t => {
+            const parsed = parse(t, "h:mm a", new Date());
+            return parsed.getHours() >= minHourForToday;
+          });
+          setAvailableTimes(filteredFallback);
+        } else {
+          setAvailableTimes(fallback);
+        }
       }
     }
 
@@ -585,14 +614,21 @@ export const Services = () => {
       const time24Str = format(parsedTime, "HH:mm:ss");
 
       let serviceId = null;
+      const firstServiceName = selectedServices[0]?.name || "";
       const { data: svcData } = await supabase
         .from("services")
         .select("id")
-        .eq("name", selectedService)
+        .eq("name", firstServiceName)
         .maybeSingle();
       if (svcData) serviceId = svcData.id;
 
-      const { error: bookingErr } = await supabase
+        const servicesList = selectedServices.map(s => s.name).join(", ");
+        const notesContent = [
+          `Booked Services: ${servicesList}`,
+          coupon ? `Coupon: ${coupon}` : null
+        ].filter(Boolean).join(" | ");
+
+        const { error: bookingErr } = await supabase
         .from("bookings")
         .insert({
           customer_id: customerId,
@@ -603,7 +639,7 @@ export const Services = () => {
           status: "Confirmed",
           customer_name: fullName,
           customer_phone: phoneNumber,
-          notes: coupon ? `Coupon: ${coupon}` : null
+          notes: notesContent || null
         });
 
       if (bookingErr) throw bookingErr;
@@ -827,22 +863,35 @@ export const Services = () => {
 
                   <div className="overflow-y-auto pr-1 md:pr-2 space-y-2 flex-1 min-h-0">
                     {selectedMainService?.subservices.map((sub: any) => {
-                      const active = selectedService === sub.name;
+                      const active = selectedServices.some(s => s.name === sub.name);
                       return (
                         <button
                           key={`subservice-${sub.name}`}
                           onClick={() => {
-                            setSelectedService(sub.name);
-                            setSelectedServicePrice(sub.price);
+                            setSelectedServices(prev => {
+                              const exists = prev.find(s => s.name === sub.name);
+                              if (exists) {
+                                return prev.filter(s => s.name !== sub.name);
+                              } else {
+                                return [...prev, { name: sub.name, price: sub.price }];
+                              }
+                            });
                           }}
                           className={`w-full text-left grid grid-cols-[1fr_auto] gap-4 px-4 py-4 border transition-colors ${active
                             ? "border-[#9F3F5C] bg-white/70 font-semibold"
                             : "border-foreground/15 bg-white/40 hover:bg-white/55"
                             }`}
                         >
-                          <span className="text-foreground text-sm">{sub.name}</span>
-                          {sub.price > 0 && (
+                          <span className="text-foreground text-sm flex items-center gap-2">
+                            <span className={`w-4 h-4 border rounded flex items-center justify-center ${active ? "border-[#9F3F5C] bg-[#9F3F5C] text-white" : "border-foreground/30"}`}>
+                              {active && <Check className="w-3 h-3 stroke-[3px]" />}
+                            </span>
+                            {sub.name}
+                          </span>
+                          {sub.price > 0 ? (
                             <span className="text-foreground text-sm">AED {sub.price}</span>
+                          ) : (
+                            <span className="text-foreground/50 text-xs italic">Price varies based on size</span>
                           )}
                         </button>
                       );
@@ -958,21 +1007,14 @@ export const Services = () => {
                   <div className="border border-foreground/15 rounded-xl bg-white/40 p-5 space-y-4 shadow-sm">
                     <h4 className="font-display text-sm font-bold text-foreground">Summary</h4>
 
-                    <div className="border border-foreground/10 rounded-lg p-4 bg-white/80 space-y-1">
+                    <div className="border border-foreground/10 rounded-lg p-4 bg-white/80 space-y-3">
                       <p className="text-xs text-foreground/50">Services</p>
-                      <div className="flex justify-between items-center text-sm font-semibold text-foreground">
-                        {selectedServicePrice > 0 ? (
-                          <>
-                            <span>{selectedService} (AED {selectedServicePrice}) x {peopleCount} {peopleCount === 1 ? "person" : "people"}</span>
-                            <span>AED {selectedServicePrice * peopleCount}</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>{selectedService} x {peopleCount} {peopleCount === 1 ? "person" : "people"}</span>
-                            <span>Price Varies</span>
-                          </>
-                        )}
-                      </div>
+                      {selectedServices.map((s) => (
+                        <div key={s.name} className="flex justify-between items-center text-sm font-semibold text-foreground">
+                          <span>{s.name} x {peopleCount} {peopleCount === 1 ? "person" : "people"}</span>
+                          <span>{s.price > 0 ? `AED ${s.price * peopleCount}` : "Price Varies"}</span>
+                        </div>
+                      ))}
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -1000,7 +1042,13 @@ export const Services = () => {
 
                     <div className="border-t border-dashed border-foreground/20 pt-4 flex justify-between items-center text-base font-bold text-foreground">
                       <span>Total Amount:</span>
-                      <span>{selectedServicePrice > 0 ? `AED ${selectedServicePrice * peopleCount}` : "Price Varies"}</span>
+                      <span>
+                        {selectedServices.some(s => s.price === 0) ? (
+                          <>AED {selectedServices.reduce((sum, s) => sum + s.price, 0) * peopleCount} + Price Varies</>
+                        ) : (
+                          <>AED {selectedServices.reduce((sum, s) => sum + s.price, 0) * peopleCount}</>
+                        )}
+                      </span>
                     </div>
                   </div>
 
@@ -1018,6 +1066,9 @@ export const Services = () => {
                     <p className="text-sm text-foreground/80 mt-2">
                       Your appointment has been booked successfully for {selectedDate} at {selectedTime}.
                     </p>
+                    <p className="text-sm text-foreground/80 mt-1 font-semibold">
+                      Services: {selectedServices.map(s => s.name).join(", ")}
+                    </p>
                     <p className="text-sm text-foreground/85 mt-2 font-medium">
                       Thank you for choosing Ultimate Blend Ladies Beauty Salon
                     </p>
@@ -1031,13 +1082,13 @@ export const Services = () => {
                   <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm pt-4">
                     <button
                       onClick={() => {
-                        const serviceName = selectedService || "Salon Service";
+                        const serviceNames = selectedServices.map(s => s.name).join(", ") || "Salon Services";
                         const icsContent = [
                           "BEGIN:VCALENDAR",
                           "VERSION:2.0",
                           "PRODID:-//Ultimate Blend//Appointment//EN",
                           "BEGIN:VEVENT",
-                          `SUMMARY:Ultimate Blend - ${serviceName}`,
+                          `SUMMARY:Ultimate Blend - ${serviceNames}`,
                           `DESCRIPTION:Appointment for ${peopleCount} people. Payment will be done on-site.`,
                           "LOCATION:Ultimate Blend Ladies Beauty Salon, Dubai",
                           "STATUS:CONFIRMED",
@@ -1086,12 +1137,12 @@ export const Services = () => {
                     onClick={handleNextStep}
                     disabled={
                       (bookingStep === 1 && !selectedMainService) ||
-                      (bookingStep === 2 && !selectedService) ||
+                      (bookingStep === 2 && selectedServices.length === 0) ||
                       (bookingStep === 3 && (!selectedDate || !selectedTime)) ||
                       (bookingStep === 5 && (!firstName.trim() || !lastName.trim() || !phoneNumber.trim()))
                     }
                     className={`px-8 min-h-12 font-display text-xs transition-opacity ${(bookingStep === 1 && selectedMainService) ||
-                      (bookingStep === 2 && selectedService) ||
+                      (bookingStep === 2 && selectedServices.length > 0) ||
                       (bookingStep === 3 && selectedDate && selectedTime) ||
                       bookingStep === 4 ||
                       (bookingStep === 5 && firstName.trim() && lastName.trim() && phoneNumber.trim()) ||

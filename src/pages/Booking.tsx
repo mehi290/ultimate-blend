@@ -43,7 +43,7 @@ export default function Booking() {
   // Services State
   const [services, setServices] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("Braids");
-  const [selectedService, setSelectedService] = useState<any>(null);
+  const [selectedServices, setSelectedServices] = useState<any[]>([]);
 
   // Date & Time State
   const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1)); // Default to tomorrow
@@ -78,12 +78,20 @@ export default function Booking() {
 
   // Compute / Fetch Available slots for the selected date
   useEffect(() => {
-    if (!selectedDate || !selectedService) return;
+    if (!selectedDate || selectedServices.length === 0) return;
 
     async function calculateSlots() {
       setLoading(true);
       try {
         const dateStr = format(selectedDate, "yyyy-MM-dd");
+        const todayStr = format(new Date(), "yyyy-MM-dd");
+        const isToday = dateStr === todayStr;
+
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinutes = now.getMinutes();
+        const nextHour = currentMinutes > 0 ? currentHour + 1 : currentHour;
+        const minHourForToday = nextHour + 1;
 
         // 1. Get global settings
         let opening = "09:00:00";
@@ -134,6 +142,13 @@ export default function Booking() {
         for (const slot of slots) {
           const slotTimeStr = slot + ":00";
           if (slotTimeStr > "22:00:00") continue; // No booking is accepted after 10pm
+
+          if (isToday) {
+            const slotHour = parseInt(slot.split(":")[0]);
+            if (slotHour < minHourForToday) {
+              continue;
+            }
+          }
           let currentCapacity = defaultCapacity;
           let isBlocked = false;
 
@@ -184,19 +199,35 @@ export default function Booking() {
           "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM",
           "07:00 PM", "08:00 PM", "09:00 PM", "10:00 PM", "11:00 PM"
         ];
-        setAvailableSlots(fallbackSlots);
+        
+        const todayStr = format(new Date(), "yyyy-MM-dd");
+        if (format(selectedDate, "yyyy-MM-dd") === todayStr) {
+          const now = new Date();
+          const currentHour = now.getHours();
+          const currentMinutes = now.getMinutes();
+          const nextHour = currentMinutes > 0 ? currentHour + 1 : currentHour;
+          const minHourForToday = nextHour + 1;
+          
+          const filteredFallback = fallbackSlots.filter(t => {
+            const parsed = parse(t, "hh:mm a", new Date());
+            return parsed.getHours() >= minHourForToday;
+          });
+          setAvailableSlots(filteredFallback);
+        } else {
+          setAvailableSlots(fallbackSlots);
+        }
       } finally {
         setLoading(false);
       }
     }
 
     calculateSlots();
-  }, [selectedDate, selectedService]);
+  }, [selectedDate, selectedServices]);
 
   // Handle final submission of booking details
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedService || !selectedDate || !selectedTime || !name || !phone) {
+    if (selectedServices.length === 0 || !selectedDate || !selectedTime || !name || !phone) {
       setErrorMsg("Please fill in all required fields.");
       return;
     }
@@ -231,19 +262,26 @@ export default function Booking() {
       }
 
       // 2. Insert the Booking
+      const firstService = selectedServices[0];
+      const servicesList = selectedServices.map(s => s.name).join(", ");
+      const combinedNotes = [
+        `Booked Services: ${servicesList}`,
+        notes ? `Notes: ${notes}` : null
+      ].filter(Boolean).join(" | ");
+
       const { data: newBooking, error: bookingErr } = await supabase
         .from("bookings")
         .insert({
           customer_id: customerId,
-          service_id: selectedService.id,
+          service_id: firstService.id,
           booking_date: dateStr,
           booking_time: time24Str,
-          duration_minutes: selectedService.duration_minutes,
+          duration_minutes: firstService.duration_minutes,
           status: "Pending",
           customer_name: name,
           customer_phone: phone,
           customer_email: email || null,
-          notes: notes || null
+          notes: combinedNotes || null
         })
         .select("*")
         .single();
@@ -254,7 +292,7 @@ export default function Booking() {
       navigate("/booking/confirm", {
         state: {
           booking: newBooking,
-          serviceName: selectedService.name,
+          serviceName: servicesList,
           dateStr: format(selectedDate, "dd MMM yyyy"),
           timeStr: selectedTime,
           phone: phone
@@ -265,10 +303,11 @@ export default function Booking() {
       console.error("Booking Error:", err);
       // Fallback redirection to simulate confirmation if offline/unconfigured Supabase
       const dummyId = Math.random().toString(36).substring(7);
+      const servicesList = selectedServices.map(s => s.name).join(", ");
       navigate("/booking/confirm", {
         state: {
           booking: { id: dummyId, customer_name: name, customer_phone: phone },
-          serviceName: selectedService.name,
+          serviceName: servicesList,
           dateStr: format(selectedDate, "dd MMM yyyy"),
           timeStr: selectedTime,
           phone: phone
@@ -359,32 +398,49 @@ export default function Booking() {
                 </div>
               ) : (
                 <div className="grid gap-3">
-                  {filteredServices.map((svc) => (
-                    <button
-                      key={svc.id}
-                      onClick={() => setSelectedService(svc)}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition-all flex justify-between items-center bg-white shadow-sm ${
-                        selectedService?.id === svc.id
-                          ? "border-[#9F3F5C] ring-2 ring-[#9F3F5C]/10"
-                          : "border-pink-100/50 hover:border-pink-200"
-                      }`}
-                    >
-                      <div className="space-y-1">
-                        <h3 className="font-semibold text-sm sm:text-base text-gray-800">{svc.name}</h3>
-                        {svc.description && (
-                          <p className="text-xs text-gray-500 line-clamp-2 max-w-md">{svc.description}</p>
-                        )}
-                        <span className="inline-block text-[11px] font-semibold text-gray-400">
-                          Duration: {svc.duration_minutes} mins
-                        </span>
-                      </div>
-                      <div className="text-right pl-4">
-                        <span className="font-bold text-sm sm:text-base text-[#9F3F5C]">
-                          {svc.price ? `AED ${svc.price}` : "Price Varies"}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
+                  {filteredServices.map((svc) => {
+                    const active = selectedServices.some((s) => s.id === svc.id);
+                    return (
+                      <button
+                        key={svc.id}
+                        onClick={() => {
+                          setSelectedServices((prev) => {
+                            const exists = prev.find((s) => s.id === svc.id);
+                            if (exists) {
+                              return prev.filter((s) => s.id !== svc.id);
+                            } else {
+                              return [...prev, svc];
+                            }
+                          });
+                        }}
+                        className={`w-full text-left p-4 rounded-xl border-2 transition-all flex justify-between items-center bg-white shadow-sm ${
+                          active
+                            ? "border-[#9F3F5C] ring-2 ring-[#9F3F5C]/10"
+                            : "border-pink-100/50 hover:border-pink-200"
+                        }`}
+                      >
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-sm sm:text-base text-gray-800 flex items-center gap-2">
+                            <span className={`w-4 h-4 border rounded flex items-center justify-center ${active ? "border-[#9F3F5C] bg-[#9F3F5C] text-white" : "border-pink-200"}`}>
+                              {active && <Check className="w-3 h-3 stroke-[3px]" />}
+                            </span>
+                            {svc.name}
+                          </h3>
+                          {svc.description && (
+                            <p className="text-xs text-gray-500 line-clamp-2 max-w-md">{svc.description}</p>
+                          )}
+                          <span className="inline-block text-[11px] font-semibold text-gray-400">
+                            Duration: {svc.duration_minutes} mins
+                          </span>
+                        </div>
+                        <div className="text-right pl-4">
+                          <span className="font-bold text-sm sm:text-base text-[#9F3F5C]">
+                            {svc.price ? `AED ${svc.price}` : "Price Varies"}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -393,7 +449,7 @@ export default function Booking() {
             <div className="pt-4 flex justify-end">
               <button
                 onClick={() => setStep(2)}
-                disabled={!selectedService}
+                disabled={selectedServices.length === 0}
                 className="px-8 py-3.5 bg-[#9F3F5C] hover:bg-[#8E3852] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl shadow transition-colors"
               >
                 Continue
@@ -562,12 +618,24 @@ export default function Booking() {
             </div>
 
             {/* Summary Preview */}
-            <div className="bg-pink-50/40 border border-pink-100/70 rounded-2xl p-4 text-xs space-y-2">
+            <div className="bg-pink-50/40 border border-pink-100/70 rounded-2xl p-4 text-xs space-y-3">
               <p className="font-bold text-gray-500 uppercase">Booking Summary</p>
-              <div className="flex justify-between font-semibold">
-                <span className="text-gray-600">{selectedService?.name}</span>
-                <span className="text-[#9F3F5C] font-bold">
-                  {selectedService?.price ? `AED ${selectedService.price}` : "Price Varies"}
+              {selectedServices.map((svc) => (
+                <div key={svc.id} className="flex justify-between font-semibold">
+                  <span className="text-gray-600">{svc.name}</span>
+                  <span className="text-[#9F3F5C] font-bold">
+                    {svc.price ? `AED ${svc.price}` : "Price Varies"}
+                  </span>
+                </div>
+              ))}
+              <div className="border-t border-dashed border-pink-200 pt-2 flex justify-between font-bold text-sm">
+                <span className="text-gray-700">Total Price:</span>
+                <span className="text-[#9F3F5C]">
+                  {selectedServices.some(s => !s.price) ? (
+                    <>AED {selectedServices.reduce((sum, s) => sum + (s.price || 0), 0)} + Price Varies</>
+                  ) : (
+                    <>AED {selectedServices.reduce((sum, s) => sum + (s.price || 0), 0)}</>
+                  )}
                 </span>
               </div>
               <p className="text-gray-500 font-medium">
