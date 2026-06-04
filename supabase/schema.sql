@@ -241,3 +241,19 @@ insert into public.services (name, category, description, duration_minutes, pric
 ('Eye Lash Extensions', 'Lashes', 'Gorgeous extension applications.', 90, 180, true),
 ('Make Up', 'Makeup', 'Full face glam for special events.', 90, 250, true),
 ('Signature Facial', 'Hair Treatments', 'Premium skin-nourishing facial.', 60, 150, true);
+
+-- Add calendar_index column to bookings and blocked_slots tables
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS calendar_index integer DEFAULT 1 CHECK (calendar_index BETWEEN 1 AND 5);
+ALTER TABLE public.blocked_slots ADD COLUMN IF NOT EXISTS calendar_index integer DEFAULT 1 CHECK (calendar_index BETWEEN 1 AND 5);
+
+-- Enable RLS updates (public operations)
+CREATE POLICY "Public insert blocked slots" ON public.blocked_slots FOR INSERT TO public WITH CHECK (true);
+CREATE POLICY "Public delete blocked slots" ON public.blocked_slots FOR DELETE TO public USING (true);
+CREATE POLICY "Public update bookings" ON public.bookings FOR UPDATE TO public USING (true) WITH CHECK (true);
+CREATE POLICY "Public delete booking_items" ON public.booking_items FOR DELETE TO public USING (true);
+CREATE POLICY "Public update customers" ON public.customers FOR UPDATE TO public USING (true) WITH CHECK (true);
+CREATE POLICY "Public insert services" ON public.services FOR INSERT TO public WITH CHECK (true);
+CREATE POLICY "Public update services" ON public.services FOR UPDATE TO public USING (true) WITH CHECK (true);
+CREATE POLICY "Public insert service_variants" ON public.service_variants FOR INSERT TO public WITH CHECK (true);
+CREATE POLICY "Public update service_variants" ON public.service_variants FOR UPDATE TO public USING (true) WITH CHECK (true);
+
