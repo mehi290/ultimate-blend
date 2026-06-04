@@ -602,12 +602,12 @@ export default function AdminDashboard() {
           status: "Confirmed",
           customer_name: walkinName,
           customer_phone: walkinPhone,
-          customer_email: walkinEmail || null,
           notes: combinedNotes,
           category_name: firstVarObj.category?.name || "Hair",
           service_name: firstVarObj.service?.name,
           variant_name: firstVarObj.variant?.name || "Standard",
-          variant_id: firstVarObj.variant?.id
+          variant_id: firstVarObj.variant?.id,
+          calendar_index: Number(walkinCalendarIndex)
         })
         .select("*")
         .single();
@@ -788,7 +788,6 @@ export default function AdminDashboard() {
           status: editStatus,
           customer_name: editName,
           customer_phone: editPhone,
-          customer_email: editEmail || null,
           notes: combinedNotes,
           category_name: firstVarObj.category?.name || "Hair",
           service_name: firstVarObj.service?.name,

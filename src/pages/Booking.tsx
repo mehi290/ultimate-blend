@@ -124,7 +124,7 @@ export default function Booking() {
         let opening = "09:00:00";
         let closing = "23:30:00";
         let interval = 60;
-        let defaultCapacity = 4;
+        let defaultCapacity = 5;
 
         const { data: rulesData } = await supabase
           .from("availability_rules")
@@ -336,7 +336,6 @@ export default function Booking() {
           status: "Confirmed",
           customer_name: name,
           customer_phone: phone,
-          customer_email: email || null,
           notes: combinedNotes || null,
           category_name: categoryName,
           service_name: serviceName,

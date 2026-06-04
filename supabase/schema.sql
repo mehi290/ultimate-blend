@@ -71,7 +71,7 @@ create table public.availability_rules (
     opening_time time without time zone not null default '09:00:00',
     closing_time time without time zone not null default '23:30:00',
     slot_interval_mins integer not null default 60,
-    default_max_capacity integer not null default 4,
+    default_max_capacity integer not null default 5,
     updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -226,7 +226,7 @@ create policy "Admins can manage gallery media" on public.gallery_media
 
 -- Set default settings
 insert into public.availability_rules (opening_time, closing_time, slot_interval_mins, default_max_capacity)
-values ('09:00:00', '23:30:00', 60, 4);
+values ('09:00:00', '23:30:00', 60, 5);
 
 -- Seed Services
 insert into public.services (name, category, description, duration_minutes, price, active) values

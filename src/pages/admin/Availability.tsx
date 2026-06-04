@@ -9,7 +9,7 @@ export default function AdminAvailability() {
   const [openingTime, setOpeningTime] = useState("09:00");
   const [closingTime, setClosingTime] = useState("23:30");
   const [interval, setInterval] = useState(60);
-  const [capacity, setCapacity] = useState(4);
+  const [capacity, setCapacity] = useState(5);
   const [savingGlobal, setSavingGlobal] = useState(false);
   const [rulesId, setRulesId] = useState<string | null>(null);
 
@@ -207,7 +207,7 @@ export default function AdminAvailability() {
                 type="number"
                 min="1"
                 value={capacity}
-                onChange={(e) => setCapacity(parseInt(e.target.value) || 4)}
+                onChange={(e) => setCapacity(parseInt(e.target.value) || 5)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-[#9F3F5C] outline-none"
               />
               <p className="text-[10px] text-gray-400 mt-1 italic">Typically matches number of active hair stylists.</p>

@@ -431,7 +431,7 @@ export const Services = () => {
         let opening = "09:00:00";
         let closing = "23:30:00";
         let interval = 60;
-        let defaultCapacity = 4;
+        let defaultCapacity = 5;
 
         const { data: rulesData } = await supabase
           .from("availability_rules")
