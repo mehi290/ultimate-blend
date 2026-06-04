@@ -17,20 +17,20 @@ import { format, addDays, isSameDay, parse } from "date-fns";
 
 // Seed services fallback in case Supabase is not connected
 const FALLBACK_SERVICES = [
-  { id: "1", name: "Goddess Twist Braid", category: "Braids", duration_minutes: 120, price: 250 },
+  { id: "1", name: "Goddess Twist Braid", category: "Hair", duration_minutes: 120, price: 250 },
   { id: "2", name: "Blow Dry & Iron", category: "Hair", duration_minutes: 60, price: 100 },
-  { id: "3", name: "Box Braids", category: "Braids", duration_minutes: 180, price: 300 },
-  { id: "4", name: "Cornrows", category: "Braids", duration_minutes: 90, price: 150 },
-  { id: "5", name: "Crochet", category: "Braids", duration_minutes: 120, price: 200 },
-  { id: "6", name: "Wig Installation", category: "Wig Installation", duration_minutes: 120, price: 250 },
+  { id: "3", name: "Box Braids", category: "Hair", duration_minutes: 180, price: 300 },
+  { id: "4", name: "Cornrows", category: "Hair", duration_minutes: 90, price: 150 },
+  { id: "5", name: "Crochet", category: "Hair", duration_minutes: 120, price: 200 },
+  { id: "6", name: "Wig Installation", category: "Hair", duration_minutes: 120, price: 250 },
   { id: "7", name: "Manicure", category: "Nails", duration_minutes: 45, price: 80 },
   { id: "8", name: "Pedicure", category: "Nails", duration_minutes: 60, price: 100 },
-  { id: "9", name: "Eye Lash Extensions", category: "Lashes", duration_minutes: 90, price: 180 },
+  { id: "9", name: "Eye Lash Extensions", category: "Makeup", duration_minutes: 90, price: 180 },
   { id: "10", name: "Make Up", category: "Makeup", duration_minutes: 90, price: 250 },
-  { id: "11", name: "Signature Facial", category: "Hair Treatments", duration_minutes: 60, price: 150 }
+  { id: "11", name: "Signature Facial", category: "Skin", duration_minutes: 60, price: 150 }
 ];
 
-const CATEGORIES = ["Braids", "Hair", "Wig Installation", "Nails", "Lashes", "Makeup", "Hair Treatments"];
+const CATEGORIES = ["Hair", "Nails", "Makeup", "Skin"];
 
 export default function Booking() {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export default function Booking() {
 
   // Services State
   const [services, setServices] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("Braids");
+  const [selectedCategory, setSelectedCategory] = useState("Hair");
   const [selectedServices, setSelectedServices] = useState<any[]>([]);
 
   // Date & Time State
@@ -61,13 +61,40 @@ export default function Booking() {
     async function fetchServices() {
       try {
         const { data, error } = await supabase
-          .from("services")
-          .select("*")
-          .eq("active", true);
+          .from("service_variants")
+          .select(`
+            id,
+            name,
+            price,
+            price_varies,
+            duration_minutes,
+            service_id,
+            services (
+              id,
+              name,
+              active,
+              categories (
+                id,
+                name
+              )
+            )
+          `);
         if (error || !data || data.length === 0) {
           setServices(FALLBACK_SERVICES);
         } else {
-          setServices(data);
+          const mapped = data
+            .filter((v: any) => v.services?.active !== false)
+            .map((v: any) => ({
+              id: v.id,
+              name: v.services?.name === v.name || v.name?.toLowerCase() === "standard"
+                ? v.services?.name
+                : `${v.services?.name} - ${v.name}`,
+              category: v.services?.categories?.name || "Hair",
+              duration_minutes: v.duration_minutes || 60,
+              price: v.price ? parseFloat(v.price) : 0,
+              price_varies: v.price_varies || false
+            }));
+          setServices(mapped);
         }
       } catch (err) {
         setServices(FALLBACK_SERVICES);
@@ -269,22 +296,81 @@ export default function Booking() {
         notes ? `Notes: ${notes}` : null
       ].filter(Boolean).join(" | ");
 
+      // Group items by category to calculate category-based max duration
+      const bookingCategories = new Set<string>();
+      selectedServices.forEach(s => {
+        bookingCategories.add(s.category || "Hair");
+      });
+
+      let totalDuration = 60;
+      bookingCategories.forEach(cat => {
+        let catDuration = 60;
+        const cLower = cat.toLowerCase();
+        if (cLower === "nails" || cLower === "nail") {
+          catDuration = 120; // 2 hours
+        } else if (cLower === "hair" || cLower === "braids" || cLower === "braid") {
+          catDuration = 180; // 3 hours
+        } else if (cLower === "makeup" || cLower === "make up") {
+          catDuration = 90;  // 1.5 hours
+        } else if (cLower === "skin" || cLower === "skincare") {
+          catDuration = 60;  // 1 hour
+        }
+        if (catDuration > totalDuration) {
+          totalDuration = catDuration;
+        }
+      });
+
+      // Extract variant details for the first service
+      const categoryName = firstService.category || "Hair";
+      const serviceName = firstService.name.includes(" - ") ? firstService.name.split(" - ")[0] : firstService.name;
+      const variantName = firstService.name.includes(" - ") ? firstService.name.split(" - ")[1] : "Standard";
+      const variantId = firstService.id;
+
       const { data: newBooking, error: bookingErr } = await supabase
         .from("bookings")
         .insert({
           customer_id: customerId,
-          service_id: firstService.id,
           booking_date: dateStr,
           booking_time: time24Str,
-          duration_minutes: firstService.duration_minutes,
-          status: "Pending",
+          duration_minutes: totalDuration,
+          status: "Confirmed",
           customer_name: name,
           customer_phone: phone,
           customer_email: email || null,
-          notes: combinedNotes || null
+          notes: combinedNotes || null,
+          category_name: categoryName,
+          service_name: serviceName,
+          variant_name: variantName,
+          variant_id: variantId
         })
         .select("*")
         .single();
+
+      if (bookingErr) throw bookingErr;
+
+      const bookingId = newBooking.id;
+
+      // 3. Insert child items in booking_items
+      if (bookingId && selectedServices.length > 0) {
+        const itemsToInsert = selectedServices.map(s => ({
+          booking_id: bookingId,
+          category_name: s.category || "Hair",
+          service_name: s.name.includes(" - ") ? s.name.split(" - ")[0] : s.name,
+          variant_name: s.name.includes(" - ") ? s.name.split(" - ")[1] : "Standard",
+          variant_id: s.id,
+          duration_minutes: s.duration_minutes,
+          price: s.price || 0,
+          price_varies: s.price_varies || false
+        }));
+
+        const { error: itemsErr } = await supabase
+          .from("booking_items")
+          .insert(itemsToInsert);
+
+        if (itemsErr) {
+          console.error("Error inserting booking items:", itemsErr);
+        }
+      }
 
       if (bookingErr) throw bookingErr;
 
@@ -430,7 +516,7 @@ export default function Booking() {
                             <p className="text-xs text-gray-500 line-clamp-2 max-w-md">{svc.description}</p>
                           )}
                           <span className="inline-block text-[11px] font-semibold text-gray-400">
-                            Duration: {svc.duration_minutes} mins
+                            Duration: {svc.duration_minutes >= 60 ? `${Math.floor(svc.duration_minutes / 60)} hr${Math.floor(svc.duration_minutes / 60) > 1 ? "s" : ""}${svc.duration_minutes % 60 > 0 ? ` ${svc.duration_minutes % 60} min` : ""}` : `${svc.duration_minutes} mins`}
                           </span>
                         </div>
                         <div className="text-right pl-4">

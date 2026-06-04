@@ -211,7 +211,7 @@ export const Services = () => {
   const [bookingCategory, setBookingCategory] = useState<string>("");
   const [bookingScope, setBookingScope] = useState<string>("");
   const [bookingImage, setBookingImage] = useState<string>("");
-  const [selectedServices, setSelectedServices] = useState<{ name: string; price: number }[]>([]);
+  const [selectedServices, setSelectedServices] = useState<{ name: string; price: number; category?: string }[]>([]);
   const [selectedStylist, setSelectedStylist] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
@@ -584,6 +584,64 @@ export const Services = () => {
 
   const [bookingLoading, setBookingLoading] = useState(false);
 
+  const sendWhatsAppConfirmation = async (params: {
+    customerName: string;
+    phoneNumber: string;
+    servicesList: string;
+    dateStr: string;
+    timeStr: string;
+    peopleCount: number;
+  }) => {
+    const token = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN || "";
+    const phoneId = import.meta.env.VITE_WHATSAPP_PHONE_NUMBER_ID || "";
+    if (!token || !phoneId) {
+      console.warn("WhatsApp API token or Phone Number ID not configured in environment variables.");
+      return;
+    }
+
+    const messageText = `✅ Booking Confirmed!
+Hi ${params.customerName}!
+Services: ${params.servicesList}
+Date: ${params.dateStr}
+Time: ${params.timeStr}
+People: ${params.peopleCount}
+Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
+
+    let formattedPhone = params.phoneNumber.replace(/[^0-9]/g, "");
+    if (formattedPhone.startsWith("0")) {
+      formattedPhone = "971" + formattedPhone.slice(1);
+    } else if (!formattedPhone.startsWith("971") && formattedPhone.length === 9) {
+      formattedPhone = "971" + formattedPhone;
+    }
+
+    try {
+      const res = await fetch(`https://graph.facebook.com/v19.0/${phoneId}/messages`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          recipient_type: "individual",
+          to: formattedPhone,
+          type: "text",
+          text: {
+            body: messageText
+          }
+        })
+      });
+      const resData = await res.json();
+      if (!res.ok) {
+        console.error("Meta WhatsApp Cloud API error response:", resData);
+      } else {
+        console.log("WhatsApp confirmation sent successfully:", resData);
+      }
+    } catch (err) {
+      console.error("Error calling Meta WhatsApp Cloud API:", err);
+    }
+  };
+
   const handleCreateBooking = async () => {
     setBookingLoading(true);
     try {
@@ -614,36 +672,182 @@ export const Services = () => {
       const parsedTime = parse(selectedTime, "hh:mm a", new Date());
       const time24Str = format(parsedTime, "HH:mm:ss");
 
-      let serviceId = null;
-      const firstServiceName = selectedServices[0]?.name || "";
-      const { data: svcData } = await supabase
-        .from("services")
-        .select("id")
-        .eq("name", firstServiceName)
-        .maybeSingle();
-      if (svcData) serviceId = svcData.id;
+      // Load all variants to perform robust matching
+      const { data: dbVariants } = await supabase
+        .from("service_variants")
+        .select(`
+          id,
+          name,
+          price,
+          price_varies,
+          duration_minutes,
+          services (
+            name,
+            categories (
+              name
+            )
+          )
+        `);
 
-        const servicesList = selectedServices.map(s => s.name).join(", ");
-        const notesContent = [
-          `Booked Services: ${servicesList}`,
-          coupon ? `Coupon: ${coupon}` : null
-        ].filter(Boolean).join(" | ");
+      const matchVariant = (uiNameRaw: string, categoryRaw?: string) => {
+        if (!dbVariants || dbVariants.length === 0) return null;
+        const uiName = uiNameRaw.toLowerCase().trim();
+        const category = categoryRaw?.toLowerCase().trim() || "";
 
-        const { error: bookingErr } = await supabase
+        // Filter variants that match the category (if category is provided)
+        const categoryVariants = dbVariants.filter((v: any) => {
+          if (!category) return true;
+          const vCat = v.services?.categories?.name?.toLowerCase().trim() || "";
+          return vCat === category || vCat.includes(category) || category.includes(vCat);
+        });
+
+        const pool = categoryVariants.length > 0 ? categoryVariants : dbVariants;
+
+        let bestMatch = pool.find((v: any) => {
+          const sName = v.services?.name?.toLowerCase().trim() || "";
+          const vName = v.name?.toLowerCase().trim() || "";
+          return uiName === sName && (vName === "standard" || vName === "classic" || vName === "per nail");
+        });
+        if (bestMatch) return bestMatch;
+
+        bestMatch = pool.find((v: any) => {
+          const sName = v.services?.name?.toLowerCase().trim() || "";
+          return uiName === sName;
+        });
+        if (bestMatch) return bestMatch;
+
+        bestMatch = pool.find((v: any) => {
+          const sName = v.services?.name?.toLowerCase().trim() || "";
+          const vName = v.name?.toLowerCase().trim() || "";
+          const normUi = uiName.replace(/[^a-z0-9]/g, "");
+          const normS = sName.replace(/[^a-z0-9]/g, "");
+          const normV = vName.replace(/[^a-z0-9]/g, "");
+          if (normUi.includes(normS) && normUi.includes(normV)) return true;
+          return false;
+        });
+        if (bestMatch) return bestMatch;
+
+        bestMatch = pool.find((v: any) => {
+          const sName = v.services?.name?.toLowerCase().trim() || "";
+          const normUi = uiName.replace(/[^a-z0-9]/g, "");
+          const normS = sName.replace(/[^a-z0-9]/g, "");
+          return normUi.includes(normS) || normS.includes(normUi);
+        });
+        if (bestMatch) return bestMatch;
+
+        const defaultVar = pool.find((v: any) => {
+          const vName = v.name?.toLowerCase().trim() || "";
+          return vName === "standard" || vName === "classic" || vName === "per nail";
+        });
+        if (defaultVar) return defaultVar;
+
+        return pool[0] || dbVariants[0];
+      };
+
+      const matchedItems = selectedServices.map(s => {
+        const mv = matchVariant(s.name, s.category);
+        return {
+          uiService: s,
+          variant: mv
+        };
+      });
+
+      // Prepare main booking fields based on the first matched item
+      const firstMatched = matchedItems[0];
+      const categoryName = firstMatched?.variant?.services?.categories?.name || null;
+      const serviceName = firstMatched?.variant?.services?.name || firstMatched?.uiService?.name || null;
+      const variantName = firstMatched?.variant?.name || null;
+      const variantId = firstMatched?.variant?.id || null;
+
+      // Group items by category to calculate category-based max duration
+      const bookingCategories = new Set<string>();
+      matchedItems.forEach(item => {
+        const cat = item.variant?.services?.categories?.name || item.uiService?.category || "Hair";
+        bookingCategories.add(cat);
+      });
+
+      let totalDuration = 60;
+      bookingCategories.forEach(cat => {
+        let catDuration = 60;
+        const cLower = cat.toLowerCase();
+        if (cLower === "nails" || cLower === "nail") {
+          catDuration = 120; // 2 hours
+        } else if (cLower === "hair" || cLower === "braids" || cLower === "braid") {
+          catDuration = 180; // 3 hours
+        } else if (cLower === "makeup" || cLower === "make up") {
+          catDuration = 90;  // 1.5 hours
+        } else if (cLower === "skin" || cLower === "skincare") {
+          catDuration = 60;  // 1 hour
+        }
+        if (catDuration > totalDuration) {
+          totalDuration = catDuration;
+        }
+      });
+
+      const servicesList = selectedServices.map(s => s.name).join(", ");
+      const notesContent = [
+        `Booked Services: ${servicesList}`,
+        coupon ? `Coupon: ${coupon}` : null
+      ].filter(Boolean).join(" | ");
+
+      // Insert parent booking
+      const { data: newBooking, error: bookingErr } = await supabase
         .from("bookings")
         .insert({
           customer_id: customerId,
-          service_id: serviceId,
           booking_date: dateStr,
           booking_time: time24Str,
-          duration_minutes: 60,
+          duration_minutes: totalDuration,
           status: "Confirmed",
           customer_name: fullName,
           customer_phone: phoneNumber,
-          notes: notesContent || null
-        });
+          notes: notesContent || null,
+          coupon: coupon || null,
+          people_count: peopleCount,
+          category_name: categoryName,
+          service_name: serviceName,
+          variant_name: variantName,
+          variant_id: variantId
+        })
+        .select("id")
+        .single();
 
       if (bookingErr) throw bookingErr;
+
+      const bookingId = newBooking.id;
+
+      // Insert booking items
+      if (bookingId && matchedItems.length > 0) {
+        const itemsToInsert = matchedItems.map(item => ({
+          booking_id: bookingId,
+          category_name: item.variant?.services?.categories?.name || "Hair",
+          service_name: item.variant?.services?.name || item.uiService.name,
+          variant_name: item.variant?.name || "Standard",
+          variant_id: item.variant?.id || null,
+          duration_minutes: item.variant?.duration_minutes || 60,
+          price: item.variant?.price || item.uiService.price || 0,
+          price_varies: item.variant?.price_varies || false
+        }));
+
+        const { error: itemsErr } = await supabase
+          .from("booking_items")
+          .insert(itemsToInsert);
+
+        if (itemsErr) {
+          console.error("Error inserting booking items:", itemsErr);
+        }
+      }
+
+      // Send Meta WhatsApp confirmation
+      await sendWhatsAppConfirmation({
+        customerName: fullName,
+        phoneNumber: phoneNumber,
+        servicesList: servicesList,
+        dateStr: format(dateObj, "dd-MM-yyyy"),
+        timeStr: selectedTime,
+        peopleCount: peopleCount
+      });
+
     } catch (err) {
       console.error("Booking db error: ", err);
     } finally {
@@ -890,7 +1094,7 @@ export const Services = () => {
                                   if (exists) {
                                     return prev.filter(s => s.name !== sub.name);
                                   } else {
-                                    return [...prev, { name: sub.name, price: sub.price }];
+                                    return [...prev, { name: sub.name, price: sub.price, category: mainSvc.category }];
                                   }
                                 });
                               }}
@@ -1150,6 +1354,7 @@ export const Services = () => {
                   <button
                     onClick={handleNextStep}
                     disabled={
+                      bookingLoading ||
                       (bookingStep === 1 && selectedMainServices.length === 0) ||
                       (bookingStep === 2 && selectedServices.length === 0) ||
                       (bookingStep === 3 && (!selectedDate || !selectedTime)) ||

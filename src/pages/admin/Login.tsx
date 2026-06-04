@@ -41,8 +41,10 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDF8FA] flex items-center justify-center p-4">
-      <div className="bg-white border border-pink-100/50 w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 sm:p-8 space-y-6">
+    <div className="min-h-screen bg-[#0F0F11] text-white flex items-center justify-center p-4 font-sans">
+      <div className="bg-[#18181C] border border-[#2D2D35] w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 relative">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-[#9F3F5C]" />
+        
         <div className="text-center space-y-2">
           <img 
             src="/ULTIMATE_LOGO-removebg-preview.png" 
@@ -52,50 +54,50 @@ export default function AdminLogin() {
               (e.target as HTMLElement).style.display = 'none';
             }}
           />
-          <h1 className="font-display text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#9F3F5C]">
+          <h1 className="font-display text-xl sm:text-2xl font-bold uppercase tracking-wider text-white">
             Admin Control Center
           </h1>
           <p className="text-xs text-gray-400 font-semibold">Ultimate Blend Ladies Beauty Salon</p>
         </div>
 
         {errorMsg && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2 text-xs">
-            <AlertCircle className="w-4 h-4 shrink-0" />
+          <div className="bg-red-950/60 border border-red-900 text-red-200 px-4 py-3 rounded-lg flex items-center gap-2 text-xs">
+            <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
             <p>{errorMsg}</p>
           </div>
         )}
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-gray-400 uppercase mb-1.5">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-500" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@ultimateblend.com"
-                className="w-full pl-10 pr-4 py-3 border border-pink-100/70 rounded-xl bg-pink-50/10 focus:border-[#9F3F5C] focus:bg-white outline-none text-sm transition-all"
+                className="w-full pl-10 pr-4 py-3 border border-[#2E2E38] bg-[#222228] text-white rounded-xl focus:border-[#9F3F5C] outline-none text-sm transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-gray-400 uppercase mb-1.5">
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-500" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-3 border border-pink-100/70 rounded-xl bg-pink-50/10 focus:border-[#9F3F5C] focus:bg-white outline-none text-sm transition-all"
+                className="w-full pl-10 pr-4 py-3 border border-[#2E2E38] bg-[#222228] text-white rounded-xl focus:border-[#9F3F5C] outline-none text-sm transition-all"
               />
             </div>
           </div>
@@ -103,15 +105,15 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-[#9F3F5C] hover:bg-[#8E3852] disabled:opacity-50 text-white font-bold text-sm rounded-xl shadow transition-colors"
+            className="w-full py-3.5 bg-[#9F3F5C] hover:bg-[#8E3852] disabled:opacity-50 text-white font-bold text-sm rounded-xl shadow transition-colors uppercase tracking-wider font-display"
           >
             {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
 
         <div className="text-center pt-2">
-          <p className="text-[10px] text-gray-400 italic">
-            Default credentials for local preview: <span className="font-bold text-gray-500">admin@ultimateblend.com</span> / <span className="font-bold text-gray-500">admin123</span>
+          <p className="text-[10px] text-gray-500 italic">
+            Default credentials for local preview: <span className="font-bold text-gray-400">admin@ultimateblend.com</span> / <span className="font-bold text-gray-400">admin123</span>
           </p>
         </div>
       </div>

@@ -19,6 +19,7 @@ import AdminServices from "./pages/admin/Services.tsx";
 import AdminAvailability from "./pages/admin/Availability.tsx";
 import AdminCustomers from "./pages/admin/Customers.tsx";
 import AdminGallery from "./pages/admin/Gallery.tsx";
+import AdminDashboardNew from "./pages/AdminDashboard.tsx";
 
 const queryClient = new QueryClient();
 
@@ -36,8 +37,9 @@ const App = () => (
           <Route path="/booking/cancel" element={<BookingCancel />} />
 
           {/* Admin Routes */}
+          <Route path="/admin" element={<AdminDashboardNew />} />
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/dashboard" element={<AdminDashboardNew />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
           <Route path="/admin/services" element={<AdminServices />} />
           <Route path="/admin/availability" element={<AdminAvailability />} />
