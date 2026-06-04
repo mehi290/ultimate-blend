@@ -1258,11 +1258,11 @@ export default function AdminDashboard() {
 
                                   {/* 5 Calendar sub-headers */}
                                   <div className="sticky bg-[#1D1D22] border-b border-[#2D2D35] grid grid-cols-5 text-center text-[9px] font-black text-gray-400 uppercase tracking-wider z-10 py-1.5" style={{ top: selectedDashDates.length > 1 ? "29px" : "0px" }}>
-                                    <div className="border-r border-[#2D2D35]/30">Cal 1</div>
-                                    <div className="border-r border-[#2D2D35]/30">Cal 2</div>
-                                    <div className="border-r border-[#2D2D35]/30">Cal 3</div>
-                                    <div className="border-r border-[#2D2D35]/30">Cal 4</div>
-                                    <div>Cal 5</div>
+                                    <div className="border-r border-[#2D2D35]/30">Staff 1</div>
+                                    <div className="border-r border-[#2D2D35]/30">Staff 2</div>
+                                    <div className="border-r border-[#2D2D35]/30">Staff 3</div>
+                                    <div className="border-r border-[#2D2D35]/30">Staff 4</div>
+                                    <div>Staff 5</div>
                                   </div>
 
                                   {/* Subtle vertical column gridlines background */}
@@ -2083,18 +2083,18 @@ export default function AdminDashboard() {
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                      Calendar Track
+                      Assigned Staff
                     </label>
                     <select
                       value={walkinCalendarIndex}
                       onChange={(e) => setWalkinCalendarIndex(Number(e.target.value))}
                       className="w-full px-3 py-2 border border-[#2E2E38] bg-[#222228] text-white rounded-xl outline-none focus:border-[#9F3F5C] text-xs transition-all font-bold"
                     >
-                      <option value="1">Calendar 1</option>
-                      <option value="2">Calendar 2</option>
-                      <option value="3">Calendar 3</option>
-                      <option value="4">Calendar 4</option>
-                      <option value="5">Calendar 5</option>
+                      <option value="1">Staff 1</option>
+                      <option value="2">Staff 2</option>
+                      <option value="3">Staff 3</option>
+                      <option value="4">Staff 4</option>
+                      <option value="5">Staff 5</option>
                     </select>
                   </div>
                   <div>
@@ -2279,18 +2279,18 @@ export default function AdminDashboard() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                        Calendar Track
+                        Assigned Staff
                       </label>
                       <select
                         value={blockCalendarIndex}
                         onChange={(e) => setBlockCalendarIndex(Number(e.target.value))}
                         className="w-full px-3 py-2 border border-[#2E2E38] bg-[#222228] text-white rounded-xl outline-none focus:border-[#9F3F5C] text-xs transition-all font-bold"
                       >
-                        <option value="1">Calendar 1</option>
-                        <option value="2">Calendar 2</option>
-                        <option value="3">Calendar 3</option>
-                        <option value="4">Calendar 4</option>
-                        <option value="5">Calendar 5</option>
+                        <option value="1">Staff 1</option>
+                        <option value="2">Staff 2</option>
+                        <option value="3">Staff 3</option>
+                        <option value="4">Staff 4</option>
+                        <option value="5">Staff 5</option>
                       </select>
                     </div>
 
@@ -2433,7 +2433,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                    Calendar Track
+                    Assigned Staff
                   </label>
                   <select
                     disabled={isBookingDetailsReadOnly}
@@ -2441,11 +2441,11 @@ export default function AdminDashboard() {
                     onChange={(e) => setEditCalendarIndex(Number(e.target.value))}
                     className="w-full px-3 py-2 border border-[#2E2E38] bg-[#222228] text-white rounded-xl outline-none focus:border-[#9F3F5C] text-xs transition-all font-bold disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <option value="1">Calendar 1</option>
-                    <option value="2">Calendar 2</option>
-                    <option value="3">Calendar 3</option>
-                    <option value="4">Calendar 4</option>
-                    <option value="5">Calendar 5</option>
+                    <option value="1">Staff 1</option>
+                    <option value="2">Staff 2</option>
+                    <option value="3">Staff 3</option>
+                    <option value="4">Staff 4</option>
+                    <option value="5">Staff 5</option>
                   </select>
                 </div>
                 <div>
