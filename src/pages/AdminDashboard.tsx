@@ -96,53 +96,18 @@ const getBookingServicesText = (b: any, serviceVariants: any[] = []): string => 
 
 // Helper: calculate category-based max duration dynamically for dashboard presentation override
 const getBookingDuration = (b: any): number => {
+  if (b.duration_minutes) {
+    return b.duration_minutes;
+  }
   const items = b.booking_items || [];
-  const categories = new Set<string>();
-
   if (items.length > 0) {
+    let total = 0;
     items.forEach((item: any) => {
-      categories.add(item.category_name || "Hair");
+      total += item.duration_minutes || 0;
     });
-  } else {
-    // Detect categories from notes or fields
-    const text = ((b.category_name || "") + " " + (b.service_name || "") + " " + (b.notes || "")).toLowerCase();
-    if (text.includes("nail") || text.includes("manicure") || text.includes("pedicure") || text.includes("acrylic") || text.includes("gel")) {
-      categories.add("Nails");
-    }
-    if (text.includes("braid") || text.includes("hair") || text.includes("crochet") || text.includes("dread") || text.includes("wig") || text.includes("cornrow") || text.includes("blow") || text.includes("twist")) {
-      categories.add("Hair");
-    }
-    if (text.includes("lash") || text.includes("makeup") || text.includes("make up")) {
-      categories.add("Makeup");
-    }
-    if (text.includes("facial") || text.includes("skin")) {
-      categories.add("Skin");
-    }
+    return total > 0 ? total : 60;
   }
-
-  if (categories.size === 0) {
-    return b.duration_minutes || 60;
-  }
-
-  let maxDuration = 60;
-  categories.forEach(cat => {
-    let catDuration = 60;
-    const cLower = cat.toLowerCase();
-    if (cLower === "nails" || cLower === "nail") {
-      catDuration = 120; // 2 hours
-    } else if (cLower === "hair" || cLower === "braids" || cLower === "braid") {
-      catDuration = 180; // 3 hours
-    } else if (cLower === "makeup" || cLower === "make up") {
-      catDuration = 90;  // 1.5 hours
-    } else if (cLower === "skin" || cLower === "skincare") {
-      catDuration = 60;  // 1 hour
-    }
-    if (catDuration > maxDuration) {
-      maxDuration = catDuration;
-    }
-  });
-
-  return maxDuration;
+  return 60;
 };
 
 // Booking block color palette (Sleek dark theme pastel colors)

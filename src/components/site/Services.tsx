@@ -216,9 +216,14 @@ export const Services = () => {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [peopleCount, setPeopleCount] = useState<number>(1);
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>( "");
+  const [availableSpotsForSlot, setAvailableSpotsForSlot] = useState<number>(5);
+  const [existingCountA, setExistingCountA] = useState<number>(0);
+  const [existingCountB, setExistingCountB] = useState<number>(0);
+  const [slotCapacity, setSlotCapacity] = useState<number>(5);
 
   // New customized states
+  const [dbMainServices, setDbMainServices] = useState<any[]>(MAIN_SERVICES);
   const [selectedMainServices, setSelectedMainServices] = useState<any[]>([]);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -226,6 +231,10 @@ export const Services = () => {
   const [isOtherPeople, setIsOtherPeople] = useState(false);
   const [otherPeopleVal, setOtherPeopleVal] = useState("5");
   const [orderedServices, setOrderedServices] = useState<any[]>(MAIN_SERVICES);
+
+  const [isSameService, setIsSameService] = useState<boolean>(true);
+  const [personServices, setPersonServices] = useState<Record<number, { name: string; price: number; category?: string }[]>>({});
+  const [activePersonTab, setActivePersonTab] = useState<number>(2);
 
   const nudge = (dir: 1 | -1) => {
     const el = scrollRef.current;
@@ -259,6 +268,9 @@ export const Services = () => {
     setLastName("");
     setPhoneNumber("");
     setCoupon("");
+    setIsSameService(true);
+    setPersonServices({});
+    setActivePersonTab(2);
 
     // Determine the clicked main service ID
     let matchId = "";
@@ -306,9 +318,9 @@ export const Services = () => {
       matchId = "treatment";
     }
 
-    const matched = MAIN_SERVICES.find(s => s.id === matchId);
-    const others = MAIN_SERVICES.filter(s => s.id !== matchId);
-    const ordered = matched ? [matched, ...others] : MAIN_SERVICES;
+    const matched = dbMainServices.find(s => s.id === matchId);
+    const others = dbMainServices.filter(s => s.id !== matchId);
+    const ordered = matched ? [matched, ...others] : dbMainServices;
 
     setSelectedMainServices(matched ? [matched] : []);
     setOrderedServices(ordered);
@@ -332,7 +344,10 @@ export const Services = () => {
     setLastName("");
     setPhoneNumber("");
     setCoupon("");
-    setOrderedServices(MAIN_SERVICES);
+    setIsSameService(true);
+    setPersonServices({});
+    setActivePersonTab(2);
+    setOrderedServices(dbMainServices);
     setBookingStep(1);
     setBookingOpen(true);
   };
@@ -350,6 +365,62 @@ export const Services = () => {
     const uniq = Array.from(new Map(scoped.map((s) => [s.name, s])).values());
     return uniq;
   }, [bookingScope]);
+
+  useEffect(() => {
+    async function syncServices() {
+      try {
+        const { data, error } = await supabase
+          .from("service_variants")
+          .select(`
+            id,
+            name,
+            price,
+            price_varies,
+            duration_minutes,
+            services (
+              name,
+              active,
+              categories (
+                name
+              )
+            )
+          `);
+
+        if (error || !data) return;
+
+        const updated = MAIN_SERVICES.map(main => {
+          const updatedSubservices = main.subservices.map(sub => {
+            const match = data.find(v => {
+              const sName = v.services?.name?.toLowerCase().trim() || "";
+              const vName = v.name?.toLowerCase().trim() || "";
+              const uiName = sub.name.toLowerCase().trim();
+              return uiName === sName || uiName === `${sName} - ${vName}` || (uiName.includes(sName) && (vName === "standard" || vName === "classic" || vName === "per nail"));
+            });
+
+            if (match) {
+              return {
+                ...sub,
+                price: match.price ? parseFloat(match.price) : 0,
+                duration: match.duration_minutes || 60
+              };
+            }
+            return sub;
+          });
+
+          return {
+            ...main,
+            subservices: updatedSubservices
+          };
+        });
+
+        setDbMainServices(updated);
+        setOrderedServices(updated);
+      } catch (err) {
+        console.error("Error syncing services from DB:", err);
+      }
+    }
+    syncServices();
+  }, []);
 
   useEffect(() => {
     const handleOpenBooking = () => {
@@ -455,9 +526,15 @@ export const Services = () => {
           current = new Date(current.getTime() + interval * 60 * 1000);
         }
 
+        const isProspectiveGroupB = selectedServices.some((s: any) => {
+          const cat = (s.category || "Hair").toLowerCase();
+          const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+          return !isGroupA;
+        });
+
         const { data: bookingsData } = await supabase
           .from("bookings")
-          .select("booking_time, status")
+          .select("booking_time, status, category_name, people_count")
           .eq("booking_date", dateStr)
           .neq("status", "Cancelled");
 
@@ -505,11 +582,33 @@ export const Services = () => {
 
           if (isBlocked) continue;
 
-          const bookingCount = bookingsData
-            ? bookingsData.filter((b) => b.booking_time === slotTimeStr).length
-            : 0;
+          // Count existing active bookings for Group A vs Group B
+          const slotBookings = bookingsData
+            ? bookingsData.filter((b) => b.booking_time === slotTimeStr)
+            : [];
+          
+          let countA = 0;
+          let countB = 0;
+          for (const b of slotBookings) {
+            const cat = (b.category_name || "Hair").toLowerCase();
+            const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+            const pCount = b.people_count || 1;
+            if (isGroupA) {
+              countA += pCount;
+            } else {
+              countB += pCount;
+            }
+          }
 
-          if (bookingCount < currentCapacity) {
+          let nextCountA = countA;
+          let nextCountB = countB;
+          if (isProspectiveGroupB) {
+            nextCountB += peopleCount;
+          } else {
+            nextCountA += peopleCount;
+          }
+
+          if (nextCountB <= 2 && (nextCountA + nextCountB) <= currentCapacity) {
             const parsedTime = parse(slot, "HH:mm", new Date());
             computedAvailable.push(format(parsedTime, "h:mm a").toUpperCase());
           }
@@ -542,6 +641,218 @@ export const Services = () => {
 
     calculateSlots();
   }, [selectedDate, dateMap]);
+
+  useEffect(() => {
+    if (!selectedDate || !dateMap[selectedDate] || !selectedTime) return;
+
+    async function fetchAvailableSpots() {
+      try {
+        const dateObj = dateMap[selectedDate];
+        const dateStr = format(dateObj, "yyyy-MM-dd");
+
+        let parsedTime;
+        try {
+          parsedTime = parse(selectedTime, "h:mm a", new Date());
+          if (isNaN(parsedTime.getTime())) {
+            parsedTime = parse(selectedTime, "hh:mm a", new Date());
+          }
+        } catch (e) {
+          parsedTime = parse(selectedTime, "hh:mm a", new Date());
+        }
+        const time24Str = format(parsedTime, "HH:mm:ss");
+
+        let defaultCapacity = 5;
+        const { data: rulesData } = await supabase
+          .from("availability_rules")
+          .select("*")
+          .limit(1)
+          .maybeSingle();
+
+        if (rulesData) {
+          defaultCapacity = rulesData.default_max_capacity;
+        }
+
+        const { data: bookingsData } = await supabase
+          .from("bookings")
+          .select("booking_time, status, category_name, people_count")
+          .eq("booking_date", dateStr)
+          .eq("booking_time", time24Str)
+          .neq("status", "Cancelled");
+
+        const { data: blockedData } = await supabase
+          .from("blocked_slots")
+          .select("*")
+          .filter("start_date", "lte", dateStr)
+          .filter("end_date", "gte", dateStr);
+
+        let currentCapacity = defaultCapacity;
+        let isBlocked = false;
+
+        if (blockedData) {
+          for (const block of blockedData) {
+            if (block.block_type === "full_day") {
+              isBlocked = true;
+              break;
+            }
+            const blockStart = block.start_time;
+            const blockEnd = block.end_time;
+            if (blockStart && blockEnd) {
+              if (time24Str >= blockStart && time24Str <= blockEnd) {
+                if (block.block_type === "reduced_capacity" && block.override_capacity !== null) {
+                  currentCapacity = block.override_capacity;
+                } else {
+                  isBlocked = true;
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        if (isBlocked) {
+          setAvailableSpotsForSlot(0);
+          return;
+        }
+
+        // Count existing active bookings for Group A vs Group B
+        let countA = 0;
+        let countB = 0;
+        if (bookingsData) {
+          for (const b of bookingsData) {
+            const cat = (b.category_name || "Hair").toLowerCase();
+            const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+            const pCount = b.people_count || 1;
+            if (isGroupA) {
+              countA += pCount;
+            } else {
+              countB += pCount;
+            }
+          }
+        }
+
+        setExistingCountA(countA);
+        setExistingCountB(countB);
+        setSlotCapacity(currentCapacity);
+
+        const isProspectiveGroupB = selectedServices.some((s: any) => {
+          const cat = (s.category || "Hair").toLowerCase();
+          const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+          return !isGroupA;
+        });
+
+        if (isProspectiveGroupB) {
+          // Nails/Lashes (Group B) limit is 2
+          const spotsB = 2 - countB;
+          const totalSpots = currentCapacity - (countA + countB);
+          const available = Math.max(0, Math.min(spotsB, totalSpots));
+          setAvailableSpotsForSlot(available);
+        } else {
+          // Hair (Group A) limit is 5
+          const spotsA = 5 - countA;
+          const totalSpots = currentCapacity - (countA + countB);
+          const available = Math.max(0, Math.min(spotsA, totalSpots));
+          setAvailableSpotsForSlot(available);
+        }
+      } catch (err) {
+        console.error("Error fetching available spots:", err);
+        setAvailableSpotsForSlot(5);
+      }
+    }
+
+    fetchAvailableSpots();
+  }, [selectedDate, selectedTime, selectedServices, bookingStep]);
+
+  const prospectiveCounts = useMemo(() => {
+    let reqA = 0;
+    let reqB = 0;
+
+    // Person 1
+    const p1GroupB = selectedServices.some((s: any) => {
+      const cat = (s.category || "Hair").toLowerCase();
+      const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+      return !isGroupA;
+    });
+    if (p1GroupB) reqB++; else reqA++;
+
+    // Person 2 to N
+    for (let i = 2; i <= peopleCount; i++) {
+      const services = personServices[i] || [];
+      if (services.length > 0) {
+        const hasGroupB = services.some((s: any) => {
+          const cat = (s.category || "Hair").toLowerCase();
+          const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+          return !isGroupA;
+        });
+        if (hasGroupB) reqB++; else reqA++;
+      }
+    }
+
+    return { reqA, reqB };
+  }, [selectedServices, personServices, peopleCount]);
+
+  const isCustomConfigInvalid = useMemo(() => {
+    if (isSameService) return false;
+    const { reqA, reqB } = prospectiveCounts;
+    
+    // Check if configuration is complete (all people have at least 1 service)
+    const incomplete = Array.from({ length: peopleCount - 1 }).some((_, idx) => {
+      const pId = idx + 2;
+      return !personServices[pId] || personServices[pId].length === 0;
+    });
+    if (incomplete) return false;
+
+    if (existingCountB + reqB > 2) return true;
+    if (existingCountA + reqA > 5) return true;
+    if ((existingCountA + reqA) + (existingCountB + reqB) > slotCapacity) return true;
+
+    return false;
+  }, [isSameService, prospectiveCounts, existingCountA, existingCountB, slotCapacity, peopleCount, personServices]);
+
+  const sameServiceWarning = useMemo(() => {
+    if (!isSameService || peopleCount <= availableSpotsForSlot) return null;
+
+    return (
+      <div className="mt-4 p-4 bg-pink-100 border border-pink-400 text-pink-700 rounded-md">
+        <p className="font-bold text-sm text-pink-800">
+          The same time spot for this service is not available for {peopleCount} people.
+        </p>
+        <p className="text-xs text-pink-705 mt-1 font-semibold">
+          Only <span className="font-bold text-[#9F3F5C] text-sm">{availableSpotsForSlot}</span> spot(s) are available for this service category at {selectedTime}.
+        </p>
+        <p className="text-xs text-pink-705 mt-1">
+          Please select "No, select different" to choose different services for some clients, or choose a different time slot.
+        </p>
+      </div>
+    );
+  }, [isSameService, peopleCount, availableSpotsForSlot, selectedTime]);
+
+  const customConfigWarning = useMemo(() => {
+    if (!isCustomConfigInvalid) return null;
+    const { reqA, reqB } = prospectiveCounts;
+
+    const availA = Math.max(0, Math.min(5 - existingCountA, slotCapacity - (existingCountA + existingCountB)));
+    const availB = Math.max(0, Math.min(2 - existingCountB, slotCapacity - (existingCountA + existingCountB)));
+
+    return (
+      <div className="mt-4 p-4 bg-pink-100 border border-pink-400 text-pink-700 rounded-md">
+        <p className="font-bold text-sm text-pink-800">
+          The selected services configuration exceeds the slot capacity.
+        </p>
+        <p className="text-xs text-pink-700 mt-1 font-semibold">
+          For this time slot:
+          {availA < reqA && (
+            <span className="block mt-1">• Hair services: requested {reqA}, but only {availA} spot(s) are available.</span>
+          )}
+          {availB < reqB && (
+            <span className="block mt-1">• Nails/Lashes services: requested {reqB}, but only {availB} spot(s) are available.</span>
+          )}
+        </p>
+        <p className="text-xs text-pink-700 mt-2">
+          Please adjust the services for some clients so they fit the available spots, or choose another time slot.
+        </p>
+      </div>
+    );
+  }, [isCustomConfigInvalid, prospectiveCounts, existingCountA, existingCountB, slotCapacity]);
 
   const selectedPrice = selectedServices.length > 0 ? getRandomPrice(selectedServices[0].name) : "";
   const isVideoFile = (src: string) => /\.(mp4|webm|mov|m4v)$/i.test(src);
@@ -744,99 +1055,141 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
         return pool[0] || dbVariants[0];
       };
 
-      const matchedItems = selectedServices.map(s => {
-        const mv = matchVariant(s.name, s.category);
-        return {
-          uiService: s,
-          variant: mv
-        };
-      });
+      const allServicesBooked: string[] = [];
+      for (let pIndex = 0; pIndex < peopleCount; pIndex++) {
+        // Resolve services for this person
+        const currentPersonServices = pIndex === 0 
+          ? selectedServices 
+          : (isSameService ? selectedServices : (personServices[pIndex + 1] && personServices[pIndex + 1].length > 0 ? personServices[pIndex + 1] : selectedServices));
 
-      // Prepare main booking fields based on the first matched item
-      const firstMatched = matchedItems[0];
-      const categoryName = firstMatched?.variant?.services?.categories?.name || null;
-      const serviceName = firstMatched?.variant?.services?.name || firstMatched?.uiService?.name || null;
-      const variantName = firstMatched?.variant?.name || null;
-      const variantId = firstMatched?.variant?.id || null;
+        currentPersonServices.forEach(s => {
+          if (!allServicesBooked.includes(s.name)) {
+            allServicesBooked.push(s.name);
+          }
+        });
 
-      // Group items by category to calculate category-based max duration
-      const bookingCategories = new Set<string>();
-      matchedItems.forEach(item => {
-        const cat = item.variant?.services?.categories?.name || item.uiService?.category || "Hair";
-        bookingCategories.add(cat);
-      });
+        const matchedItems = currentPersonServices.map(s => {
+          const mv = matchVariant(s.name, s.category);
+          return {
+            uiService: s,
+            variant: mv
+          };
+        });
 
-      let totalDuration = 60;
-      bookingCategories.forEach(cat => {
-        let catDuration = 60;
-        const cLower = cat.toLowerCase();
-        if (cLower === "nails" || cLower === "nail") {
-          catDuration = 120; // 2 hours
-        } else if (cLower === "hair" || cLower === "braids" || cLower === "braid") {
-          catDuration = 180; // 3 hours
-        } else if (cLower === "makeup" || cLower === "make up") {
-          catDuration = 90;  // 1.5 hours
-        } else if (cLower === "skin" || cLower === "skincare") {
-          catDuration = 60;  // 1 hour
+        // Prepare main booking fields based on the first matched item
+        const firstMatched = matchedItems[0];
+        const categoryName = firstMatched?.variant?.services?.categories?.name || null;
+        const serviceName = firstMatched?.variant?.services?.name || firstMatched?.uiService?.name || null;
+        const variantName = firstMatched?.variant?.name || null;
+        const variantId = firstMatched?.variant?.id || null;
+
+        let totalDuration = 0;
+        matchedItems.forEach(item => {
+          totalDuration += item.variant?.duration_minutes || 60;
+        });
+        if (totalDuration === 0) {
+          totalDuration = 60;
         }
-        if (catDuration > totalDuration) {
-          totalDuration = catDuration;
+
+        const servicesList = currentPersonServices.map(s => s.name).join(", ");
+        const notesContent = [
+          `Booked Services: ${servicesList}`,
+          coupon ? `Coupon: ${coupon}` : null
+        ].filter(Boolean).join(" | ");
+
+        // Determine if this booking is Group B (Nails/Lashes/etc.)
+        const isProspectiveGroupB = currentPersonServices.some((s: any) => {
+          const cat = (s.category || "Hair").toLowerCase();
+          const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+          return !isGroupA;
+        });
+        // Query active bookings at the selected slot to find occupied staff indexes
+        const { data: existingSlotBookings } = await supabase
+          .from("bookings")
+          .select("calendar_index")
+          .eq("booking_date", dateStr)
+          .eq("booking_time", time24Str)
+          .neq("status", "Cancelled");
+
+        const occupiedIndexes = existingSlotBookings ? existingSlotBookings.map(b => b.calendar_index || 1) : [];
+
+        let assignedStaff = 1;
+        if (isProspectiveGroupB) {
+          if (!occupiedIndexes.includes(1)) {
+            assignedStaff = 1;
+          } else if (!occupiedIndexes.includes(2)) {
+            assignedStaff = 2;
+          } else {
+            assignedStaff = 1;
+          }
+        } else {
+          if (!occupiedIndexes.includes(3)) {
+            assignedStaff = 3;
+          } else if (!occupiedIndexes.includes(4)) {
+            assignedStaff = 4;
+          } else if (!occupiedIndexes.includes(5)) {
+            assignedStaff = 5;
+          } else if (!occupiedIndexes.includes(1)) {
+            assignedStaff = 1;
+          } else if (!occupiedIndexes.includes(2)) {
+            assignedStaff = 2;
+          } else {
+            assignedStaff = 3;
+          }
         }
-      });
 
-      const servicesList = selectedServices.map(s => s.name).join(", ");
-      const notesContent = [
-        `Booked Services: ${servicesList}`,
-        coupon ? `Coupon: ${coupon}` : null
-      ].filter(Boolean).join(" | ");
+        // Insert parent booking
+        const suffix = peopleCount > 1 ? ` (Person ${pIndex + 1})` : "";
+        const { data: newBooking, error: bookingErr } = await supabase
+          .from("bookings")
+          .insert({
+            customer_id: customerId,
+            booking_date: dateStr,
+            booking_time: time24Str,
+            duration_minutes: totalDuration,
+            status: "Confirmed",
+            customer_name: `${fullName}${suffix}`,
+            customer_phone: phoneNumber,
+            notes: notesContent || null,
+            coupon: coupon || null,
+            people_count: 1,
+            category_name: categoryName,
+            service_name: serviceName,
+            variant_name: variantName,
+            variant_id: variantId,
+            calendar_index: assignedStaff
+          })
+          .select("id")
+          .single();
 
-      // Insert parent booking
-      const { data: newBooking, error: bookingErr } = await supabase
-        .from("bookings")
-        .insert({
-          customer_id: customerId,
-          booking_date: dateStr,
-          booking_time: time24Str,
-          duration_minutes: totalDuration,
-          status: "Confirmed",
-          customer_name: fullName,
-          customer_phone: phoneNumber,
-          notes: notesContent || null,
-          coupon: coupon || null,
-          people_count: peopleCount,
-          category_name: categoryName,
-          service_name: serviceName,
-          variant_name: variantName,
-          variant_id: variantId
-        })
-        .select("id")
-        .single();
+        if (bookingErr) throw bookingErr;
 
-      if (bookingErr) throw bookingErr;
+        const bookingId = newBooking.id;
 
-      const bookingId = newBooking.id;
+        // Insert booking items
+        if (bookingId && matchedItems.length > 0) {
+          const itemsToInsert = matchedItems.map(item => ({
+            booking_id: bookingId,
+            category_name: item.variant?.services?.categories?.name || "Hair",
+            service_name: item.variant?.services?.name || item.uiService.name,
+            variant_name: item.variant?.name || "Standard",
+            variant_id: item.variant?.id || null,
+            duration_minutes: item.variant?.duration_minutes || 60,
+            price: item.variant?.price || item.uiService.price || 0,
+            price_varies: item.variant?.price_varies || false
+          }));
 
-      // Insert booking items
-      if (bookingId && matchedItems.length > 0) {
-        const itemsToInsert = matchedItems.map(item => ({
-          booking_id: bookingId,
-          category_name: item.variant?.services?.categories?.name || "Hair",
-          service_name: item.variant?.services?.name || item.uiService.name,
-          variant_name: item.variant?.name || "Standard",
-          variant_id: item.variant?.id || null,
-          duration_minutes: item.variant?.duration_minutes || 60,
-          price: item.variant?.price || item.uiService.price || 0,
-          price_varies: item.variant?.price_varies || false
-        }));
+          const { error: itemsErr } = await supabase
+            .from("booking_items")
+            .insert(itemsToInsert);
 
-        const { error: itemsErr } = await supabase
-          .from("booking_items")
-          .insert(itemsToInsert);
-
-        if (itemsErr) {
-          console.error("Error inserting booking items:", itemsErr);
+          if (itemsErr) {
+            console.error("Error inserting booking items:", itemsErr);
+          }
         }
       }
+
+      const servicesList = allServicesBooked.join(", ") || "Salon Services";
 
       // Send Meta WhatsApp confirmation
       await sendWhatsAppConfirmation({
@@ -856,12 +1209,56 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
     }
   };
 
+  const handlePrevStep = () => {
+    if (bookingStep === 5) {
+      if (peopleCount > 1) {
+        setBookingStep(4.5);
+      } else {
+        setBookingStep(4);
+      }
+    } else if (bookingStep === 4.5) {
+      setBookingStep(4);
+    } else {
+      setBookingStep((s) => s - 1);
+    }
+  };
+
   const handleNextStep = async () => {
-    if (bookingStep === 6) {
+    if (bookingStep === 4) {
+      if (peopleCount > 1) {
+        setBookingStep(4.5);
+      } else {
+        setBookingStep(5);
+      }
+    } else if (bookingStep === 4.5) {
+      setBookingStep(5);
+    } else if (bookingStep === 6) {
       await handleCreateBooking();
     } else {
       setBookingStep((s) => s + 1);
     }
+  };
+
+  const getBookingTotal = () => {
+    let total = 0;
+    let hasPriceVaries = false;
+
+    // Person 1
+    selectedServices.forEach(s => {
+      if (s.price === 0) hasPriceVaries = true;
+      total += s.price;
+    });
+
+    // Person 2 to N
+    for (let i = 2; i <= peopleCount; i++) {
+      const services = isSameService ? selectedServices : (personServices[i] && personServices[i].length > 0 ? personServices[i] : selectedServices);
+      services.forEach(s => {
+        if (s.price === 0) hasPriceVaries = true;
+        total += s.price;
+      });
+    }
+
+    return { total, hasPriceVaries };
   };
 
   return (
@@ -976,23 +1373,11 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
         <div className="fixed inset-0 z-[70] bg-black/45 backdrop-blur-sm p-0 md:p-6 h-[100dvh] overflow-y-auto">
           <div className="bg-[#e4cad6] w-full min-h-[100dvh] md:h-[88vh] md:max-w-6xl mx-auto grid md:grid-cols-2 md:overflow-hidden">
             <div className="hidden md:block relative min-h-[26dvh] md:min-h-full">
-              {isVideoFile(bookingImage) ? (
-                <video
-                  src={bookingImage}
-                  preload="metadata"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              ) : (
-                <img
-                  src={bookingImage}
-                  alt={`[PHOTO ${bookingCategory}]`}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              )}
+              <img
+                src="/booking slot background.jpeg"
+                alt="Booking Background"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
             </div>
 
             <div className="bg-[#e5cad8] p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] md:p-8 flex flex-col min-h-0">
@@ -1000,7 +1385,7 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                 <h3 className="font-display text-xl md:text-2xl text-foreground normal-case flex items-center gap-2">
                   {bookingStep === 6 && (
                     <button
-                      onClick={() => setBookingStep(5)}
+                      onClick={handlePrevStep}
                       className="mr-1 p-1 hover:bg-black/10 rounded"
                     >
                       <ChevronLeft className="w-5 h-5 text-foreground inline" />
@@ -1010,6 +1395,7 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                   {bookingStep === 2 && (selectedMainServices.length === 1 ? selectedMainServices[0].name : "Select Subservices")}
                   {bookingStep === 3 && "Select Date & Time"}
                   {bookingStep === 4 && "How Many People"}
+                  {bookingStep === 4.5 && "Service Assignment per Person"}
                   {bookingStep === 5 && "User Details"}
                   {bookingStep === 6 && "Payments"}
                   {bookingStep === 7 && "Booking Confirmed"}
@@ -1180,6 +1566,122 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                 </div>
               )}
 
+              {bookingStep === 4.5 && (
+                <div className="flex-1 min-h-0 overflow-y-auto space-y-5 pr-1 md:pr-2">
+                  <div>
+                    <p className="font-display text-xs text-foreground/70 mb-3 uppercase">Is it the same services for all people?</p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setIsSameService(true)}
+                        className={`flex-1 py-3 border text-sm font-semibold transition-all ${isSameService
+                          ? "bg-[#9F3F5C] text-white border-[#9F3F5C]"
+                          : "bg-white/45 border-foreground/15 hover:bg-white/60 text-foreground"
+                        }`}
+                      >
+                        Yes, same services
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsSameService(false);
+                          // Initialize default selections for other people if empty
+                          const initialPersonServices = { ...personServices };
+                          for (let i = 2; i <= peopleCount; i++) {
+                            if (!initialPersonServices[i] || initialPersonServices[i].length === 0) {
+                              initialPersonServices[i] = [];
+                            }
+                          }
+                          setPersonServices(initialPersonServices);
+                          setActivePersonTab(2);
+                        }}
+                        className={`flex-1 py-3 border text-sm font-semibold transition-all ${!isSameService
+                          ? "bg-[#9F3F5C] text-white border-[#9F3F5C]"
+                          : "bg-white/45 border-foreground/15 hover:bg-white/60 text-foreground"
+                        }`}
+                      >
+                        No, select different
+                      </button>
+                    </div>
+                  </div>
+
+                  {sameServiceWarning}
+                  {customConfigWarning}
+
+                  {!isSameService && (
+                    <div className="space-y-4">
+                      {/* Tabs for Person 2, Person 3, etc. */}
+                      <div className="flex gap-2 border-b border-foreground/10 pb-2 overflow-x-auto no-scrollbar">
+                        {Array.from({ length: peopleCount - 1 }).map((_, idx) => {
+                          const pId = idx + 2;
+                          const isActive = activePersonTab === pId;
+                          const hasSelection = personServices[pId] && personServices[pId].length > 0;
+                          return (
+                            <button
+                              key={`tab-person-${pId}`}
+                              onClick={() => setActivePersonTab(pId)}
+                              className={`px-4 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-all ${isActive
+                                ? "border-[#9F3F5C] text-[#9F3F5C]"
+                                : "border-transparent text-foreground/60 hover:text-foreground"
+                              }`}
+                            >
+                              Person {pId} {hasSelection && "✓"}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Service selector checklist for activePersonTab */}
+                      <div>
+                        <p className="font-display text-xs text-foreground/70 mb-3">Select Services for Person {activePersonTab}:</p>
+                        <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1">
+                          {dbMainServices.map((mainSvc) => (
+                            <div key={`p-${activePersonTab}-group-${mainSvc.id}`} className="space-y-2">
+                              <p className="font-display font-bold text-[11px] text-[#9F3F5C] uppercase tracking-wider px-1">
+                                {mainSvc.name}
+                              </p>
+                              {mainSvc.subservices.map((sub: any) => {
+                                const currentSelections = personServices[activePersonTab] || [];
+                                const active = currentSelections.some(s => s.name === sub.name);
+                                return (
+                                  <button
+                                    key={`p-${activePersonTab}-subservice-${sub.name}`}
+                                    onClick={() => {
+                                      setPersonServices(prev => {
+                                        const selections = prev[activePersonTab] || [];
+                                        const exists = selections.find(s => s.name === sub.name);
+                                        const newSelections = exists
+                                          ? selections.filter(s => s.name !== sub.name)
+                                          : [...selections, { name: sub.name, price: sub.price, category: mainSvc.category }];
+                                        return { ...prev, [activePersonTab]: newSelections };
+                                      });
+                                    }}
+                                    className={`w-full text-left grid grid-cols-[1fr_auto] gap-4 px-3 py-2.5 border transition-colors text-xs ${active
+                                      ? "border-[#9F3F5C] bg-white/70 font-semibold"
+                                      : "border-foreground/15 bg-white/40 hover:bg-white/55"
+                                    }`}
+                                  >
+                                    <span className="text-foreground flex items-center gap-2">
+                                      <span className={`w-3.5 h-3.5 border rounded flex items-center justify-center ${active ? "border-[#9F3F5C] bg-[#9F3F5C] text-white" : "border-foreground/30"}`}>
+                                        {active && <Check className="w-2.5 h-2.5 stroke-[3px]" />}
+                                      </span>
+                                      {sub.name}
+                                    </span>
+                                    {sub.price > 0 ? (
+                                      <span className="text-foreground font-semibold">AED {sub.price}</span>
+                                    ) : (
+                                      <span className="text-foreground/50 italic">Price varies</span>
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {bookingStep === 5 && (
                 <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pr-1 md:pr-2">
                   <div className="grid grid-cols-2 gap-4">
@@ -1227,12 +1729,43 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
 
                     <div className="border border-foreground/10 rounded-lg p-4 bg-white/80 space-y-3">
                       <p className="text-xs text-foreground/50">Services</p>
-                      {selectedServices.map((s) => (
-                        <div key={s.name} className="flex justify-between items-center text-sm font-semibold text-foreground">
-                          <span>{s.name} x {peopleCount} {peopleCount === 1 ? "person" : "people"}</span>
-                          <span>{s.price > 0 ? `AED ${s.price * peopleCount}` : "Price Varies"}</span>
+                      {isSameService ? (
+                        selectedServices.map((s) => (
+                          <div key={s.name} className="flex justify-between items-center text-sm font-semibold text-foreground">
+                            <span>{s.name} x {peopleCount} {peopleCount === 1 ? "person" : "people"}</span>
+                            <span>{s.price > 0 ? `AED ${s.price * peopleCount}` : "Price Varies"}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1 text-xs">
+                          {/* Person 1 */}
+                          <div className="border-b border-foreground/5 pb-2">
+                            <p className="font-bold text-[#9F3F5C] mb-1">Person 1:</p>
+                            {selectedServices.map(s => (
+                              <div key={`summary-p1-${s.name}`} className="flex justify-between ml-2 font-medium text-foreground/80">
+                                <span>- {s.name}</span>
+                                <span>{s.price > 0 ? `AED ${s.price}` : "Price Varies"}</span>
+                              </div>
+                            ))}
+                          </div>
+                          {/* Person 2..N */}
+                          {Array.from({ length: peopleCount - 1 }).map((_, idx) => {
+                            const pId = idx + 2;
+                            const services = personServices[pId] && personServices[pId].length > 0 ? personServices[pId] : selectedServices;
+                            return (
+                              <div key={`summary-group-p${pId}`} className="border-b border-foreground/5 pb-2 last:border-b-0 last:pb-0">
+                                <p className="font-bold text-[#9F3F5C] mb-1">Person {pId}:</p>
+                                {services.map(s => (
+                                  <div key={`summary-p${pId}-${s.name}`} className="flex justify-between ml-2 font-medium text-foreground/80">
+                                    <span>- {s.name}</span>
+                                    <span>{s.price > 0 ? `AED ${s.price}` : "Price Varies"}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            );
+                          })}
                         </div>
-                      ))}
+                      )}
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -1261,10 +1794,10 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                     <div className="border-t border-dashed border-foreground/20 pt-4 flex justify-between items-center text-base font-bold text-foreground">
                       <span>Total Amount:</span>
                       <span>
-                        {selectedServices.some(s => s.price === 0) ? (
-                          <>AED {selectedServices.reduce((sum, s) => sum + s.price, 0) * peopleCount} + Price Varies</>
+                        {getBookingTotal().hasPriceVaries ? (
+                          <>AED {getBookingTotal().total} + Price Varies</>
                         ) : (
-                          <>AED {selectedServices.reduce((sum, s) => sum + s.price, 0) * peopleCount}</>
+                          <>AED {getBookingTotal().total}</>
                         )}
                       </span>
                     </div>
@@ -1341,7 +1874,7 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
               <div className="mt-4 md:mt-6 flex items-center justify-between gap-3 shrink-0">
                 {bookingStep > 1 && bookingStep < 7 ? (
                   <button
-                    onClick={() => setBookingStep((s) => s - 1)}
+                    onClick={handlePrevStep}
                     className="px-5 min-h-11 border border-foreground/20 bg-white/35 text-foreground font-display text-xs"
                   >
                     Back
@@ -1358,19 +1891,37 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                       (bookingStep === 1 && selectedMainServices.length === 0) ||
                       (bookingStep === 2 && selectedServices.length === 0) ||
                       (bookingStep === 3 && (!selectedDate || !selectedTime)) ||
+                      (bookingStep === 4 && peopleCount < 1) ||
+                      (bookingStep === 4.5 && (
+                        (isSameService && peopleCount > availableSpotsForSlot) ||
+                        (!isSameService && (
+                          isCustomConfigInvalid ||
+                          Array.from({ length: peopleCount - 1 }).some((_, idx) => {
+                            const pId = idx + 2;
+                            return !personServices[pId] || personServices[pId].length === 0;
+                          })
+                        ))
+                      )) ||
                       (bookingStep === 5 && (!firstName.trim() || !lastName.trim() || !phoneNumber.trim()))
                     }
                     className={`px-8 min-h-12 font-display text-xs transition-opacity ${(bookingStep === 1 && selectedMainServices.length > 0) ||
                       (bookingStep === 2 && selectedServices.length > 0) ||
                       (bookingStep === 3 && selectedDate && selectedTime) ||
-                      bookingStep === 4 ||
+                      (bookingStep === 4 && peopleCount >= 1) ||
+                      (bookingStep === 4.5 && (
+                        (isSameService && peopleCount <= availableSpotsForSlot) ||
+                        (!isSameService && !isCustomConfigInvalid && !Array.from({ length: peopleCount - 1 }).some((_, idx) => {
+                          const pId = idx + 2;
+                          return !personServices[pId] || personServices[pId].length === 0;
+                        }))
+                      )) ||
                       (bookingStep === 5 && firstName.trim() && lastName.trim() && phoneNumber.trim()) ||
                       bookingStep === 6
                       ? "bg-[#1E36C7] text-[#FFD2E2] hover:opacity-90"
                       : "bg-[#1E36C7]/40 text-[#FFD2E2]/70 cursor-not-allowed"
                       }`}
                   >
-                    {bookingStep === 6 ? "Continue" : "Next"}
+                    {bookingStep === 6 ? "Confirm & Book" : "Next"}
                   </button>
                 ) : null}
               </div>

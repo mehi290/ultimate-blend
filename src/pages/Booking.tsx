@@ -149,10 +149,17 @@ export default function Booking() {
           current = new Date(current.getTime() + interval * 60 * 1000);
         }
 
+        // Identify if prospective booking has any Nails / Lashes / Makeup / Skin service
+        const isProspectiveGroupB = selectedServices.some((s: any) => {
+          const cat = (s.category || "Hair").toLowerCase();
+          const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+          return !isGroupA;
+        });
+
         // 3. Fetch existing bookings count on date
         const { data: bookingsData } = await supabase
           .from("bookings")
-          .select("booking_time, status")
+          .select("booking_time, status, category_name, people_count")
           .eq("booking_date", dateStr)
           .neq("status", "Cancelled");
 
@@ -206,12 +213,33 @@ export default function Booking() {
 
           if (isBlocked) continue;
 
-          // Count existing active bookings
-          const bookingCount = bookingsData
-            ? bookingsData.filter((b) => b.booking_time === slotTimeStr).length
-            : 0;
+          // Count existing active bookings for Group A vs Group B
+          const slotBookings = bookingsData
+            ? bookingsData.filter((b) => b.booking_time === slotTimeStr)
+            : [];
+          
+          let countA = 0;
+          let countB = 0;
+          for (const b of slotBookings) {
+            const cat = (b.category_name || "Hair").toLowerCase();
+            const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+            const pCount = b.people_count || 1;
+            if (isGroupA) {
+              countA += pCount;
+            } else {
+              countB += pCount;
+            }
+          }
 
-          if (bookingCount < currentCapacity) {
+          let nextCountA = countA;
+          let nextCountB = countB;
+          if (isProspectiveGroupB) {
+            nextCountB++;
+          } else {
+            nextCountA++;
+          }
+
+          if (nextCountB <= 2 && (nextCountA + nextCountB) <= currentCapacity) {
             // Convert to 12 hour AM/PM display string
             const parsedTime = parse(slot, "HH:mm", new Date());
             computedAvailable.push(format(parsedTime, "hh:mm a"));
@@ -296,29 +324,55 @@ export default function Booking() {
         notes ? `Notes: ${notes}` : null
       ].filter(Boolean).join(" | ");
 
-      // Group items by category to calculate category-based max duration
-      const bookingCategories = new Set<string>();
-      selectedServices.forEach(s => {
-        bookingCategories.add(s.category || "Hair");
+      // Determine if this booking is Group B (Nails/Lashes/etc.)
+      const isProspectiveGroupB = selectedServices.some((s: any) => {
+        const cat = (s.category || "Hair").toLowerCase();
+        const isGroupA = cat.includes("hair") || cat.includes("braid") || cat.includes("wig") || cat.includes("treatment");
+        return !isGroupA;
       });
 
-      let totalDuration = 60;
-      bookingCategories.forEach(cat => {
-        let catDuration = 60;
-        const cLower = cat.toLowerCase();
-        if (cLower === "nails" || cLower === "nail") {
-          catDuration = 120; // 2 hours
-        } else if (cLower === "hair" || cLower === "braids" || cLower === "braid") {
-          catDuration = 180; // 3 hours
-        } else if (cLower === "makeup" || cLower === "make up") {
-          catDuration = 90;  // 1.5 hours
-        } else if (cLower === "skin" || cLower === "skincare") {
-          catDuration = 60;  // 1 hour
+      // Query active bookings at the selected slot to find occupied staff indexes
+      const { data: existingSlotBookings } = await supabase
+        .from("bookings")
+        .select("calendar_index")
+        .eq("booking_date", dateStr)
+        .eq("booking_time", time24Str)
+        .neq("status", "Cancelled");
+
+      const occupiedIndexes = existingSlotBookings ? existingSlotBookings.map(b => b.calendar_index || 1) : [];
+
+      let assignedStaff = 1;
+      if (isProspectiveGroupB) {
+        if (!occupiedIndexes.includes(1)) {
+          assignedStaff = 1;
+        } else if (!occupiedIndexes.includes(2)) {
+          assignedStaff = 2;
+        } else {
+          assignedStaff = 1;
         }
-        if (catDuration > totalDuration) {
-          totalDuration = catDuration;
+      } else {
+        if (!occupiedIndexes.includes(3)) {
+          assignedStaff = 3;
+        } else if (!occupiedIndexes.includes(4)) {
+          assignedStaff = 4;
+        } else if (!occupiedIndexes.includes(5)) {
+          assignedStaff = 5;
+        } else if (!occupiedIndexes.includes(1)) {
+          assignedStaff = 1;
+        } else if (!occupiedIndexes.includes(2)) {
+          assignedStaff = 2;
+        } else {
+          assignedStaff = 3;
         }
+      }
+
+      let totalDuration = 0;
+      selectedServices.forEach(s => {
+        totalDuration += s.duration_minutes || 60;
       });
+      if (totalDuration === 0) {
+        totalDuration = 60;
+      }
 
       // Extract variant details for the first service
       const categoryName = firstService.category || "Hair";
@@ -340,7 +394,8 @@ export default function Booking() {
           category_name: categoryName,
           service_name: serviceName,
           variant_name: variantName,
-          variant_id: variantId
+          variant_id: variantId,
+          calendar_index: assignedStaff
         })
         .select("*")
         .single();

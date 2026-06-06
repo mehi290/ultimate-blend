@@ -8,6 +8,7 @@ const WORK_ITEMS = [
   { name: "Boho Braids", video: "/boho%20raids%20middle.mp4" },
   { name: "French Curls Boho Braids", video: "/French%20curls%20Boho%20braids.mp4" },
   { name: "Gel Extension", video: "/gelsih%20extension.mp4" },
+  { name: "Crochet", video: "/crochet.mp4" },
 ];
 
 export const OurWork = () => {

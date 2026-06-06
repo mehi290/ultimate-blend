@@ -3,7 +3,7 @@ import { HERO_TILES } from "./data";
 
 export const Hero = () => {
   const title = "Ultimate Blend Ladies Beauty Salon Dubai";
-  const subtitle = "Discover The New You";
+  const subtitle = "Never Be Too Busy To Be Beautiful";
   const [typedTitle, setTypedTitle] = useState("");
   const [typedSubtitle, setTypedSubtitle] = useState("");
 
@@ -71,10 +71,10 @@ export const Hero = () => {
               <span className="inline-block w-[0.08em] h-[0.95em] ml-[0.08em] bg-white align-[-0.08em] animate-pulse" />
             ) : null}
           </h1>
-          <p className="mt-3 sm:mt-4 font-editorial font-semibold md:font-normal text-[#FFE6F1] [text-shadow:0_2px_14px_rgba(0,0,0,0.75)] text-3xl sm:text-3xl md:text-5xl lg:text-6xl max-w-[18ch] mx-auto leading-[1.2]">
+          <p className="mt-3 sm:mt-4 font-sans font-black text-pink-500 [text-shadow:0_3px_12px_rgba(0,0,0,0.9)] text-xl sm:text-xl md:text-3xl lg:text-4xl max-w-[18ch] mx-auto leading-[1.2]">
             {typedSubtitle}
             {typedTitle.length >= title.length && typedSubtitle.length < subtitle.length ? (
-              <span className="inline-block w-[0.08em] h-[0.9em] ml-[0.08em] bg-[#FFE6F1] align-[-0.08em] animate-pulse" />
+              <span className="inline-block w-[0.08em] h-[0.9em] ml-[0.08em] bg-pink-500 align-[-0.08em] animate-pulse" />
             ) : null}
           </p>
         </div>
