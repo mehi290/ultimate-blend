@@ -22,7 +22,7 @@ export const Testimonials = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1800&q=80')",
+            "url('/what customer says background.jpeg')",
         }}
       />
       <div
