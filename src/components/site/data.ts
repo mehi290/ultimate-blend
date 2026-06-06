@@ -18,9 +18,9 @@ export const SERVICE_CATEGORIES: {
       category: "Hair",
       items: [
         { name: "Goddess Twist Braid", image: "/goddess twist braid.mp4" },
-        { name: "BLOW DRY & IRON", image: "/keratin.jpg" },
+        
         { name: "BRAIDS", image: "/Braids.mp4" },
-        { name: "BOX BRAIDS", image: u("photo-1647891938250-754ad796f67a") },
+        { name: "BOX BRAIDS", image: "/box%20braids.mp4" },
         { name: "CORNROWS", image: "/cornrow braids.mp4" },
         { name: "CROCHET", image: "/crochet services.mp4" },
         { name: "PONYTAIL", image: "/ponytail.mp4" },
@@ -39,14 +39,14 @@ export const SERVICE_CATEGORIES: {
         { name: "Small Knotless Braids", image: "/smal%20knotles%20braid.mp4" },
         { name: "Wig Installation", image: "/hair%20styling.mp4" },
 { name: "Wig Extensions", image: "/Wig%20Extenshions.mp4" },
-{ name: "HAIR TREATMENT", image: u("photo-1522337360788-8b13dee7a37e") },
+
 { name: "CHILDREN HAIRSTYLING", image: "/children%20boho%20%20braids.mp4" },
       ],
     },
     {
       category: "Nails",
       items: [
-        { name: "MANICURE", image: "/service-section-manicure.mp4" },
+        { name: "MANICURE", image: "/service%20section%20manicure.mp4" },
         { name: "PEDICURE", image: "/pedicure.mp4" },
       ],
     },
