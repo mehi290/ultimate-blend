@@ -6,8 +6,8 @@ export const HomeServices = () => {
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
         {/* Text column */}
         <div className="space-y-6">
-          <h2 className="font-editorial text-[#8F3E59] text-3xl md:text-5xl leading-[1.15] tracking-tight">
-            Beauty at You door front
+          <h2 className="font-display font-black text-[#9F3F5C] text-2xl md:text-4xl tracking-tight normal-case leading-tight">
+            Beauty at Your door front
           </h2>
           
           <div className="space-y-4 text-[#4A4A4A] text-base md:text-lg leading-relaxed max-w-xl">
