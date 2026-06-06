@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { NAV_LINKS } from "./data";
 import { cn } from "@/lib/utils";
@@ -9,6 +10,7 @@ function scrollTo(id: string) {
 }
 
 export const Sidebar = () => {
+  const navigate = useNavigate();
   const [active, setActive] = useState("home");
   const [open, setOpen] = useState(false);
 
@@ -29,6 +31,16 @@ export const Sidebar = () => {
   }, []);
 
   const handleNav = (id: string) => {
+    const idToPathMap: Record<string, string> = {
+      "home": "/",
+      "about": "/about",
+      "services": "/services",
+      "testimonials": "/testimonials",
+      "our-work": "/ourwork",
+      "contact": "/contactus",
+    };
+    const path = idToPathMap[id] || "/";
+    navigate(path);
     scrollTo(id);
     setOpen(false);
   };

@@ -32,6 +32,11 @@ const App = () => (
         <Routes>
           {/* Client Routes */}
           <Route path="/" element={<Index />} />
+          <Route path="/about" element={<Index />} />
+          <Route path="/services" element={<Index />} />
+          <Route path="/testimonials" element={<Index />} />
+          <Route path="/ourwork" element={<Index />} />
+          <Route path="/contactus" element={<Index />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/booking/confirm" element={<BookingConfirm />} />
           <Route path="/booking/cancel" element={<BookingCancel />} />
