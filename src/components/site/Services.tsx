@@ -327,6 +327,7 @@ export const Services = () => {
     setOrderedServices(ordered);
     setBookingStep(1);
     setBookingOpen(true);
+    window.history.pushState({ bookingOpen: true }, "", "/booking");
   };
 
   const openGenericBookingPanel = () => {
@@ -351,11 +352,16 @@ export const Services = () => {
     setOrderedServices(dbMainServices);
     setBookingStep(1);
     setBookingOpen(true);
+    window.history.pushState({ bookingOpen: true }, "", "/booking");
   };
 
   const closeBookingPanel = () => {
     setBookingOpen(false);
     setBookingStep(1);
+    // Restore URL back to home
+    if (window.location.pathname === "/booking") {
+      window.history.replaceState(null, "", "/");
+    }
   };
 
   const bookingItems = useMemo(() => {
@@ -460,7 +466,20 @@ export const Services = () => {
       openGenericBookingPanel();
     };
     window.addEventListener("open-booking-flow", handleOpenBooking);
-    return () => window.removeEventListener("open-booking-flow", handleOpenBooking);
+
+    // Close popup when user presses browser back button
+    const handlePopState = () => {
+      if (window.location.pathname !== "/booking") {
+        setBookingOpen(false);
+        setBookingStep(1);
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("open-booking-flow", handleOpenBooking);
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, []);
 
   useEffect(() => {

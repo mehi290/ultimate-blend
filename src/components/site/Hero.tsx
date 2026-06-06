@@ -73,7 +73,7 @@ export const Hero = () => {
       {/* Desktop top-right booking strip */}
       <div className="hidden md:flex fixed top-0 right-0 z-50 h-16 min-w-[260px] bg-transparent">
         <button
-          onClick={() => window.location.href = '/booking'}
+          onClick={() => window.dispatchEvent(new Event("open-booking-flow"))}
           className="flex-1 h-full bg-[#9F3F5C] text-white font-display text-[20px] tracking-[0.08em] [text-shadow:0_2px_10px_rgba(0,0,0,0.45)] hover:bg-[#8E3852] transition-colors"
         >
           BOOK NOW
