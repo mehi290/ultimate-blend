@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { HERO_TILES } from "./data";
 
 export const Hero = () => {
@@ -31,16 +31,34 @@ export const Hero = () => {
     return () => {
       if (timeoutId) window.clearTimeout(timeoutId);
     };
+    }, []);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoSrc, setVideoSrc] = useState<string>("");
+  // Lazy‑load hero background video when it enters the viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && videoRef.current && !videoSrc) {
+          setVideoSrc("/final%20hero%20ultimate%20compressed%20final.mp4");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "200px" });
+    if (videoRef.current) observer.observe(videoRef.current);
+    return () => observer.disconnect();
   }, []);
+
 
   return (
     <section
       id="home"
       className="relative w-full min-h-[100svh] min-h-[100dvh] md:min-h-[640px] overflow-hidden bg-black"
     >
-      {/* Full-screen background video */}
+      {/* Lazy-loaded full-screen background video */}
       <video
-        src="/hero ultiamte.mp4"
+        ref={videoRef}
+        src={videoSrc}
+        preload="metadata"
         autoPlay
         loop
         muted
