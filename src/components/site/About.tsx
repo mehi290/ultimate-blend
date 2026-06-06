@@ -83,10 +83,7 @@ export const About = () => {
 
         <div className="space-y-5 text-muted-foreground text-base leading-relaxed max-w-xl">
           <p>
-            Where beauty meets precision, with a signature touch of luxury.
-            Ultimate Blend Ladies Beauty Salon is a sanctuary where craft meets care. Our stylists,
-            colorists, and artists collaborate with each guest to create looks
-            that feel honest, modern, and entirely their own.
+            Where beauty meets precision with a signature touch of luxury. Ultimate Blend Ladies Beauty Salon is a sanctuary for expert hair, beauty, nail, and lash services. Whether you visit our salon in Deira or enjoy the convenience of a home appointment, our experienced team creates beautiful, long lasting results tailored to your style.
           </p>
         </div>
 
@@ -117,10 +114,7 @@ export const About = () => {
 
           <div className="space-y-5 text-muted-foreground text-base leading-relaxed max-w-xl">
             <p>
-              Where beauty meets precision, with a signature touch of luxury.
-              Ultimate Blend Ladies Beauty Salon is a sanctuary where craft meets care. Our stylists,
-              colorists, and artists collaborate with each guest to create looks
-              that feel honest, modern, and entirely their own.
+              Where beauty meets precision with a signature touch of luxury. Ultimate Blend Ladies Beauty Salon is a sanctuary for expert hair, beauty, nail, and lash services. Whether you visit our salon in Deira or enjoy the convenience of a home appointment, our experienced team creates beautiful, long-lasting results tailored to your style.
             </p>
           </div>
 
