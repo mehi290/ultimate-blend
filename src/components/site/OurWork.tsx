@@ -5,10 +5,14 @@ const WORK_ITEMS = [
   { name: "Loose Weave Boho Braid", video: "/loose%20weave%20boho%20braid.mp4" },
   { name: "Braid", video: "/cornrow%20braids%20our%20work.mp4" },
   { name: "Fulani twist braid", video: "/knotlessboxbraids_dubai.mp4" },
-  { name: "Goddess Boho Braids", video: "/our work goddess boho braidsa.mp4" },
+  { name: "Goddess Boho Braids", video: "/our%20work%20goddess%20boho%20braidsa.mp4" },
   { name: "French Curls Boho Braids", video: "/French%20curls%20Boho%20braids.mp4" },
   { name: "Gel Extension", video: "/gelsih%20extension.mp4" },
   { name: "Crochet", video: "/crochet.mp4" },
+  { name: "Gelish Manicure", video: "/gelish%20manicure%20our%20work.mp4" },
+  { name: "Wig Installation", video: "/TikVideo.App_7441695982816890128.mp4" },
+  { name: "Eyelash Extension", video: "/eyelash%20our%20work.mp4" },
+  { name: "Cornrow", video: "/our%20work%20cornrow.mp4" },
 ];
 
 export const OurWork = () => {

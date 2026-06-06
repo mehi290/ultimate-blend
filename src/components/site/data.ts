@@ -26,8 +26,8 @@ export const SERVICE_CATEGORIES: {
         { name: "PONYTAIL", image: "/ponytail.mp4" },
         { name: "BOHO BRAIDS", image: "/boho braids.mp4" },
 { name: "Goddess Boho Braid", image: "/Goddess Boho Braid.mp4" },
-        { name: "Goddess Boho Braids", image: "/Goddess Boho Braid.mp4" },
-{ name: "STITCH BRAIDS", image: u("photo-1582095133179-bfd08e2fc6b3") },
+        
+{ name: "STITCH BRAIDS", image: "/stich%20braids.mp4" },
         { name: "Knotless Braids", image: "/Small Knotless Braids.mp4" },
         { name: "French Curls", image: "/French Curls.mp4" },
         { name: "Boho French Curls", image: "/boho frenchcurls.mp4" },
@@ -37,16 +37,16 @@ export const SERVICE_CATEGORIES: {
         { name: "REVAMPING OF HUMAN HAIR", image: "/revamping hair extension.mp4" },
 
         { name: "Small Knotless Braids", image: "/smal%20knotles%20braid.mp4" },
-        { name: "Wig Installation", image: "/hair styling.mp4" },
-{ name: "Wig Extensions", image: "/Wig Extenshions.mp4" },
-        { name: "HAIR TREATMENT", image: u("photo-1522337360788-8b13dee7a37e") },
-        { name: "CHILDREN HAIRSTYLING", image: "/children boho  braids.mp4" },
+        { name: "Wig Installation", image: "/hair%20styling.mp4" },
+{ name: "Wig Extensions", image: "/Wig%20Extenshions.mp4" },
+{ name: "HAIR TREATMENT", image: u("photo-1522337360788-8b13dee7a37e") },
+{ name: "CHILDREN HAIRSTYLING", image: "/children%20boho%20%20braids.mp4" },
       ],
     },
     {
       category: "Nails",
       items: [
-        { name: "MANICURE", image: "/MANICURE.mp4" },
+        { name: "MANICURE", image: "/service-section-manicure.mp4" },
         { name: "PEDICURE", image: "/pedicure.mp4" },
       ],
     },
@@ -54,7 +54,7 @@ export const SERVICE_CATEGORIES: {
       category: "Makeup",
       items: [
         { name: "EYE LASH EXTENSIONS", image: "/eyelash.mp4" },
-        { name: "MAKE UP", image: "/make up.mp4" },
+        { name: "MAKE UP", image: "/make%20up.mp4" },
       ],
     },
     {
