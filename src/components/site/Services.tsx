@@ -236,6 +236,7 @@ export const Services = () => {
   const [isSameService, setIsSameService] = useState<boolean>(true);
   const [personServices, setPersonServices] = useState<Record<number, { name: string; price: number; category?: string }[]>>({});
   const [activePersonTab, setActivePersonTab] = useState<number>(2);
+  const [appointmentType, setAppointmentType] = useState<"salon" | "home">("salon");
 
   const nudge = (dir: 1 | -1) => {
     const el = scrollRef.current;
@@ -272,6 +273,7 @@ export const Services = () => {
     setIsSameService(true);
     setPersonServices({});
     setActivePersonTab(2);
+    setAppointmentType("salon");
 
     // Determine the clicked main service ID
     let matchId = "";
@@ -349,6 +351,7 @@ export const Services = () => {
     setIsSameService(true);
     setPersonServices({});
     setActivePersonTab(2);
+    setAppointmentType("salon");
     setOrderedServices(dbMainServices);
     setBookingStep(1);
     setBookingOpen(true);
@@ -1470,6 +1473,36 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
 
               {bookingStep === 1 && (
                 <div className="flex-1 flex flex-col min-h-0">
+                  {/* Appointment Type Choices */}
+                  <div className="mb-4 px-1 space-y-2">
+                    <button
+                      onClick={() => setAppointmentType("salon")}
+                      className={`w-full flex items-center gap-3 px-4 py-3.5 border transition-all text-sm font-semibold rounded-lg ${
+                        appointmentType === "salon"
+                          ? "border-[#9F3F5C] bg-[#9F3F5C]/5 text-[#9F3F5C]"
+                          : "border-foreground/10 bg-white/40 hover:bg-white/60 text-foreground/80"
+                      }`}
+                    >
+                      <span className="text-base font-bold select-none leading-none">
+                        {appointmentType === "salon" ? "●" : "○"}
+                      </span>
+                      Salon Appointment
+                    </button>
+                    <button
+                      onClick={() => setAppointmentType("home")}
+                      className={`w-full flex items-center gap-3 px-4 py-3.5 border transition-all text-sm font-semibold rounded-lg ${
+                        appointmentType === "home"
+                          ? "border-[#9F3F5C] bg-[#9F3F5C]/5 text-[#9F3F5C]"
+                          : "border-foreground/10 bg-white/40 hover:bg-white/60 text-foreground/80"
+                      }`}
+                    >
+                      <span className="text-base font-bold select-none leading-none">
+                        {appointmentType === "home" ? "●" : "○"}
+                      </span>
+                      Home Service Appointment
+                    </button>
+                  </div>
+
                   <div className="grid grid-cols-[1fr_auto] gap-4 font-display text-xs text-foreground/70 mb-2 px-1">
                     <p>Main Services</p>
                   </div>

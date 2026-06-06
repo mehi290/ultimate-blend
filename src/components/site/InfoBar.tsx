@@ -20,7 +20,7 @@ export const InfoBar = () => {
   };
 
   return (
-    <div className="w-full bg-[#EAD0DC] border-y border-[#D8BDCD] py-4 md:py-0 md:h-[70px] flex items-center justify-center shrink-0">
+    <div className="w-full bg-[#9F3F5C] border-y border-[#8E3852] py-4 md:py-0 md:h-[70px] flex items-center justify-center shrink-0">
       <div className="max-w-7xl w-full mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-2 md:gap-8 items-center justify-items-center">
         {items.map((item, idx) => {
           const Icon = item.icon;
@@ -30,10 +30,10 @@ export const InfoBar = () => {
               onClick={() => handleScrollToSection(item.action)}
               className="flex items-center justify-center gap-2.5 md:gap-3 group transition-all duration-300 hover:scale-[1.02] active:scale-95 focus:outline-none"
             >
-              <div className="w-8 h-8 rounded-full bg-white border border-[#F0E6EA] flex items-center justify-center shadow-sm group-hover:border-[#9F3F5C]/40 group-hover:shadow-md transition-all duration-300">
-                <Icon className="w-4 h-4 text-[#9F3F5C] stroke-[1.5] transition-transform duration-300 group-hover:scale-110" />
+              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:bg-white/90 transition-all duration-300">
+                <Icon className="w-4 h-4 text-[#9F3F5C] stroke-[2] transition-transform duration-300 group-hover:scale-110" />
               </div>
-              <span className="font-display text-xs sm:text-[13px] font-semibold tracking-wide text-foreground/80 group-hover:text-[#9F3F5C] transition-colors duration-300 text-left">
+              <span className="font-display text-xs sm:text-[13px] font-bold tracking-wide text-white transition-colors duration-300 text-left">
                 {item.text}
               </span>
             </button>
