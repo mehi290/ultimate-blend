@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Sidebar } from "@/components/site/Sidebar";
 import { Hero } from "@/components/site/Hero";
+import { InfoBar } from "@/components/site/InfoBar";
 import { About } from "@/components/site/About";
 import { Services } from "@/components/site/Services";
 import { HomeServices } from "@/components/site/HomeServices";
@@ -40,6 +41,7 @@ const Index = () => {
       <Sidebar />
       <main className="md:pl-[88px] pt-14 md:pt-0">
         <Hero />
+        <InfoBar />
         <About />
         <Services />
         <HomeServices />
