@@ -20,27 +20,28 @@ export default function BookingConfirm() {
   }, []);
 
   const handleAddToCalendar = () => {
-    const icsContent = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//Ultimate Blend//Salon Booking//EN",
-      "BEGIN:VEVENT",
-      `SUMMARY:Ultimate Blend - ${serviceName}`,
-      `DESCRIPTION:Appointment at Ultimate Blend Ladies Beauty Salon. Payment is done on-site.`,
-      "LOCATION:Ultimate Blend Ladies Beauty Salon, Dubai",
-      "STATUS:CONFIRMED",
-      "END:VEVENT",
-      "END:VCALENDAR"
-    ].join("\r\n");
+    const title = `Ultimate Blend - ${serviceName}`;
+    let datePart = dateStr;
+    if (dateStr && !dateStr.includes("202")) {
+      const year = new Date().getFullYear();
+      datePart = `${dateStr} ${year}`;
+    }
+    
+    let googleUrl = "";
+    try {
+      const parsedDate = new Date(`${datePart} ${timeStr}`);
+      if (!isNaN(parsedDate.getTime())) {
+        const startStr = parsedDate.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+        const endStr = new Date(parsedDate.getTime() + 60 * 60 * 1000).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+        googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startStr}/${endStr}&details=${encodeURIComponent("Appointment at Ultimate Blend Ladies Beauty Salon")}&location=${encodeURIComponent("Ultimate Blend Ladies Beauty Salon, Dubai")}`;
+      }
+    } catch (e) {}
 
-    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "appointment.ics");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (!googleUrl) {
+      googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent("Appointment at Ultimate Blend Ladies Beauty Salon")}&location=${encodeURIComponent("Ultimate Blend Ladies Beauty Salon, Dubai")}`;
+    }
+
+    window.open(googleUrl, "_blank");
   };
 
   return (
@@ -91,15 +92,6 @@ export default function BookingConfirm() {
               Thank you for choosing Ultimate Blend Ladies Beauty Salon
             </p>
           </div>
-
-          {/* SMS Status Message */}
-          <div className="w-full bg-[#D8BDCD] border border-pink-200/40 rounded-lg py-3 px-4 shadow-sm text-center">
-            <p className="text-xs sm:text-sm text-gray-800 font-bold">
-              A confirmation SMS has been sent to <span className="font-black">{phone}</span>.
-            </p>
-          </div>
-
-
 
           {/* Action buttons */}
           <div className="grid grid-cols-2 gap-3 w-full pt-2">

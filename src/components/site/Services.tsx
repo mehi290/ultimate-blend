@@ -1875,38 +1875,33 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                     <p className="text-sm text-foreground/85 mt-2 font-medium">
                       Thank you for choosing Ultimate Blend Ladies Beauty Salon
                     </p>
-                    <div className="bg-[#9F3F5C]/10 border border-[#9F3F5C]/20 rounded-md p-3 mt-4 max-w-md mx-auto">
-                      <p className="text-xs text-foreground/90 font-medium">
-                        A confirmation SMS has been sent to <span className="font-bold">{phoneNumber}</span>.
-                      </p>
-                    </div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm pt-4">
                     <button
                       onClick={() => {
                         const serviceNames = selectedServices.map(s => s.name).join(", ") || "Salon Services";
-                        const icsContent = [
-                          "BEGIN:VCALENDAR",
-                          "VERSION:2.0",
-                          "PRODID:-//Ultimate Blend//Appointment//EN",
-                          "BEGIN:VEVENT",
-                          `SUMMARY:Ultimate Blend - ${serviceNames}`,
-                          `DESCRIPTION:Appointment for ${peopleCount} people. Payment will be done on-site.`,
-                          "LOCATION:Ultimate Blend Ladies Beauty Salon, Dubai",
-                          "STATUS:CONFIRMED",
-                          "END:VEVENT",
-                          "END:VCALENDAR"
-                        ].join("\r\n");
+                        let datePart = selectedDate || "";
+                        if (datePart && !datePart.includes("202")) {
+                          const year = new Date().getFullYear();
+                          datePart = `${datePart} ${year}`;
+                        }
+                        
+                        let googleUrl = "";
+                        try {
+                          const parsedDate = new Date(`${datePart} ${selectedTime}`);
+                          if (!isNaN(parsedDate.getTime())) {
+                            const startStr = parsedDate.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+                            const endStr = new Date(parsedDate.getTime() + 60 * 60 * 1000).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+                            googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Ultimate Blend - " + serviceNames)}&dates=${startStr}/${endStr}&details=${encodeURIComponent("Appointment for " + peopleCount + " people at Ultimate Blend Ladies Beauty Salon")}&location=${encodeURIComponent("Ultimate Blend Ladies Beauty Salon, Dubai")}`;
+                          }
+                        } catch (e) {}
 
-                        const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8;" });
-                        const url = URL.createObjectURL(blob);
-                        const link = document.createElement("a");
-                        link.href = url;
-                        link.setAttribute("download", "appointment.ics");
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+                        if (!googleUrl) {
+                          googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Ultimate Blend - " + serviceNames)}&details=${encodeURIComponent("Appointment for " + peopleCount + " people at Ultimate Blend Ladies Beauty Salon")}&location=${encodeURIComponent("Ultimate Blend Ladies Beauty Salon, Dubai")}`;
+                        }
+
+                        window.open(googleUrl, "_blank");
                       }}
                       className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-[#9F3F5C] hover:bg-[#8E3852] text-white text-xs font-semibold shadow transition-all"
                     >

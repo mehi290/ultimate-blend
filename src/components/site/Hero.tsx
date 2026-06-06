@@ -83,7 +83,7 @@ export const Hero = () => {
       {/* Floating WhatsApp & Call icons – bottom-right */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
         <a
-          href="https://wa.me/1234567890"
+          href="https://wa.me/971556173486"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat on WhatsApp"
@@ -95,7 +95,7 @@ export const Hero = () => {
           </svg>
         </a>
         <a
-          href="tel:+1234567890"
+          href="tel:+971556173486"
           aria-label="Call us"
           className="w-12 h-12 rounded-full bg-[#34B7F1] text-white flex items-center justify-center shadow-lg hover:bg-[#0A94D8] hover:scale-110 transition-all duration-200"
         >

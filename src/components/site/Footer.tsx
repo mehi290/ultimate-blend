@@ -38,7 +38,9 @@ export const Footer = () => {
               </div>
               <div className="flex items-start gap-3">
                 <Phone className="w-4 h-4 mt-1 opacity-70" />
-                <p className="font-editorial text-xl leading-snug">+97155617 3486</p>
+                <a href="tel:+971556173486" className="font-editorial text-xl leading-snug hover:underline hover:text-primary transition-all">
+                  +97155617 3486
+                </a>
               </div>
               <div className="flex items-start gap-3">
                 <Clock className="w-4 h-4 mt-1 opacity-70" />
@@ -46,7 +48,9 @@ export const Footer = () => {
               </div>
               <div className="flex items-start gap-3">
                 <MessageCircle className="w-4 h-4 mt-1 opacity-70" />
-                <p className="font-editorial text-xl leading-snug">Mobile: +97155617 3486</p>
+                <a href="https://wa.me/971556173486" target="_blank" rel="noopener noreferrer" className="font-editorial text-xl leading-snug hover:underline hover:text-primary transition-all">
+                  Mobile / WhatsApp: +97155617 3486
+                </a>
               </div>
             </div>
 
