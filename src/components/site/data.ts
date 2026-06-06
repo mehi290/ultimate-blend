@@ -54,7 +54,7 @@ export const SERVICE_CATEGORIES: {
       category: "Makeup",
       items: [
         { name: "EYE LASH EXTENSIONS", image: "/eyelash.mp4" },
-        { name: "MAKE UP", image: "/make up.jpeg" },
+        { name: "MAKE UP", image: "/make up.mp4" },
       ],
     },
     {
