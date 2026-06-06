@@ -71,14 +71,24 @@ export const Hero = () => {
       <div className="absolute inset-0 bg-black/40 pointer-events-none" />
 
       {/* Desktop top-right booking strip */}
-      <div className="hidden md:flex fixed top-0 right-0 z-50 h-16 min-w-[320px] bg-transparent">
-        <button
-          onClick={() => window.dispatchEvent(new Event("open-booking-flow"))}
-          className="w-full h-full bg-[#9F3F5C] text-white font-display text-[20px] tracking-[0.08em] [text-shadow:0_2px_10px_rgba(0,0,0,0.45)] hover:bg-[#8E3852] transition-colors"
-        >
-          BOOK NOW
-        </button>
-      </div>
+      <div className="hidden md:flex fixed top-0 right-0 z-50 h-16 min-w-[520px] bg-transparent space-x-2">
+  <button
+    onClick={() => window.dispatchEvent(new Event("open-booking-flow"))}
+    className="flex-1 h-full bg-[#9F3F5C] text-white font-display text-[20px] tracking-[0.08em] [text-shadow:0_2px_10px_rgba(0,0,0,0.45)] hover:bg-[#8E3852] transition-colors"
+  >
+    BOOK NOW
+  </button>
+  <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer"
+    className="flex-1 h-full bg-[#25D366] text-white font-display text-[20px] tracking-[0.08em] hover:bg-[#128C7E] transition-colors flex items-center justify-center"
+  >
+    WhatsApp
+  </a>
+  <a href="tel:+1234567890"
+    className="flex-1 h-full bg-[#34B7F1] text-white font-display text-[20px] tracking-[0.08em] hover:bg-[#0A94D8] transition-colors flex items-center justify-center"
+  >
+    Call
+  </a>
+</div>
 
       {/* Tagline centered */}
       <div className="absolute inset-0 flex items-center justify-center px-5 sm:px-6 pointer-events-none">
