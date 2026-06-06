@@ -142,7 +142,7 @@ const MAIN_SERVICES = [
   },
   {
     id: "styling",
-    name: "Hair Styling Services",
+    name: "Wig Installation",
     count: 3,
     category: "Hair",
     subservices: [
