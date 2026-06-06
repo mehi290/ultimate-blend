@@ -221,6 +221,7 @@ export const Services = () => {
   const [existingCountA, setExistingCountA] = useState<number>(0);
   const [existingCountB, setExistingCountB] = useState<number>(0);
   const [slotCapacity, setSlotCapacity] = useState<number>(5);
+  const [debugStatus, setDebugStatus] = useState<string>("Initializing...");
 
   // New customized states
   const [dbMainServices, setDbMainServices] = useState<any[]>(MAIN_SERVICES);
@@ -386,21 +387,33 @@ export const Services = () => {
             )
           `);
 
-        if (error || !data) return;
-
+        if (error) {
+          console.error("Supabase error fetching service_variants:", error);
+          setDebugStatus(`Error: ${error.message || JSON.stringify(error)}`);
+          return;
+        }
+        if (!data) {
+          console.error("No data returned for service_variants");
+          setDebugStatus("Error: No data returned");
+          return;
+        }
         const updated = MAIN_SERVICES.map(main => {
           const updatedSubservices = main.subservices.map(sub => {
             const match = data.find(v => {
               const sName = v.services?.name?.toLowerCase().trim() || "";
               const vName = v.name?.toLowerCase().trim() || "";
               const uiName = sub.name.toLowerCase().trim();
-              return uiName === sName || uiName === `${sName} - ${vName}` || (uiName.includes(sName) && (vName === "standard" || vName === "classic" || vName === "per nail"));
+              const isMatch = uiName === vName || uiName === sName || uiName === `${sName} - ${vName}` || (uiName.includes(sName) && (vName === "standard" || vName === "classic" || vName === "per nail"));
+              if (isMatch) {
+                console.log(`Matched subservice "${sub.name}" with db variant "${v.name}" (price_varies: ${v.price_varies})`);
+              }
+              return isMatch;
             });
 
             if (match) {
               return {
                 ...sub,
-                price: match.price ? parseFloat(match.price) : 0,
+                price: match.price_varies ? 0 : (match.price ? parseFloat(match.price) : 0),
                 duration: match.duration_minutes || 60
               };
             }
@@ -413,6 +426,11 @@ export const Services = () => {
           };
         });
 
+        const crochetPrice = updated.find(s => s.id === "crochet")?.subservices.find(sub => sub.name === "Twist Crochet")?.price;
+        setDebugStatus(`Loaded ${data.length} variants. Twist Crochet price: ${crochetPrice}`);
+        console.log("Fetched service variants successfully:", data);
+
+        console.log("Updated dbMainServices mapped result:", updated);
         setDbMainServices(updated);
         setOrderedServices(updated);
       } catch (err) {
@@ -421,6 +439,21 @@ export const Services = () => {
     }
     syncServices();
   }, []);
+
+  useEffect(() => {
+    setSelectedMainServices(prev => {
+      return prev.map(p => {
+        const fresh = dbMainServices.find(s => s.id === p.id);
+        return fresh || p;
+      });
+    });
+    setOrderedServices(prev => {
+      return prev.map(p => {
+        const fresh = dbMainServices.find(s => s.id === p.id);
+        return fresh || p;
+      });
+    });
+  }, [dbMainServices]);
 
   useEffect(() => {
     const handleOpenBooking = () => {
@@ -1925,6 +1958,7 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                   </button>
                 ) : null}
               </div>
+
             </div>
           </div>
         </div>
