@@ -53,7 +53,7 @@ export const Sidebar = () => {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => window.dispatchEvent(new Event("open-booking-flow"))}
+            onClick={() => window.location.href = '/booking'}
             className="px-4 min-h-10 bg-[#9F3F5C] text-white text-xs font-display tracking-[0.08em] hover:bg-[#8E3852] transition-colors"
             aria-label="Book now"
           >

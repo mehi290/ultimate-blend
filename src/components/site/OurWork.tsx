@@ -102,7 +102,7 @@ export const OurWork = () => {
                     {item.name}
                   </p>
                   <button
-                    onClick={() => window.dispatchEvent(new Event("open-booking-flow"))}
+                    onClick={() => window.location.href = '/booking'}
                     className="px-5 py-2.5 bg-[#9F3F5C] text-white text-xs font-display font-semibold hover:bg-[#8E3852] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9F3F5C] focus-visible:ring-offset-2"
                   >
                     Book this look

@@ -51,7 +51,7 @@ export const Footer = () => {
             </div>
 
             <button
-              onClick={() => window.dispatchEvent(new Event("open-booking-flow"))}
+              onClick={() => window.location.href = '/booking'}
               className="px-8 min-h-12 bg-primary text-primary-foreground font-display text-xs hover:opacity-90 transition-opacity"
             >
               Get Directions
