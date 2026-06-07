@@ -1316,6 +1316,52 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
     return { total, hasPriceVaries };
   };
 
+  const getBookingTotalText = () => {
+    const { total, hasPriceVaries } = getBookingTotal();
+    
+    if (!hasPriceVaries) {
+      return `AED ${total}`;
+    }
+    
+    const priceVariesServices = new Set<string>();
+    
+    selectedServices.forEach(s => {
+      if (s.price === 0) {
+        priceVariesServices.add(s.name);
+      }
+    });
+    
+    for (let i = 2; i <= peopleCount; i++) {
+      const services = isSameService ? selectedServices : (personServices[i] && personServices[i].length > 0 ? personServices[i] : selectedServices);
+      services.forEach(s => {
+        if (s.price === 0) {
+          priceVariesServices.add(s.name);
+        }
+      });
+    }
+    
+    const serviceNames = Array.from(priceVariesServices).map(name => {
+      const lower = name.toLowerCase();
+      if (lower.includes("boho")) {
+        return "Boho";
+      }
+      if (lower.includes("box braid")) {
+        return "Box Braid";
+      }
+      return name;
+    });
+
+    if (total === 0) {
+      return "Price Varies";
+    }
+
+    if (serviceNames.length > 0) {
+      return `AED ${total} + ${serviceNames.join(" & ")}`;
+    }
+    
+    return `AED ${total} + Price Varies`;
+  };
+
   return (
     <>
       <section id="services" className="bg-lavender py-20 md:py-28">
@@ -1877,14 +1923,8 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                     </div>
 
                     <div className="border-t border-dashed border-foreground/20 pt-4 flex justify-between items-center text-base font-bold text-foreground">
-                      <span>Total Amount:</span>
-                      <span>
-                        {getBookingTotal().hasPriceVaries ? (
-                          <>AED {getBookingTotal().total} + Price Varies</>
-                        ) : (
-                          <>AED {getBookingTotal().total}</>
-                        )}
-                      </span>
+                      <span>Total Price:</span>
+                      <span>{getBookingTotalText()}</span>
                     </div>
                   </div>
 
