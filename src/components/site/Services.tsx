@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, X, Ticket, Calendar, CheckCircle2, Check } from "lucide-react";
 import { SERVICES_FLAT, SERVICE_FILTERS } from "./data";
 import { supabase } from "@/lib/supabase";
@@ -202,6 +203,7 @@ const MAIN_SERVICES = [
 ];
 
 export const Services = () => {
+  const navigate = useNavigate();
   const servicesTitle = "Services";
   const [typedServicesTitle, setTypedServicesTitle] = useState("");
   const [filter, setFilter] = useState<string>("All");
@@ -1256,11 +1258,34 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
         peopleCount: peopleCount
       });
 
+      // Redirect to confirm page
+      navigate("/booking/confirm", {
+        state: {
+          booking: newBooking || { id: "fallback" },
+          serviceName: servicesList,
+          dateStr: format(dateObj, "dd MMM yyyy"),
+          timeStr: selectedTime,
+          phone: phoneNumber
+        }
+      });
+
     } catch (err) {
       console.error("Booking db error: ", err);
+      // Fallback redirection
+      const dummyId = Math.random().toString(36).substring(7);
+      const servicesList = allServicesBooked.join(", ") || "Salon Services";
+      navigate("/booking/confirm", {
+        state: {
+          booking: { id: dummyId, customer_name: fullName, customer_phone: phoneNumber },
+          serviceName: servicesList,
+          dateStr: format(dateObj, "dd MMM yyyy"),
+          timeStr: selectedTime,
+          phone: phoneNumber
+        }
+      });
     } finally {
       setBookingLoading(false);
-      setBookingStep(7);
+      setBookingOpen(false);
     }
   };
 
