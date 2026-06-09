@@ -21,6 +21,8 @@ import AdminCustomers from "./pages/admin/Customers.tsx";
 import AdminGallery from "./pages/admin/Gallery.tsx";
 import AdminDashboardNew from "./pages/AdminDashboard.tsx";
 
+import { AnalyticsTracker } from "@/components/site/AnalyticsTracker";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -29,6 +31,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AnalyticsTracker />
         <Routes>
           {/* Client Routes */}
           <Route path="/" element={<Index />} />
