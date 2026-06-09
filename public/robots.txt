@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://tres-beaux-beauty.vercel.app/sitemap.xml
+Sitemap: https://www.ultimateblendladiessalon.com/sitemap.xml
