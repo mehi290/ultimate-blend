@@ -1012,8 +1012,11 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
 
   const handleCreateBooking = async () => {
     setBookingLoading(true);
+    const fullName = `${firstName} ${lastName}`.trim();
+    const allServicesBooked: string[] = [];
+    const dateObj = dateMap[selectedDate] || new Date();
+
     try {
-      const fullName = `${firstName} ${lastName}`.trim();
       let customerId = "";
 
       const { data: existingCust } = await supabase
@@ -1034,10 +1037,17 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
         if (newCust) customerId = newCust.id;
       }
 
-      const dateObj = dateMap[selectedDate] || new Date();
       const dateStr = format(dateObj, "yyyy-MM-dd");
 
-      const parsedTime = parse(selectedTime, "hh:mm a", new Date());
+      let parsedTime;
+      try {
+        parsedTime = parse(selectedTime, "h:mm a", new Date());
+        if (isNaN(parsedTime.getTime())) {
+          parsedTime = parse(selectedTime, "hh:mm a", new Date());
+        }
+      } catch (e) {
+        parsedTime = parse(selectedTime, "hh:mm a", new Date());
+      }
       const time24Str = format(parsedTime, "HH:mm:ss");
 
       // Load all variants to perform robust matching
@@ -1112,7 +1122,6 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
         return pool[0] || dbVariants[0];
       };
 
-      const allServicesBooked: string[] = [];
       for (let pIndex = 0; pIndex < peopleCount; pIndex++) {
         // Resolve services for this person
         const currentPersonServices = pIndex === 0 
@@ -1261,7 +1270,7 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
       // Redirect to confirm page
       navigate("/booking/confirm", {
         state: {
-          booking: newBooking || { id: "fallback" },
+          booking: { id: "success" },
           customerName: fullName,
           serviceName: servicesList,
           dateStr: format(dateObj, "dd MMM yyyy"),
