@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -22,6 +23,17 @@ import AdminGallery from "./pages/admin/Gallery.tsx";
 import AdminDashboardNew from "./pages/AdminDashboard.tsx";
 
 import { AnalyticsTracker } from "@/components/site/AnalyticsTracker";
+
+const ChatRedirect = () => {
+  useEffect(() => {
+    window.location.replace("https://wa.me/971556173486");
+  }, []);
+  return (
+    <div className="min-h-screen bg-[#FDF8FA] flex items-center justify-center">
+      <p className="text-[#9F3F5C] font-semibold">Redirecting you to WhatsApp...</p>
+    </div>
+  );
+};
 
 const queryClient = new QueryClient();
 
@@ -51,6 +63,8 @@ const App = () => (
           <Route path="/booking" element={<Booking />} />
           <Route path="/booking/confirm" element={<BookingConfirm />} />
           <Route path="/booking/cancel" element={<BookingCancel />} />
+
+          <Route path="/chat" element={<ChatRedirect />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboardNew />} />

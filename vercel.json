@@ -1,1 +1,15 @@
-{"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]}
+{
+  "redirects": [
+    {
+      "source": "/chat",
+      "destination": "https://wa.me/971556173486",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
