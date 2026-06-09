@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, X, Ticket, Calendar, CheckCircle2, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Ticket, Calendar, CheckCircle2, Check, MessageCircle } from "lucide-react";
 import { SERVICES_FLAT, SERVICE_FILTERS } from "./data";
 import { supabase } from "@/lib/supabase";
 import { format, addDays, parse, isSameDay } from "date-fns";
@@ -1981,32 +1981,21 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                     <button
                       onClick={() => {
                         const serviceNames = selectedServices.map(s => s.name).join(", ") || "Salon Services";
-                        let datePart = selectedDate || "";
-                        if (datePart && !datePart.includes("202")) {
-                          const year = new Date().getFullYear();
-                          datePart = `${datePart} ${year}`;
-                        }
-                        
-                        let googleUrl = "";
-                        try {
-                          const parsedDate = new Date(`${datePart} ${selectedTime}`);
-                          if (!isNaN(parsedDate.getTime())) {
-                            const startStr = parsedDate.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-                            const endStr = new Date(parsedDate.getTime() + 60 * 60 * 1000).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-                            googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Ultimate Blend - " + serviceNames)}&dates=${startStr}/${endStr}&details=${encodeURIComponent("Appointment for " + peopleCount + " people at Ultimate Blend Ladies Beauty Salon")}&location=${encodeURIComponent("Ultimate Blend Ladies Beauty Salon, Dubai")}`;
-                          }
-                        } catch (e) {}
+                        const nameToUse = `${firstName} ${lastName}`.trim() || "Client";
+                        const text = `Hi, I would like to confirm my booking:
+- *Name:* ${nameToUse}
+- *Service(s):* ${serviceNames}
+- *Date:* ${selectedDate}
+- *Time:* ${selectedTime}
+- *Phone:* ${phoneNumber}`;
 
-                        if (!googleUrl) {
-                          googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Ultimate Blend - " + serviceNames)}&details=${encodeURIComponent("Appointment for " + peopleCount + " people at Ultimate Blend Ladies Beauty Salon")}&location=${encodeURIComponent("Ultimate Blend Ladies Beauty Salon, Dubai")}`;
-                        }
-
-                        window.open(googleUrl, "_blank");
+                        const whatsappUrl = `https://wa.me/971556173486?text=${encodeURIComponent(text)}`;
+                        window.open(whatsappUrl, "_blank");
                       }}
-                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-[#9F3F5C] hover:bg-[#8E3852] text-white text-xs font-semibold shadow transition-all"
+                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-semibold shadow transition-all"
                     >
-                      <Calendar className="w-4 h-4" />
-                      Add to Calendar
+                      <MessageCircle className="w-4 h-4" />
+                      Confirm on WhatsApp
                     </button>
                     <button
                       onClick={closeBookingPanel}
