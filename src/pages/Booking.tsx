@@ -463,7 +463,10 @@ export default function Booking() {
   const filteredServices = services.filter(s => s.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-[#FDF8FA] text-[#2D2D2D] font-sans pb-12">
+    <div 
+      className="min-h-screen text-[#2D2D2D] font-sans pb-12 bg-cover bg-center bg-no-repeat bg-fixed relative"
+      style={{ backgroundImage: "url('/booking slot background.jpeg')" }}
+    >
       {/* Header Banner */}
       <header className="bg-[#9F3F5C] text-white py-6 px-4 text-center relative shadow-sm">
         <button 
