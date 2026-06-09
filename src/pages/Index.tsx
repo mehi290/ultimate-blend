@@ -20,6 +20,10 @@ const Index = () => {
       "/testimonials": "testimonials",
       "/ourwork": "our-work",
       "/contactus": "contact",
+      "/gallery": "our-work",
+      "/deira": "contact",
+      "/home-service-dubai": "home-services",
+      "/salon-near-me": "services",
     };
 
     let id = pathToIdMap[location.pathname];

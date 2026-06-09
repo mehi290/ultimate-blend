@@ -41,6 +41,13 @@ const App = () => (
           <Route path="/testimonials" element={<Index />} />
           <Route path="/ourwork" element={<Index />} />
           <Route path="/contactus" element={<Index />} />
+          <Route path="/deira" element={<Index />} />
+          <Route path="/salon-near-me" element={<Index />} />
+          <Route path="/home-service-dubai" element={<Index />} />
+          <Route path="/terms-conditions" element={<Index />} />
+          <Route path="/privacy-policy" element={<Index />} />
+          <Route path="/faq" element={<Index />} />
+          <Route path="/gallery" element={<Index />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/booking/confirm" element={<BookingConfirm />} />
           <Route path="/booking/cancel" element={<BookingCancel />} />
