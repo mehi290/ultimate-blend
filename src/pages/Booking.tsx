@@ -432,6 +432,7 @@ export default function Booking() {
       navigate("/booking/confirm", {
         state: {
           booking: newBooking,
+          customerName: name,
           serviceName: servicesList,
           dateStr: format(selectedDate, "dd MMM yyyy"),
           timeStr: selectedTime,
@@ -447,6 +448,7 @@ export default function Booking() {
       navigate("/booking/confirm", {
         state: {
           booking: { id: dummyId, customer_name: name, customer_phone: phone },
+          customerName: name,
           serviceName: servicesList,
           dateStr: format(selectedDate, "dd MMM yyyy"),
           timeStr: selectedTime,

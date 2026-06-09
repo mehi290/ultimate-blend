@@ -1,17 +1,18 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Check, Calendar as CalendarIcon, X } from "lucide-react";
+import { Check, MessageCircle, X } from "lucide-react";
 
 export default function BookingConfirm() {
   const navigate = useNavigate();
   const location = useLocation();
 
   // Get state parameters passed from Booking page
-  const { serviceName, dateStr, timeStr, phone } = location.state || {
+  const { serviceName, dateStr, timeStr, phone, customerName } = location.state || {
     serviceName: "Salon Service",
     dateStr: "04 Jun",
     timeStr: "10:30 AM",
-    phone: "0503234327"
+    phone: "0503234327",
+    customerName: "Client"
   };
 
   // Auto redirect to WhatsApp if the user completes booking (useful secondary action/redirect)
@@ -19,29 +20,17 @@ export default function BookingConfirm() {
     // We can let user trigger this manually via button, or open in a new tab on page load
   }, []);
 
-  const handleAddToCalendar = () => {
-    const title = `Ultimate Blend - ${serviceName}`;
-    let datePart = dateStr;
-    if (dateStr && !dateStr.includes("202")) {
-      const year = new Date().getFullYear();
-      datePart = `${dateStr} ${year}`;
-    }
-    
-    let googleUrl = "";
-    try {
-      const parsedDate = new Date(`${datePart} ${timeStr}`);
-      if (!isNaN(parsedDate.getTime())) {
-        const startStr = parsedDate.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-        const endStr = new Date(parsedDate.getTime() + 60 * 60 * 1000).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-        googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startStr}/${endStr}&details=${encodeURIComponent("Appointment at Ultimate Blend Ladies Beauty Salon")}&location=${encodeURIComponent("Ultimate Blend Ladies Beauty Salon, Dubai")}`;
-      }
-    } catch (e) {}
+  const handleConfirmOnWhatsApp = () => {
+    const nameToUse = customerName || location.state?.booking?.customer_name || "Client";
+    const text = `Hi, I would like to confirm my booking:
+- *Name:* ${nameToUse}
+- *Service(s):* ${serviceName}
+- *Date:* ${dateStr}
+- *Time:* ${timeStr}
+- *Phone:* ${phone}`;
 
-    if (!googleUrl) {
-      googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent("Appointment at Ultimate Blend Ladies Beauty Salon")}&location=${encodeURIComponent("Ultimate Blend Ladies Beauty Salon, Dubai")}`;
-    }
-
-    window.open(googleUrl, "_blank");
+    const whatsappUrl = `https://wa.me/971556173486?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
@@ -96,11 +85,11 @@ export default function BookingConfirm() {
           {/* Action buttons */}
           <div className="grid grid-cols-2 gap-3 w-full pt-2">
             <button
-              onClick={handleAddToCalendar}
-              className="flex items-center justify-center gap-2 py-3 bg-[#9F3F5C] hover:bg-[#8E3852] text-white text-xs sm:text-sm font-bold rounded-xl shadow transition-colors"
+              onClick={handleConfirmOnWhatsApp}
+              className="flex items-center justify-center gap-2 py-3 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-bold rounded-xl shadow transition-colors"
             >
-              <CalendarIcon className="w-4 h-4" />
-              Add to Calendar
+              <MessageCircle className="w-4.5 h-4.5" />
+              Confirm on WhatsApp
             </button>
             <button
               onClick={() => navigate("/")}

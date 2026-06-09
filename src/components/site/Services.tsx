@@ -1262,6 +1262,7 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
       navigate("/booking/confirm", {
         state: {
           booking: newBooking || { id: "fallback" },
+          customerName: fullName,
           serviceName: servicesList,
           dateStr: format(dateObj, "dd MMM yyyy"),
           timeStr: selectedTime,
@@ -1277,6 +1278,7 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
       navigate("/booking/confirm", {
         state: {
           booking: { id: dummyId, customer_name: fullName, customer_phone: phoneNumber },
+          customerName: fullName,
           serviceName: servicesList,
           dateStr: format(dateObj, "dd MMM yyyy"),
           timeStr: selectedTime,
