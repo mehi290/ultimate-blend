@@ -22,7 +22,10 @@ const Index = () => {
       "/contactus": "contact",
     };
 
-    const id = pathToIdMap[location.pathname];
+    let id = pathToIdMap[location.pathname];
+    if (!id && location.pathname.startsWith("/services/")) {
+      id = "services";
+    }
     if (id) {
       const element = document.getElementById(id);
       if (element) {
