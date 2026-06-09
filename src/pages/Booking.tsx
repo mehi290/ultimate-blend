@@ -772,7 +772,11 @@ export default function Booking() {
                 <span className="text-gray-700">Total Price:</span>
                 <span className="text-[#9F3F5C]">
                   {selectedServices.some(s => !s.price) ? (
-                    <>AED {selectedServices.reduce((sum, s) => sum + (s.price || 0), 0)} + Price Varies</>
+                    selectedServices.reduce((sum, s) => sum + (s.price || 0), 0) > 0 ? (
+                      <>AED {selectedServices.reduce((sum, s) => sum + (s.price || 0), 0)} + Price Varies</>
+                    ) : (
+                      <>Price Varies</>
+                    )
                   ) : (
                     <>AED {selectedServices.reduce((sum, s) => sum + (s.price || 0), 0)}</>
                   )}
