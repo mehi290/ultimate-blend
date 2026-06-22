@@ -21,8 +21,8 @@ const BASE_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "BeautySalon",
   "name": "Ultimate Blend Ladies Beauty Salon",
-  "url": "https://ultimate-blend-salon.vercel.app/",
-  "image": "https://ultimate-blend-salon.vercel.app/about%20image.png",
+  "url": "https://www.ultimateblendladiessalon.com/",
+  "image": "https://www.ultimateblendladiessalon.com/about%20image.png",
   "telephone": "+97155617 3486",
   "address": {
     "@type": "PostalAddress",
@@ -146,6 +146,42 @@ const SEO_MAP: Record<string, SEOConfig> = {
     title: "Beauty Salon Near Me in Deira, Dubai | Ultimate Blend Ladies Salon",
     description: "Looking for a top-rated ladies beauty salon near you in Deira, Dubai? Visit Ultimate Blend Ladies Beauty Salon for professional hair and nail care.",
     schema: BASE_SCHEMA
+  },
+  "/faq": {
+    title: "Frequently Asked Questions (FAQ) | Ultimate Blend Ladies Beauty Salon",
+    description: "Got questions about our beauty salon services, bookings, opening hours, or home service in Dubai? Find all the answers here.",
+    schema: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Where is Ultimate Blend Ladies Beauty Salon located?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We are located at City Stay Premium Hotel Building - Shop 4 - 4th St - Naif - Deira - Dubai."
+          }
+        }
+      ]
+    }
+  },
+  "/privacy-policy": {
+    title: "Privacy Policy | Ultimate Blend Ladies Beauty Salon Dubai",
+    description: "Read the Privacy Policy of Ultimate Blend Ladies Beauty Salon to learn how we collect, use, and protect your personal information.",
+    schema: {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Privacy Policy | Ultimate Blend Ladies Beauty Salon"
+    }
+  },
+  "/terms-conditions": {
+    title: "Terms & Conditions | Ultimate Blend Ladies Beauty Salon Dubai",
+    description: "Read the terms and conditions for booking appointments and using the services of Ultimate Blend Ladies Beauty Salon.",
+    schema: {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Terms and Conditions | Ultimate Blend Ladies Beauty Salon"
+    }
   }
 };
 

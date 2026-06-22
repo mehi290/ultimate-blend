@@ -32,7 +32,7 @@ export const SEO = ({
     metaDescription.setAttribute("content", description);
 
     // 3. Update Canonical URL
-    const canonicalUrl = canonical || `https://ultimate-blend-salon.vercel.app${location.pathname}`;
+    const canonicalUrl = canonical || `https://www.ultimateblendladiessalon.com${location.pathname}`;
     let canonicalLink = document.querySelector('link[rel="canonical"]');
     if (!canonicalLink) {
       canonicalLink = document.createElement("link");
