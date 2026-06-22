@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import { SEO } from "@/components/site/SEO";
 import { 
   ChevronLeft, 
   Check, 
@@ -467,11 +468,16 @@ export default function Booking() {
       className="min-h-screen text-[#2D2D2D] font-sans pb-12 bg-cover bg-center bg-no-repeat bg-fixed relative"
       style={{ backgroundImage: "url('/booking slot background.jpeg')" }}
     >
+      <SEO 
+        title="Book an Appointment | Ultimate Blend Ladies Beauty Salon Dubai"
+        description="Easily book your hairdressing, braiding, nail care, or makeup appointment online. Select your service, date, and slot today."
+      />
       {/* Background tint overlay to ensure high readability of all text */}
       <div className="absolute inset-0 bg-[#FDF8FA]/90 backdrop-blur-[2px] pointer-events-none" />
       
       <div className="relative z-10">
       {/* Header Banner */}
+
       <header className="bg-[#9F3F5C] text-white py-6 px-4 text-center relative shadow-sm">
         <button 
           onClick={() => navigate("/")}

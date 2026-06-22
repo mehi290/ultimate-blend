@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Check, MessageCircle, X } from "lucide-react";
+import { SEO } from "@/components/site/SEO";
 
 export default function BookingConfirm() {
   const navigate = useNavigate();
@@ -35,8 +36,13 @@ export default function BookingConfirm() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-4">
+      <SEO 
+        title="Booking Confirmed | Ultimate Blend Ladies Beauty Salon"
+        description="Your appointment has been successfully booked! We look forward to welcoming you at Ultimate Blend Ladies Beauty Salon."
+      />
       {/* Container Card */}
       <div className="bg-[#EAD0DC] w-full max-w-lg rounded-2xl shadow-xl overflow-hidden relative border border-pink-100/30">
+
         
         {/* Header section with X button */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-pink-200/20">

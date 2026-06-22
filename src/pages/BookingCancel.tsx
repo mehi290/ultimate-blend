@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { AlertCircle, CheckCircle2, ChevronLeft } from "lucide-react";
+import { SEO } from "@/components/site/SEO";
 
 export default function BookingCancel() {
   const navigate = useNavigate();
@@ -68,7 +69,12 @@ export default function BookingCancel() {
 
   return (
     <div className="min-h-screen bg-[#FDF8FA] text-[#2D2D2D] font-sans pb-12">
+      <SEO 
+        title="Booking Canceled | Ultimate Blend Ladies Beauty Salon"
+        description="Your appointment booking has been canceled. Please contact us if you need to reschedule."
+      />
       <header className="bg-[#9F3F5C] text-white py-6 px-4 text-center relative shadow-sm">
+
         <button 
           onClick={() => navigate("/")}
           className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1 text-white/90 hover:text-white text-xs font-semibold uppercase tracking-wider"
