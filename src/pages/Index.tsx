@@ -10,6 +10,7 @@ import { Testimonials } from "@/components/site/Testimonials";
 import { OurWork } from "@/components/site/OurWork";
 import { Footer } from "@/components/site/Footer";
 import { SEO } from "@/components/site/SEO";
+import { FAQ } from "@/components/site/FAQ";
 
 interface SEOConfig {
   title: string;
@@ -45,6 +46,11 @@ const BASE_SCHEMA = {
       "opens": "09:00",
       "closes": "23:30"
     }
+  ],
+  "sameAs": [
+    "https://www.instagram.com/ultimateblendladiessalon/",
+    "https://www.tiktok.com/@ultimateblendsalon1",
+    "https://www.facebook.com/p/Ultimate-blend-Ladies-Beauty-Salon-Dubai-100046602049825/"
   ]
 };
 
@@ -148,18 +154,26 @@ const SEO_MAP: Record<string, SEOConfig> = {
     schema: BASE_SCHEMA
   },
   "/faq": {
-    title: "Frequently Asked Questions (FAQ) | Ultimate Blend Ladies Beauty Salon",
-    description: "Got questions about our beauty salon services, bookings, opening hours, or home service in Dubai? Find all the answers here.",
+    title: "Best Hair Braiding in Deira | Ultimate Blend Ladies Salon Dubai",
+    description: "Looking for the best hair braiding in Deira? Ultimate Blend Ladies Salon offers flawless knotless braids, Fulani cornrows, boho braids, and convenient premium home services across Dubai. Book your appointment online today!",
     schema: {
       "@context": "https://schema.org",
       "@type": "FAQPage",
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Where is Ultimate Blend Ladies Beauty Salon located?",
+          "name": "Do you provide the hair extensions for boho, knotless, and Fulani braids?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "We are located at City Stay Premium Hotel Building - Shop 4 - 4th St - Naif - Deira - Dubai."
+            "text": "Yes, Ultimate Blend Ladies Salon provides premium-quality extensions across various natural colors and lengths for all knotless, boho, and Fulani braiding packages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I book a home service salon appointment in Dubai?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can book our professional home service beauty and braiding team directly through our website booking portal or by dropping us a message on WhatsApp."
           }
         }
       ]
@@ -199,6 +213,7 @@ const Index = () => {
       "/deira": "contact",
       "/home-service-dubai": "home-services",
       "/salon-near-me": "services",
+      "/faq": "faq",
     };
 
     let id = pathToIdMap[location.pathname];
@@ -256,6 +271,7 @@ const Index = () => {
         <HomeServices />
         <Testimonials />
         <OurWork />
+        <FAQ />
         <Footer />
       </main>
     </div>
