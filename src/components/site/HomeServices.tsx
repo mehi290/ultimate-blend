@@ -1,6 +1,32 @@
+import { useRef, useEffect } from "react";
 import { Calendar } from "lucide-react";
 
 export const HomeServices = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+
+    el.pause();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const p = el.play();
+            if (p && typeof p.catch === "function") p.catch(() => {});
+          } else {
+            if (!el.paused) el.pause();
+          }
+        });
+      },
+      { rootMargin: "200px 0px", threshold: 0 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section id="home-services" className="bg-[#FAF6F8] py-20 md:py-28 border-t border-border">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
@@ -35,9 +61,10 @@ export const HomeServices = () => {
         <div className="w-full md:max-w-lg md:justify-self-end">
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl shadow-xl border border-pink-100/20">
             <video
+              ref={videoRef}
               src="/home%20service%20knotless.mp4"
               className="w-full h-full object-cover"
-              autoPlay
+              preload="metadata"
               muted
               loop
               playsInline
