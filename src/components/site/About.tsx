@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const About = () => {
   const aboutTitle = "About Ultimate Blend Ladies Beauty Salon";
   const aboutImageSrc = "/about.mp4";
   const [typedAboutTitle, setTypedAboutTitle] = useState("");
-  const mobileVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     let timeoutId: number | undefined;
@@ -21,31 +20,6 @@ export const About = () => {
     return () => {
       if (timeoutId) window.clearTimeout(timeoutId);
     };
-  }, []);
-
-  // IntersectionObserver for mobile video
-  useEffect(() => {
-    const el = mobileVideoRef.current;
-    if (!el) return;
-
-    el.pause();
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const target = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) {
-            const p = target.play();
-            if (p && typeof p.catch === 'function') p.catch(() => {});
-          } else {
-            if (!target.paused) target.pause();
-          }
-        });
-      },
-      { rootMargin: "200px 0px", threshold: 0 }
-    );
-
-    obs.observe(el);
-    return () => obs.disconnect();
   }, []);
 
   useEffect(() => {
@@ -96,11 +70,10 @@ export const About = () => {
         <div className="mb-8">
           <div className="relative aspect-[4/5] w-full overflow-hidden">
             <video
-              ref={mobileVideoRef}
               src={aboutImageSrc}
               aria-label="About video"
               className="w-full h-full object-cover"
-              preload="metadata"
+              autoPlay
               muted
               loop
               playsInline

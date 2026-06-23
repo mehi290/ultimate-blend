@@ -254,7 +254,7 @@ export const Services = () => {
     [filter]
   );
 
-  const loop = items;
+  const loop = [...items, ...items];
 
   const openBookingPanel = (category: string, image: string, serviceName?: string) => {
     setBookingCategory(category);
