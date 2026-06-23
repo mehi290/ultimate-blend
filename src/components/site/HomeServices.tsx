@@ -20,7 +20,7 @@ export const HomeServices = () => {
           }
         });
       },
-      { rootMargin: "0px", threshold: 0.1 }
+      { rootMargin: "200px 0px", threshold: 0 }
     );
 
     observer.observe(el);
@@ -64,7 +64,7 @@ export const HomeServices = () => {
               ref={videoRef}
               src="/home%20service%20knotless.mp4"
               className="w-full h-full object-cover"
-              preload="none"
+              preload="metadata"
               muted
               loop
               playsInline

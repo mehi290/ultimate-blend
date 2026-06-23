@@ -5,7 +5,6 @@ export const About = () => {
   const aboutImageSrc = "/about.mp4";
   const [typedAboutTitle, setTypedAboutTitle] = useState("");
   const mobileVideoRef = useRef<HTMLVideoElement>(null);
-  const desktopVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     let timeoutId: number | undefined;
@@ -42,39 +41,36 @@ export const About = () => {
           }
         });
       },
-      { rootMargin: "0px", threshold: 0.1 }
+      { rootMargin: "200px 0px", threshold: 0 }
     );
 
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
-  // IntersectionObserver for desktop video
   useEffect(() => {
-    const el = desktopVideoRef.current;
-    if (!el) return;
+    const sel = document.querySelector('#about video[data-autoplay]') as HTMLVideoElement | null;
+    if (!sel) return;
 
-    el.pause();
+    sel.pause();
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const target = entry.target as HTMLVideoElement;
+          const el = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) {
-            const p = target.play();
-            if (p && typeof p.catch === 'function') p.catch(() => {});
+            const p = el.play();
+            if (p && typeof p.catch === 'function') p.catch(() => { });
           } else {
-            if (!target.paused) target.pause();
+            if (!el.paused) el.pause();
           }
         });
       },
-      { rootMargin: "0px", threshold: 0.1 }
+      { rootMargin: "200px 0px", threshold: 0 }
     );
 
-    obs.observe(el);
+    obs.observe(sel);
     return () => obs.disconnect();
   }, []);
-
-
 
   return (
     <section
@@ -104,7 +100,7 @@ export const About = () => {
               src={aboutImageSrc}
               aria-label="About video"
               className="w-full h-full object-cover"
-              preload="none"
+              preload="metadata"
               muted
               loop
               playsInline
@@ -160,9 +156,10 @@ export const About = () => {
         <div className="w-full md:max-w-lg md:justify-self-end">
           <div className="relative aspect-[4/5] w-full overflow-hidden">
             <video
-              ref={desktopVideoRef}
               src={aboutImageSrc}
-              preload="none"
+              data-autoplay
+              preload="metadata"
+              autoPlay
               aria-label="About video"
               className="w-full h-full object-cover"
               muted
