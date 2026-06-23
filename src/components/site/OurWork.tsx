@@ -46,7 +46,7 @@ export const OurWork = () => {
           }
         });
       },
-      { root: null, rootMargin: "200px 0px", threshold: 0 }
+      { root: null, rootMargin: "50px 0px", threshold: 0 }
     );
 
     videos.forEach((v) => {

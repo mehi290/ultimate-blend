@@ -43,7 +43,7 @@ export const Hero = () => {
           observer.unobserve(entry.target);
         }
       });
-    }, { rootMargin: "200px" });
+    }, { rootMargin: "0px", threshold: 0 });
     if (videoRef.current) observer.observe(videoRef.current);
     return () => observer.disconnect();
   }, []);
@@ -57,8 +57,8 @@ export const Hero = () => {
       {/* Lazy-loaded full-screen background video */}
       <video
         ref={videoRef}
-        src={videoSrc}
-        preload="metadata"
+        src={videoSrc || undefined}
+        preload="none"
         autoPlay
         loop
         muted
