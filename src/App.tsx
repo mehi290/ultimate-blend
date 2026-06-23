@@ -23,6 +23,7 @@ import AdminGallery from "./pages/admin/Gallery.tsx";
 import AdminDashboardNew from "./pages/AdminDashboard.tsx";
 
 import { AnalyticsTracker } from "@/components/site/AnalyticsTracker";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const ChatRedirect = () => {
   useEffect(() => {
@@ -44,6 +45,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AnalyticsTracker />
+        <SpeedInsights />
         <Routes>
           {/* Client Routes */}
           <Route path="/" element={<Index />} />
