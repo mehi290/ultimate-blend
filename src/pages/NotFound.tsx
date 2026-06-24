@@ -14,6 +14,7 @@ const NotFound = () => {
       <SEO 
         title="404 Page Not Found | Ultimate Blend Ladies Beauty Salon"
         description="The requested page could not be found. Return to Ultimate Blend Ladies Beauty Salon homepage."
+        robots="noindex, nofollow"
       />
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold">404</h1>

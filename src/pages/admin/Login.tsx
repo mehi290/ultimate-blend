@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Lock, Mail, AlertCircle } from "lucide-react";
+import { SEO } from "@/components/site/SEO";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -42,6 +43,11 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen bg-[#0F0F11] text-white flex items-center justify-center p-4 font-sans">
+      <SEO
+        title="Admin Login | Ultimate Blend Ladies Beauty Salon"
+        description="Admin login for Ultimate Blend Ladies Beauty Salon."
+        robots="noindex, nofollow"
+      />
       <div className="bg-[#18181C] border border-[#2D2D35] w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 relative">
         <div className="absolute top-0 left-0 right-0 h-1 bg-[#9F3F5C]" />
         

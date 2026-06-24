@@ -39,6 +39,12 @@ export default function BookingConfirm() {
       <SEO 
         title="Booking Confirmed | Ultimate Blend Ladies Beauty Salon"
         description="Your appointment has been successfully booked! We look forward to welcoming you at Ultimate Blend Ladies Beauty Salon."
+        robots="noindex, nofollow"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: "Booking Confirmed | Ultimate Blend Ladies Beauty Salon",
+        }}
       />
       {/* Container Card */}
       <div className="bg-[#EAD0DC] w-full max-w-lg rounded-2xl shadow-xl overflow-hidden relative border border-pink-100/30">

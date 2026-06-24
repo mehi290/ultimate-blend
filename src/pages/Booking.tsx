@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { SEO } from "@/components/site/SEO";
+import { BASE_SCHEMA } from "@/lib/seo-config";
 import { 
   ChevronLeft, 
   Check, 
@@ -471,6 +472,13 @@ export default function Booking() {
       <SEO 
         title="Book an Appointment | Ultimate Blend Ladies Beauty Salon Dubai"
         description="Easily book your hairdressing, braiding, nail care, or makeup appointment online. Select your service, date, and slot today."
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: "Book an Appointment | Ultimate Blend Ladies Beauty Salon",
+          description: "Online booking for hairdressing, braiding, nail care, and makeup appointments in Dubai.",
+          mainEntity: BASE_SCHEMA,
+        }}
       />
       {/* Background tint overlay to ensure high readability of all text */}
       <div className="absolute inset-0 bg-[#FDF8FA]/90 backdrop-blur-[2px] pointer-events-none" />

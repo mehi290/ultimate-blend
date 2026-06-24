@@ -11,48 +11,13 @@ import { OurWork } from "@/components/site/OurWork";
 import { Footer } from "@/components/site/Footer";
 import { SEO } from "@/components/site/SEO";
 import { FAQ } from "@/components/site/FAQ";
+import { BASE_SCHEMA, buildFAQPageSchema } from "@/lib/seo-config";
 
 interface SEOConfig {
   title: string;
   description: string;
-  schema?: Record<string, any>;
+  schema?: Record<string, unknown>;
 }
-
-const BASE_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "BeautySalon",
-  "name": "Ultimate Blend Ladies Beauty Salon",
-  "url": "https://www.ultimateblendladiessalon.com/",
-  "image": "https://www.ultimateblendladiessalon.com/about%20image.png",
-  "telephone": "+97155617 3486",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "City Stay Premium Hotel Building - Shop 4 - 4th St - Naif - Deira - Dubai",
-    "addressLocality": "Dubai",
-    "addressCountry": "AE"
-  },
-  "openingHoursSpecification": [
-    {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday"
-      ],
-      "opens": "09:00",
-      "closes": "23:30"
-    }
-  ],
-  "sameAs": [
-    "https://www.instagram.com/ultimateblendladiessalon/",
-    "https://www.tiktok.com/@ultimateblendsalon1",
-    "https://www.facebook.com/p/Ultimate-blend-Ladies-Beauty-Salon-Dubai-100046602049825/"
-  ]
-};
 
 const SEO_MAP: Record<string, SEOConfig> = {
   "/": {
@@ -156,28 +121,7 @@ const SEO_MAP: Record<string, SEOConfig> = {
   "/faq": {
     title: "Best Hair Braiding in Deira | Ultimate Blend Ladies Salon Dubai",
     description: "Looking for the best hair braiding in Deira? Ultimate Blend Ladies Salon offers flawless knotless braids, Fulani cornrows, boho braids, and convenient premium home services across Dubai. Book your appointment online today!",
-    schema: {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Do you provide the hair extensions for boho, knotless, and Fulani braids?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, Ultimate Blend Ladies Salon provides premium-quality extensions across various natural colors and lengths for all knotless, boho, and Fulani braiding packages."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How do I book a home service salon appointment in Dubai?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "You can book our professional home service beauty and braiding team directly through our website booking portal or by dropping us a message on WhatsApp."
-          }
-        }
-      ]
-    }
+    schema: buildFAQPageSchema()
   },
   "/privacy-policy": {
     title: "Privacy Policy | Ultimate Blend Ladies Beauty Salon Dubai",

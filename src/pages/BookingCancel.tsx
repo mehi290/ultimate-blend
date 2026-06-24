@@ -72,6 +72,12 @@ export default function BookingCancel() {
       <SEO 
         title="Booking Canceled | Ultimate Blend Ladies Beauty Salon"
         description="Your appointment booking has been canceled. Please contact us if you need to reschedule."
+        robots="noindex, nofollow"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: "Booking Canceled | Ultimate Blend Ladies Beauty Salon",
+        }}
       />
       <header className="bg-[#9F3F5C] text-white py-6 px-4 text-center relative shadow-sm">
 

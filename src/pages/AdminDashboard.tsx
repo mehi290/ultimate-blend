@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import { SEO } from "@/components/site/SEO";
 import {
   LayoutDashboard,
   Calendar as CalendarIcon,
@@ -897,6 +898,11 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#0F0F11] text-[#E3E3E6] font-sans flex flex-col md:flex-row">
+      <SEO
+        title="Admin | Ultimate Blend Ladies Beauty Salon"
+        description="Admin dashboard for Ultimate Blend Ladies Beauty Salon."
+        robots="noindex, nofollow"
+      />
       
       {/* Mobile Header Banner */}
       <header className="md:hidden bg-[#18181C] border-b border-[#2D2D35] px-4 py-3 flex items-center justify-between text-white sticky top-0 z-50">

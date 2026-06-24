@@ -1,28 +1,29 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { OG_IMAGE, SITE_NAME, SITE_URL } from "@/lib/seo-config";
 
 interface SEOProps {
   title: string;
   description: string;
   canonical?: string;
   ogImage?: string;
-  schema?: Record<string, any>;
+  schema?: Record<string, unknown>;
+  robots?: string;
 }
 
 export const SEO = ({
   title,
   description,
   canonical,
-  ogImage = "https://ultimate-blend-salon.vercel.app/about%20image.png",
-  schema
+  ogImage = OG_IMAGE,
+  schema,
+  robots = "index, follow, max-image-preview:large",
 }: SEOProps) => {
   const location = useLocation();
 
   useEffect(() => {
-    // 1. Update Title
     document.title = title;
 
-    // 2. Update Meta Description
     let metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
       metaDescription = document.createElement("meta");
@@ -31,8 +32,15 @@ export const SEO = ({
     }
     metaDescription.setAttribute("content", description);
 
-    // 3. Update Canonical URL
-    const canonicalUrl = canonical || `https://www.ultimateblendladiessalon.com${location.pathname}`;
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    if (!metaRobots) {
+      metaRobots = document.createElement("meta");
+      metaRobots.setAttribute("name", "robots");
+      document.head.appendChild(metaRobots);
+    }
+    metaRobots.setAttribute("content", robots);
+
+    const canonicalUrl = canonical || `${SITE_URL}${location.pathname}`;
     let canonicalLink = document.querySelector('link[rel="canonical"]');
     if (!canonicalLink) {
       canonicalLink = document.createElement("link");
@@ -41,7 +49,6 @@ export const SEO = ({
     }
     canonicalLink.setAttribute("href", canonicalUrl);
 
-    // 4. Update Open Graph Tags
     const updateOgTag = (property: string, content: string) => {
       let tag = document.querySelector(`meta[property="${property}"]`);
       if (!tag) {
@@ -56,8 +63,13 @@ export const SEO = ({
     updateOgTag("og:description", description);
     updateOgTag("og:url", canonicalUrl);
     updateOgTag("og:image", ogImage);
+    updateOgTag("og:type", "website");
+    updateOgTag("og:site_name", SITE_NAME);
+    updateOgTag("og:locale", "en_US");
+    updateOgTag("og:image:width", "1200");
+    updateOgTag("og:image:height", "630");
+    updateOgTag("og:image:alt", `${SITE_NAME} preview`);
 
-    // 5. Update Twitter Tags
     const updateTwitterTag = (name: string, content: string) => {
       let tag = document.querySelector(`meta[name="${name}"]`);
       if (!tag) {
@@ -68,11 +80,17 @@ export const SEO = ({
       tag.setAttribute("content", content);
     };
 
+    updateTwitterTag("twitter:card", "summary_large_image");
     updateTwitterTag("twitter:title", title);
     updateTwitterTag("twitter:description", description);
     updateTwitterTag("twitter:image", ogImage);
+    updateTwitterTag("twitter:image:alt", `${SITE_NAME} preview`);
 
-    // 6. Inject Schema JSON-LD
+    const staticSchema = document.getElementById("static-schema");
+    if (staticSchema) {
+      staticSchema.remove();
+    }
+
     if (schema) {
       let schemaScript = document.getElementById("seo-schema") as HTMLScriptElement;
       if (!schemaScript) {
@@ -83,13 +101,12 @@ export const SEO = ({
       }
       schemaScript.textContent = JSON.stringify(schema);
     } else {
-      // Remove custom schema if not specified for this route
       const schemaScript = document.getElementById("seo-schema");
       if (schemaScript) {
         schemaScript.remove();
       }
     }
-  }, [title, description, canonical, ogImage, schema, location.pathname]);
+  }, [title, description, canonical, ogImage, schema, robots, location.pathname]);
 
   return null;
 };

@@ -1,51 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FAQ_ITEMS } from "@/lib/seo-config";
 
 export const FAQ = () => {
   const navigate = useNavigate();
   const [showAll, setShowAll] = useState(false);
 
-  const faqs = [
-    {
-      question: "Do you provide the hair extensions for boho, knotless, and Fulani braids?",
-      answer: "Yes, we provide high quality human hair extensions in a variety of colors and lengths, for specialized styles like human hair boho braids."
-    },
-    {
-      question: "How long do braids normally take to install?",
-      answer: "Depending on the thickness, and length of the style (e.g., standard knotless vs. Fulani cornrows), installation generally takes between 3 to 6 hours. Our focus is always on precision, neat parting, and hair health."
-    },
-    {
-      question: "How do I book a home service appointment in Dubai?",
-      answer: "You can seamlessly book home services online on our website or by messaging on WhatsApp. Simply choose the 'Home Service' option of your preferred service, share your address, and our professional stylists will bring the salon experience to your doorstep."
-    },
-    {
-      question: "Is there a minimum spend or travel fee for home services?",
-      answer: "Our home services are available across most major residential districts in Dubai. Transport fee depends on your exact location."
-    },
-    {
-      question: "Do you require a booking prior or accept walk-ins?",
-      answer: "While we do accommodate walk-ins at our physical Dubai salon, we recommend prior booking to avoid waiting."
-    },
-    {
-      question: "What is your cancellation and rescheduling policy?",
-      answer: "We understand plans change! We kindly ask that you modify or cancel your booking at least 6 hours in advance so we can open up the slot to other clients on our waitlist."
-    }
-  ];
-
-  const displayedFaqs = showAll ? faqs : faqs.slice(0, 2);
+  const displayedFaqs = showAll ? FAQ_ITEMS : FAQ_ITEMS.slice(0, 2);
 
   return (
     <section id="faq" className="py-12 md:py-16 px-6 md:px-16 bg-[#FDF8FA]">
       <div className="max-w-4xl mx-auto">
-        
-        {/* Uppercase Header matching your screenshot styling */}
         <div className="mb-10 text-left">
           <h2 className="font-display font-black text-[#9F3F5C] text-2xl md:text-4xl tracking-[0.05em] uppercase">
             Frequently Asked Questions
           </h2>
         </div>
 
-        {/* Flat Accordion layout (all items closed by default) */}
         <div className="space-y-2">
           {displayedFaqs.map((item, idx) => (
             <details
@@ -78,7 +49,6 @@ export const FAQ = () => {
           ))}
         </div>
 
-        {/* See More / See Less Toggle Button */}
         <div className="mt-4 text-center">
           <button
             onClick={() => setShowAll(!showAll)}
@@ -88,7 +58,6 @@ export const FAQ = () => {
           </button>
         </div>
 
-        {/* Compact CTA */}
         <div className="mt-12 text-center border-t border-pink-100/50 pt-8">
           <p className="text-xs text-gray-500 mb-4">Ready to transform your look?</p>
           <button
