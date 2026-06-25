@@ -1,4 +1,5 @@
 import { Instagram, Facebook, MapPin, Phone, Clock, MessageCircle } from "lucide-react";
+import { LAST_UPDATED } from "@/lib/seo-config";
 
 const Tiktok = ({ className }: { className?: string }) => (
   <svg
@@ -84,6 +85,8 @@ export const Footer = () => {
             <a href="/terms-conditions" className="font-display text-xs opacity-60 hover:opacity-100 transition-opacity">Terms & Conditions</a>
             <span className="text-xs opacity-30">•</span>
             <a href="/blog" className="font-display text-xs opacity-60 hover:opacity-100 transition-opacity">Blog</a>
+            <span className="text-xs opacity-30">•</span>
+            <span className="font-display text-xs opacity-60">Last updated: {LAST_UPDATED}</span>
           </div>
           <div className="flex gap-3">
             <a
