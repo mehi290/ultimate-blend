@@ -21,7 +21,14 @@ const BASE_SCHEMA = {
   "name": SITE_NAME,
   "url": `${SITE_URL}/`,
   "image": OG_IMAGE,
-  "telephone": "+971556173486", // Updated to clean standard format
+  "telephone": "+971556173486",
+  "priceRange": "$$",
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "25.2725",
+    "longitude": "55.3125"
+  },
+  "hasMap": "https://maps.google.com/?q=City+Stay+Premium+Hotel+Building+-+Shop+4+-+4th+St+-+Naif+-+Deira+-+Dubai",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "City Stay Premium Hotel Building - Shop 4 - 4th St - Naif - Deira - Dubai",
@@ -48,7 +55,94 @@ const BASE_SCHEMA = {
     "https://www.instagram.com/ultimateblendladiessalon/",
     "https://www.tiktok.com/@ultimateblendsalon1",
     "https://www.facebook.com/p/Ultimate-blend-Ladies-Beauty-Salon-Dubai-100046602049825/"
-  ]
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5.0",
+    "reviewCount": "6"
+  },
+  "review": [
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Bons Arte"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had my old braids removed, my hair washed, blow-dryed and re-braided. I have very thick, long hair. But the stylists made sure enough people were working on my hair at once that the process was the fastest I've had since moving to Dubai!! All of the staff were very welcoming and kind, I'm super happy with my braids and the service!! I will be back very soon."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Tonia Chris"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had an amazing experience at Ultimate Blend Salon! The atmosphere was warm and welcoming, and my knotless braids came out absolutely beautiful. A special shout out to Chioma she was so gentle, patient, and incredibly skilled."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Shereen Chambers"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had my hair braided by Ennie and I couldn't be happier! I booked a house call, and she arrived on time, was super friendly, and made me feel so comfortable. She worked quickly but with so much attention to detail, my braids look amazing and neat!"
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Tolu Sky"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had a great time making my hair, the customer service is top-notch and my hair was so beautiful. Great service at fair price."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Ojogri Akpevwe Avemaria"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I really loved my experience here. From the ambience to the customer service. The best I've had in Dubai. I hope to come again soon."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Deborah Mustafa"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had an amazing time at the salon. I went to make nails there and they give me the best customer service i've ever experienced since i came to dubai."
+    }
+  ],
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": [
+      "#faq",
+      "#about",
+      "#services"
+    ]
+  }
 };
 
 const FAQ_ITEMS = [
@@ -79,6 +173,9 @@ const FAQ_ITEMS = [
 ];
 
 function buildFAQPageSchema() {
+  const salonSchema = { ...BASE_SCHEMA };
+  delete (salonSchema as any)["@context"];
+
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -93,7 +190,7 @@ function buildFAQPageSchema() {
           }
         }))
       },
-      { ...BASE_SCHEMA }
+      salonSchema
     ]
   };
 }
@@ -148,29 +245,7 @@ const SEO_MAP: Record<string, { title: string; description: string; schema: any 
       "mainEntity": BASE_SCHEMA
     }
   },
-  "/gallery": {
-    title: "Gallery & Portfolio | Ultimate Blend Ladies Beauty Salon Dubai",
-    description: "Browse our portfolio of gorgeous hair braids, makeup, nails, and transformations at Ultimate Blend Ladies Beauty Salon.",
-    schema: {
-      "@context": "https://schema.org",
-      "@type": "ImageGallery",
-      "name": "Gallery | Ultimate Blend Ladies Beauty Salon",
-      "description": "Photos of haircuts, hair braids, and acrylic nails created by our beauty artists.",
-      "mainEntity": BASE_SCHEMA
-    }
-  },
   "/contactus": {
-    title: "Contact & Location in Deira, Dubai | Ultimate Blend Ladies Beauty Salon",
-    description: "Find our salon in Naif, Deira, Dubai. Contact us to book an appointment or get directions to Ultimate Blend Ladies Beauty Salon.",
-    schema: {
-      "@context": "https://schema.org",
-      "@type": "ContactPage",
-      "name": "Contact Us - Ultimate Blend Ladies Beauty Salon",
-      "description": "Get in touch or visit our salon location in Naif, Deira, Dubai.",
-      "mainEntity": BASE_SCHEMA
-    }
-  },
-  "/deira": {
     title: "Contact & Location in Deira, Dubai | Ultimate Blend Ladies Beauty Salon",
     description: "Find our salon in Naif, Deira, Dubai. Contact us to book an appointment or get directions to Ultimate Blend Ladies Beauty Salon.",
     schema: {
@@ -222,6 +297,53 @@ const SEO_MAP: Record<string, { title: string; description: string; schema: any 
   }
 };
 
+const buildBreadcrumbsSchema = (pathname: string) => {
+  const parts = pathname.split("/").filter(Boolean);
+  const items = [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://www.ultimateblendladiessalon.com/"
+    }
+  ];
+
+  let pathAccumulator = "";
+  parts.forEach((part, index) => {
+    pathAccumulator += `/${part}`;
+    let name = part.charAt(0).toUpperCase() + part.slice(1);
+    if (part === "ourwork") name = "Our Work";
+    if (part === "contactus") name = "Contact Us";
+    if (part === "home-service-dubai") name = "Home Services";
+    if (part === "salon-near-me") name = "Salon Near Me";
+    if (part === "terms-conditions") name = "Terms & Conditions";
+    if (part === "privacy-policy") name = "Privacy Policy";
+    if (part === "faq") name = "FAQs";
+
+    if (part === "services") {
+      name = "Services";
+    } else if (parts[index - 1] === "services") {
+      name = part
+        .split("-")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
+
+    items.push({
+      "@type": "ListItem",
+      "position": index + 2,
+      "name": name,
+      "item": `https://www.ultimateblendladiessalon.com${pathAccumulator}`
+    });
+  });
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items
+  };
+};
+
 export default async function middleware(request: Request) {
   const url = new URL(request.url);
   const pathname = url.pathname;
@@ -258,9 +380,15 @@ export default async function middleware(request: Request) {
         schema: {
           "@context": "https://schema.org",
           "@type": "Service",
+          "name": `${category} Services - Ultimate Blend Ladies Beauty Salon`,
           "serviceType": category,
           "provider": BASE_SCHEMA,
-          "areaServed": "Dubai"
+          "areaServed": "Dubai",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "AED",
+            "description": `Custom quotes and pricing options available for ${category} services.`
+          }
         }
       };
     }
@@ -279,8 +407,27 @@ export default async function middleware(request: Request) {
     html = html.replace(/<meta name="twitter:title" content="[^]*?"\s*\/?>/, `<meta name="twitter:title" content="${configObj.title}" />`);
     html = html.replace(/<meta name="twitter:description" content="[^]*?"\s*\/?>/, `<meta name="twitter:description" content="${configObj.description}" />`);
 
+    // Combine route schema and breadcrumbs into a single @graph schema
+    let finalSchema: any = configObj.schema;
+    if (configObj.schema) {
+      const breadcrumbs = buildBreadcrumbsSchema(pathname);
+      if (configObj.schema["@graph"] && Array.isArray(configObj.schema["@graph"])) {
+        finalSchema = {
+          "@context": "https://schema.org",
+          "@graph": [...configObj.schema["@graph"], breadcrumbs]
+        };
+      } else {
+        const routeSchema = { ...configObj.schema };
+        delete routeSchema["@context"];
+        finalSchema = {
+          "@context": "https://schema.org",
+          "@graph": [routeSchema, breadcrumbs]
+        };
+      }
+    }
+
     // Replace the static JSON-LD script block
-    const schemaScriptStr = `<script id="static-schema" type="application/ld+json">${JSON.stringify(configObj.schema)}</script>`;
+    const schemaScriptStr = `<script id="static-schema" type="application/ld+json">${JSON.stringify(finalSchema)}</script>`;
     html = html.replace(/<script id="static-schema" type="application\/ld\+json">[^]*?<\/script>/, schemaScriptStr);
 
     return new Response(html, {

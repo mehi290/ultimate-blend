@@ -41,7 +41,14 @@ export const BASE_SCHEMA = {
   name: SITE_NAME,
   url: `${SITE_URL}/`,
   image: OG_IMAGE,
-  telephone: "+97155617 3486",
+  telephone: "+971556173486",
+  priceRange: "$$",
+  geo: {
+    "@type": "GeoCoordinates",
+    "latitude": "25.2725",
+    "longitude": "55.3125"
+  },
+  hasMap: "https://maps.google.com/?q=City+Stay+Premium+Hotel+Building+-+Shop+4+-+4th+St+-+Naif+-+Deira+-+Dubai",
   address: {
     "@type": "PostalAddress",
     streetAddress:
@@ -70,6 +77,93 @@ export const BASE_SCHEMA = {
     "https://www.tiktok.com/@ultimateblendsalon1",
     "https://www.facebook.com/p/Ultimate-blend-Ladies-Beauty-Salon-Dubai-100046602049825/",
   ],
+  aggregateRating: {
+    "@type": "AggregateRating",
+    "ratingValue": "5.0",
+    "reviewCount": "6"
+  },
+  review: [
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Bons Arte"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had my old braids removed, my hair washed, blow-dryed and re-braided. I have very thick, long hair. But the stylists made sure enough people were working on my hair at once that the process was the fastest I've had since moving to Dubai!! All of the staff were very welcoming and kind, I'm super happy with my braids and the service!! I will be back very soon."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Tonia Chris"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had an amazing experience at Ultimate Blend Salon! The atmosphere was warm and welcoming, and my knotless braids came out absolutely beautiful. A special shout out to Chioma she was so gentle, patient, and incredibly skilled."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Shereen Chambers"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had my hair braided by Ennie and I couldn't be happier! I booked a house call, and she arrived on time, was super friendly, and made me feel so comfortable. She worked quickly but with so much attention to detail, my braids look amazing and neat!"
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Tolu Sky"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had a great time making my hair, the customer service is top-notch and my hair was so beautiful. Great service at fair price."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Ojogri Akpevwe Avemaria"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I really loved my experience here. From the ambience to the customer service. The best I've had in Dubai. I hope to come again soon."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Deborah Mustafa"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "I had an amazing time at the salon. I went to make nails there and they give me the best customer service i've ever experienced since i came to dubai."
+    }
+  ],
+  speakable: {
+    "@type": "SpeakableSpecification",
+    "cssSelector": [
+      "#faq",
+      "#about",
+      "#services"
+    ]
+  }
 };
 
 export function buildFAQPageSchema() {

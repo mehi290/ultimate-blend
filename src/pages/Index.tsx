@@ -155,20 +155,78 @@ const Index = () => {
   }, [location.pathname]);
 
   const currentPath = location.pathname;
+
+  const buildBreadcrumbsSchema = (pathname: string) => {
+    const parts = pathname.split("/").filter(Boolean);
+    const items = [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.ultimateblendladiessalon.com/"
+      }
+    ];
+
+    let pathAccumulator = "";
+    parts.forEach((part, index) => {
+      pathAccumulator += `/${part}`;
+      let name = part.charAt(0).toUpperCase() + part.slice(1);
+      if (part === "ourwork") name = "Our Work";
+      if (part === "contactus") name = "Contact Us";
+      if (part === "home-service-dubai") name = "Home Services";
+      if (part === "salon-near-me") name = "Salon Near Me";
+      if (part === "terms-conditions") name = "Terms & Conditions";
+      if (part === "privacy-policy") name = "Privacy Policy";
+      if (part === "faq") name = "FAQs";
+
+      if (part === "services") {
+        name = "Services";
+      } else if (parts[index - 1] === "services") {
+        name = part
+          .split("-")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      }
+
+      items.push({
+        "@type": "ListItem",
+        "position": index + 2,
+        "name": name,
+        "item": `https://www.ultimateblendladiessalon.com${pathAccumulator}`
+      });
+    });
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": items
+    };
+  };
+
   let seo = SEO_MAP[currentPath];
 
   if (!seo && currentPath.startsWith("/services/")) {
-    const category = currentPath.split("/").pop() || "";
-    const cleanCategory = category.charAt(0).toUpperCase() + category.slice(1);
+    const categoryRaw = currentPath.split("/").pop() || "";
+    const category = categoryRaw
+      .split("-")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
     seo = {
-      title: `${cleanCategory} Services | Ultimate Blend Ladies Beauty Salon Dubai`,
+      title: `${category} Services | Ultimate Blend Ladies Beauty Salon Dubai`,
       description: `Premium ${category} services in Deira, Dubai at Ultimate Blend Ladies Beauty Salon. Professional stylists, luxury treatments, and booking.`,
       schema: {
         "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": `${cleanCategory} Services | Ultimate Blend Ladies Beauty Salon`,
-        "description": `Premium ladies ${category} services in Deira, Dubai.`,
-        "mainEntity": BASE_SCHEMA
+        "@type": "Service",
+        "name": `${category} Services - Ultimate Blend Ladies Beauty Salon`,
+        "serviceType": category,
+        "provider": BASE_SCHEMA,
+        "areaServed": "Dubai",
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "AED",
+          "description": `Custom quotes and pricing options available for ${category} services.`
+        }
       }
     };
   }
@@ -177,12 +235,31 @@ const Index = () => {
     seo = SEO_MAP["/"];
   }
 
+  // Combine route schema and breadcrumbs into a single @graph schema
+  let finalSchema: any = seo.schema;
+  if (seo.schema) {
+    const breadcrumbs = buildBreadcrumbsSchema(currentPath);
+    if (seo.schema["@graph"] && Array.isArray(seo.schema["@graph"])) {
+      finalSchema = {
+        "@context": "https://schema.org",
+        "@graph": [...seo.schema["@graph"], breadcrumbs]
+      };
+    } else {
+      const routeSchema = { ...seo.schema };
+      delete (routeSchema as any)["@context"];
+      finalSchema = {
+        "@context": "https://schema.org",
+        "@graph": [routeSchema, breadcrumbs]
+      };
+    }
+  }
+
   return (
     <div className="min-h-svh bg-background text-foreground overflow-x-clip">
       <SEO 
         title={seo.title}
         description={seo.description}
-        schema={seo.schema}
+        schema={finalSchema}
       />
       <Sidebar />
       <main className="md:pl-[88px] pt-14 md:pt-0">
