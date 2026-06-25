@@ -69,29 +69,7 @@ const SEO_MAP: Record<string, SEOConfig> = {
       "mainEntity": BASE_SCHEMA
     }
   },
-  "/gallery": {
-    title: "Gallery & Portfolio | Ultimate Blend Ladies Beauty Salon Dubai",
-    description: "Browse our portfolio of gorgeous hair braids, makeup, nails, and transformations at Ultimate Blend Ladies Beauty Salon.",
-    schema: {
-      "@context": "https://schema.org",
-      "@type": "ImageGallery",
-      "name": "Gallery | Ultimate Blend Ladies Beauty Salon",
-      "description": "Photos of haircuts, hair braids, and acrylic nails created by our beauty artists.",
-      "mainEntity": BASE_SCHEMA
-    }
-  },
   "/contactus": {
-    title: "Contact & Location in Deira, Dubai | Ultimate Blend Ladies Beauty Salon",
-    description: "Find our salon in Naif, Deira, Dubai. Contact us to book an appointment or get directions to Ultimate Blend Ladies Beauty Salon.",
-    schema: {
-      "@context": "https://schema.org",
-      "@type": "ContactPage",
-      "name": "Contact Us - Ultimate Blend Ladies Beauty Salon",
-      "description": "Get in touch or visit our salon location in Naif, Deira, Dubai.",
-      "mainEntity": BASE_SCHEMA
-    }
-  },
-  "/deira": {
     title: "Contact & Location in Deira, Dubai | Ultimate Blend Ladies Beauty Salon",
     description: "Find our salon in Naif, Deira, Dubai. Contact us to book an appointment or get directions to Ultimate Blend Ladies Beauty Salon.",
     schema: {

@@ -4,6 +4,16 @@
       "source": "/chat",
       "destination": "https://wa.me/971556173486",
       "permanent": true
+    },
+    {
+      "source": "/gallery",
+      "destination": "/ourwork",
+      "permanent": true
+    },
+    {
+      "source": "/deira",
+      "destination": "/contactus",
+      "permanent": true
     }
   ],
   "rewrites": [
