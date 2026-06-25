@@ -13,6 +13,10 @@ import NotFound from "./pages/NotFound.tsx";
 import Booking from "./pages/Booking.tsx";
 import BookingConfirm from "./pages/BookingConfirm.tsx";
 import BookingCancel from "./pages/BookingCancel.tsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
+import TermsConditions from "./pages/TermsConditions.tsx";
+import Blog from "./pages/Blog.tsx";
+import BlogPost from "./pages/BlogPost.tsx";
 
 // Admin Pages
 import AdminLogin from "./pages/admin/Login.tsx";
@@ -59,8 +63,10 @@ const App = () => (
           <Route path="/contactus" element={<Index />} />
           <Route path="/salon-near-me" element={<Index />} />
           <Route path="/home-service-dubai" element={<Index />} />
-          <Route path="/terms-conditions" element={<Index />} />
-          <Route path="/privacy-policy" element={<Index />} />
+          <Route path="/terms-conditions" element={<TermsConditions />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/faq" element={<Index />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/booking/confirm" element={<BookingConfirm />} />

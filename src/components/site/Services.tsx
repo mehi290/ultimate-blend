@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight, X, Ticket, Calendar, CheckCircle2, Check, MessageCircle } from "lucide-react";
 import { SERVICES_FLAT, SERVICE_FILTERS } from "./data";
 import { supabase } from "@/lib/supabase";
@@ -202,7 +202,100 @@ const MAIN_SERVICES = [
   }
 ];
 
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  "knotless-braids": "Get lightweight, tension-free <a href=\"/services/knotless-braids\" class=\"underline text-[#9F3F5C] font-semibold\">knotless braids</a> styled by our experts. We offer small, medium, and big sizes with premium extensions. Read our <a href=\"/blog/complete-guide-to-hair-braiding-types-durability-tips\" class=\"underline text-[#9F3F5C] font-semibold\">braiding guide</a> for details, or check our <a href=\"/faq\" class=\"underline text-[#9F3F5C] font-semibold\">FAQ</a> for care tips.",
+  "boho-braids": "Achieve the beautiful, bohemian look with our signature boho braids. Crafted using premium extensions with curly wisps of hair integrated throughout. Learn about maintenance in our <a href=\"/blog/expert-tips-for-maintaining-your-boho-french-curls-in-dubais-humidity\" class=\"underline text-[#9F3F5C] font-semibold\">maintenance guide</a>.",
+  "nails": "Indulge in professional nail treatments including classic manicures, pedicures, extensions, and gel designs. We use premium polishes. Check out our <a href=\"/faq\" class=\"underline text-[#9F3F5C] font-semibold\">FAQ section</a> for nail care info.",
+  "eyelash": "Enhance your eyes with classic, hybrid, volume, or mega volume lash extensions. Our certified lash artists customize each set to match your eyes. Find answers to lash care in our <a href=\"/faq\" class=\"underline text-[#9F3F5C] font-semibold\">FAQ page</a>.",
+  "box-braids": "Traditional, clean box parting braids designed for longevity and style. Available in various lengths and thicknesses. Learn more about braiding styles in our <a href=\"/blog/complete-guide-to-hair-braiding-types-durability-tips\" class=\"underline text-[#9F3F5C] font-semibold\">ultimate braiding guide</a>.",
+  "cornrows": "Expertly crafted cornrow styles, from simple stitch lines to complex creative patterns. Clean partings and scalp care are prioritized. Book your hair service or check out our <a href=\"/faq\" class=\"underline text-[#9F3F5C] font-semibold\">frequently asked questions</a>.",
+  "crochet": "Get beautiful styling in half the time with our protective crochet installations. Lightweight, natural-looking dreads, twists, or curls. Learn about protective styles in our <a href=\"/blog/complete-guide-to-hair-braiding-types-durability-tips\" class=\"underline text-[#9F3F5C] font-semibold\">braiding guide</a>.",
+  "color": "Transform your look with customized hair coloring, root touch-ups, highlights, or balayage. Our expert colorists ensure vibrant shades. Browse our <a href=\"/blog\" class=\"underline text-[#9F3F5C] font-semibold\">blog</a> for inspiration.",
+  "treatment": "Revitalize your hair with deep conditioning, keratin, or scalp therapies. We target dry, damaged, or frizzy hair to restore shine. Learn about salon treatments on our <a href=\"/faq\" class=\"underline text-[#9F3F5C] font-semibold\">FAQ</a>.",
+  "skin": "Pamper your face with deep-cleansing facials and premium skincare therapies designed to renew and brighten your complexion. Learn about our skincare approach on our <a href=\"/faq\" class=\"underline text-[#9F3F5C] font-semibold\">FAQ page</a>.",
+  "dreadlocks": "Professional dreadlock styling, maintenance, retwists, and starter locks. We prioritize clean locking techniques. Find maintenance tips in our <a href=\"/faq\" class=\"underline text-[#9F3F5C] font-semibold\">FAQs</a>.",
+  "wigs-extensions": "Expert installations, sew-ins, wig styling, and tape-in extensions to add seamless volume, length, or a brand new style. Book online or read about hair care in our <a href=\"/blog\" class=\"underline text-[#9F3F5C] font-semibold\">blog articles</a>.",
+  "boho-french-curls": "Stunning boho French curls that offer a voluminous, glamorous style. Perfect for any occasion. Read our <a href=\"/blog/expert-tips-for-maintaining-your-boho-french-curls-in-dubais-humidity\" class=\"underline text-[#9F3F5C] font-semibold\">humidity survival guide</a> for style maintenance.",
+  "fulani-twist-braid": "Gorgeous Fulani twist braids combining cornrows with twists. Learn more about classic protective styles in our <a href=\"/blog/complete-guide-to-hair-braiding-types-durability-tips\" class=\"underline text-[#9F3F5C] font-semibold\">braiding comparison article</a>.",
+  "boho-stitch-braids": "Signature goddess boho braids and stitch braids. Excellent protective styling with clean partings. Book your appointment or visit our <a href=\"/faq\" class=\"underline text-[#9F3F5C] font-semibold\">FAQ page</a>.",
+  "extension-cornrows": "Beautiful extension cornrows custom-styled for length, volume, and longevity. Discover more about protective styles in our <a href=\"/blog/complete-guide-to-hair-braiding-types-durability-tips\" class=\"underline text-[#9F3F5C] font-semibold\">braiding types guide</a>.",
+  "blow-dry": "Get a professional blow-dry and iron finish for smooth, sleek, and voluminous hair. Learn about styling products in our salon <a href=\"/faq\" class=\"underline text-[#9F3F5C] font-semibold\">FAQ</a>.",
+  "styling": "Professional wig installation and styling services. Achieve a natural, seamless look. Learn about styling techniques in our <a href=\"/blog\" class=\"underline text-[#9F3F5C] font-semibold\">salon blog</a>."
+};
+
+
+const LazyVideo = ({ src, className }: { src: string; className?: string }) => {
+  const [shouldRender, setShouldRender] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldRender(true);
+        }
+      },
+      { rootMargin: "400px 0px", threshold: 0 }
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!shouldRender) return;
+    const el = videoRef.current;
+    if (!el) return;
+
+    const playPauseObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (el.paused) {
+            el.play().catch(() => {});
+          }
+        } else {
+          if (!el.paused) {
+            el.pause();
+          }
+        }
+      },
+      { rootMargin: "100px 0px", threshold: 0 }
+    );
+
+    playPauseObserver.observe(el);
+    return () => {
+      playPauseObserver.disconnect();
+    };
+  }, [shouldRender]);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 w-full h-full bg-neutral-900">
+      {shouldRender ? (
+        <video
+          ref={videoRef}
+          src={src}
+          preload="metadata"
+          loop
+          muted
+          playsInline
+          className={className}
+        />
+      ) : (
+        <div className="w-full h-full bg-neutral-900" />
+      )}
+    </div>
+  );
+};
+
+
 export const Services = () => {
+  const { category } = useParams();
   const navigate = useNavigate();
   const servicesTitle = "Services";
   const [typedServicesTitle, setTypedServicesTitle] = useState("");
@@ -915,41 +1008,6 @@ export const Services = () => {
   const isVideoFile = (src: string) => /\.(mp4|webm|mov|m4v)$/i.test(src);
 
 
-  useEffect(() => {
-    const root = scrollRef.current ?? document;
-    const videos: HTMLVideoElement[] = Array.from(
-      (root as Element).querySelectorAll?.("video[data-autoplay]") || []
-    );
-
-    if (!videos.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const el = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) {
-            if (el.paused) {
-              const playPromise = el.play();
-              if (playPromise && typeof playPromise.catch === "function") playPromise.catch(() => { });
-            }
-          } else {
-            if (!el.paused) el.pause();
-          }
-        });
-      },
-      { root: null, rootMargin: "200px 0px", threshold: 0 }
-    );
-
-    videos.forEach((v) => {
-      v.pause();
-      observer.observe(v);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [filter, loop]);
-
   const [bookingLoading, setBookingLoading] = useState(false);
 
   const sendWhatsAppConfirmation = async (params: {
@@ -1413,6 +1471,18 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
               </span>
             </h2>
 
+            {category && CATEGORY_DESCRIPTIONS[category.toLowerCase()] && (
+              <div className="mt-6 max-w-2xl p-5 border border-pink-100/50 bg-white/40 backdrop-blur-sm rounded-lg shadow-sm">
+                <p 
+                  className="text-sm text-gray-700 leading-relaxed font-medium"
+                  dangerouslySetInnerHTML={{ __html: CATEGORY_DESCRIPTIONS[category.toLowerCase()] }}
+                />
+                <p className="text-xs text-gray-500 mt-2 italic">
+                  *Prices vary based on length, thickness, or customization. Contact us for a quote or book below.
+                </p>
+              </div>
+            )}
+
             {/* Filter chips */}
             <div className="mt-8 flex flex-wrap gap-2">
               {SERVICE_FILTERS.map((f) => {
@@ -1450,14 +1520,8 @@ Thank you for choosing Ultimate Blend Ladies Beauty Salon Dubai 💇‍♀️`;
                   className="shrink-0 w-[82vw] sm:w-[60vw] md:w-[44vw] lg:w-[34vw] xl:w-[28vw] aspect-[4/5] relative overflow-hidden cursor-pointer bg-neutral-900"
                 >
                   {isVideoFile(item.image) ? (
-                    <video
+                    <LazyVideo
                       src={item.image}
-                      data-autoplay
-                      preload="metadata"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     />
                   ) : (

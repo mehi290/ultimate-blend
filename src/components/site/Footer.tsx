@@ -73,10 +73,18 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between flex-wrap gap-6 pt-8 border-t border-background/15">
-          <p className="font-display text-xs opacity-60">
-            © 2026 Ultimate Blend Ladies Beauty Salon Dubai. All rights reserved.
-          </p>
+        <div className="flex items-center justify-between flex-wrap gap-6 pt-8 border-t border-background/15 w-full">
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+            <p className="font-display text-xs opacity-60">
+              © 2026 Ultimate Blend Ladies Beauty Salon Dubai. All rights reserved.
+            </p>
+            <span className="text-xs opacity-30">•</span>
+            <a href="/privacy-policy" className="font-display text-xs opacity-60 hover:opacity-100 transition-opacity">Privacy Policy</a>
+            <span className="text-xs opacity-30">•</span>
+            <a href="/terms-conditions" className="font-display text-xs opacity-60 hover:opacity-100 transition-opacity">Terms & Conditions</a>
+            <span className="text-xs opacity-30">•</span>
+            <a href="/blog" className="font-display text-xs opacity-60 hover:opacity-100 transition-opacity">Blog</a>
+          </div>
           <div className="flex gap-3">
             <a
               href="https://www.instagram.com/ultimateblendladiessalon/"

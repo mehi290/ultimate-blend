@@ -5,9 +5,6 @@ import { FAQ_ITEMS } from "@/lib/seo-config";
 export const FAQ = () => {
   const navigate = useNavigate();
   const [showAll, setShowAll] = useState(false);
-
-  const displayedFaqs = showAll ? FAQ_ITEMS : FAQ_ITEMS.slice(0, 2);
-
   return (
     <section id="faq" className="py-12 md:py-16 px-6 md:px-16 bg-[#FDF8FA]">
       <div className="max-w-4xl mx-auto">
@@ -18,10 +15,12 @@ export const FAQ = () => {
         </div>
 
         <div className="space-y-2">
-          {displayedFaqs.map((item, idx) => (
+          {FAQ_ITEMS.map((item, idx) => (
             <details
               key={idx}
-              className="group bg-white border border-pink-100/30 rounded-lg overflow-hidden shadow-sm transition-all duration-200"
+              className={`group bg-white border border-pink-100/30 rounded-lg overflow-hidden shadow-sm transition-all duration-200 ${
+                idx >= 2 && !showAll ? "hidden" : ""
+              }`}
             >
               <summary className="flex items-center justify-between p-4 md:p-5 text-xs md:text-sm font-semibold text-[#2D2D2D] cursor-pointer hover:bg-pink-50/10 list-none select-none [&::-webkit-details-marker]:hidden">
                 <span className="pr-4">{item.question}</span>

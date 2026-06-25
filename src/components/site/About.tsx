@@ -61,11 +61,11 @@ export const About = () => {
           </span>
         </h2>
 
-        <h2 className="font-editorial text-[#8F3E59] text-2xl leading-[1.15] tracking-tight mb-8">
+        <h3 className="font-editorial text-[#8F3E59] text-2xl leading-[1.15] tracking-tight mb-8">
           Luxury Beauty Salon in
           <br />
           Dubai
-        </h2>
+        </h3>
 
         <div className="mb-8">
           <div className="relative aspect-[4/5] w-full overflow-hidden">
@@ -106,11 +106,11 @@ export const About = () => {
             </span>
           </h2>
 
-          <h2 className="font-editorial text-[#8F3E59] text-2xl md:text-4xl leading-[1.15] tracking-tight mb-8">
+          <h3 className="font-editorial text-[#8F3E59] text-2xl md:text-4xl leading-[1.15] tracking-tight mb-8">
             Luxury Beauty Salon in
             <br />
             Dubai
-          </h2>
+          </h3>
 
           <div className="space-y-5 text-muted-foreground text-base leading-relaxed max-w-xl">
             <p>
