@@ -33,6 +33,46 @@ export const FAQ_ITEMS = [
     answer:
       "We understand plans change! We kindly ask that you modify or cancel your booking at least 6 hours in advance so we can open up the slot to other clients on our waitlist.",
   },
+  {
+    question: "What is the best hair braiding salon in Dubai?",
+    answer:
+      "Ultimate Blend Ladies Beauty Salon is one of the top-rated hair braiding salons in Dubai. Our expert stylists specialize in knotless braids, boho braids, box braids, Fulani twists, cornrows, and more. We offer both salon visits in Deira and professional home services across Dubai.",
+  },
+  {
+    question: "How much do knotless braids cost in Dubai?",
+    answer:
+      "Prices for knotless braids at Ultimate Blend Ladies Beauty Salon vary by size (small, medium, or big), length, and hair density. Since the pricing varies, you can select your style on our booking page to view the details or message us on WhatsApp for a custom quote.",
+  },
+  {
+    question: "How much do boho braids cost in Dubai?",
+    answer:
+      "Boho braids at Ultimate Blend Ladies Beauty Salon are available in small, medium, and big sizes using either premium human hair or synthetic hair. Prices vary based on your chosen size, length, and hair type. Contact us on WhatsApp or book online for a personalized quote.",
+  },
+  {
+    question: "How long do boho braids last?",
+    answer:
+      "Boho braids typically last 4 to 8 weeks with proper care. To extend their lifespan, we recommend sleeping with a silk bonnet, moisturizing your scalp regularly, and avoiding excessive water exposure. Our stylists provide detailed aftercare tips at every appointment.",
+  },
+  {
+    question: "Can I get hair braiding done at home in Dubai?",
+    answer:
+      "Yes! Ultimate Blend Ladies Beauty Salon offers professional home braiding services across Dubai. Our experienced stylists come to your location with all the tools and premium hair extensions needed. Simply choose the 'Home Service' option when booking online or message us on WhatsApp with your address.",
+  },
+  {
+    question: "What types of braids do you offer in Dubai?",
+    answer:
+      "We offer a wide range of braiding styles including knotless braids, box braids, boho braids, goddess boho braids, Fulani twist braids, stitch braids, cornrows, extension cornrows, French curls, boho French curls, crochet braids, dreadlocks, and finger waves. All styles are available in small, medium, and big sizes.",
+  },
+  {
+    question: "What are the opening hours of Ultimate Blend salon?",
+    answer:
+      "Ultimate Blend Ladies Beauty Salon is open 7 days a week, Monday through Sunday, from 9:00 AM to 11:30 PM. We are located at City Stay Premium Hotel Building, Shop 4, 4th Street, Naif, Deira, Dubai.",
+  },
+  {
+    question: "Do you offer eyelash extensions at home in Dubai?",
+    answer:
+      "Yes, we offer professional eyelash extension services at home across Dubai. Choose from classic, hybrid, volume, or mega eyelash extensions. Our certified lash artists bring everything needed to your doorstep. Book online or contact us on WhatsApp.",
+  },
 ] as const;
 
 export const BASE_SCHEMA = {

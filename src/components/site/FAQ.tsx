@@ -4,7 +4,7 @@ import { FAQ_ITEMS } from "@/lib/seo-config";
 
 export const FAQ = () => {
   const navigate = useNavigate();
-  const [showAll, setShowAll] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(3);
   return (
     <section id="faq" className="py-12 md:py-16 px-6 md:px-16 bg-[#FDF8FA]">
       <div className="max-w-4xl mx-auto">
@@ -13,13 +13,13 @@ export const FAQ = () => {
             Frequently Asked Questions
           </h2>
         </div>
-
+ 
         <div className="space-y-2">
           {FAQ_ITEMS.map((item, idx) => (
             <details
               key={idx}
               className={`group bg-white border border-pink-100/30 rounded-lg overflow-hidden shadow-sm transition-all duration-200 ${
-                idx >= 2 && !showAll ? "hidden" : ""
+                idx >= visibleCount ? "hidden" : ""
               }`}
             >
               <summary className="flex items-center justify-between p-4 md:p-5 text-xs md:text-sm font-semibold text-[#2D2D2D] cursor-pointer hover:bg-pink-50/10 list-none select-none [&::-webkit-details-marker]:hidden">
@@ -47,16 +47,26 @@ export const FAQ = () => {
             </details>
           ))}
         </div>
-
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => setShowAll(!showAll)}
-            className="text-xs font-semibold text-[#9F3F5C] hover:text-[#8E3852] underline transition-colors focus:outline-none"
-          >
-            {showAll ? "See Less" : "See More"}
-          </button>
+ 
+        <div className="mt-6 flex justify-center gap-4">
+          {visibleCount > 3 && (
+            <button
+              onClick={() => setVisibleCount(3)}
+              className="text-xs font-semibold text-[#9F3F5C] hover:text-[#8E3852] underline transition-colors focus:outline-none"
+            >
+              See Less
+            </button>
+          )}
+          {visibleCount < FAQ_ITEMS.length && (
+            <button
+              onClick={() => setVisibleCount((prev) => Math.min(prev + 3, FAQ_ITEMS.length))}
+              className="text-xs font-semibold text-[#9F3F5C] hover:text-[#8E3852] underline transition-colors focus:outline-none"
+            >
+              See More
+            </button>
+          )}
         </div>
-
+ 
         <div className="mt-12 text-center border-t border-pink-100/50 pt-8">
           <p className="text-xs text-gray-500 mb-4">Ready to transform your look?</p>
           <button
