@@ -239,7 +239,7 @@ function buildFAQPageSchema() {
 
 const SEO_MAP: Record<string, { title: string; description: string; schema: any }> = {
   "/": {
-    title: "Ultimate Blend Ladies Beauty Salon | Best Hair & Braiding Salon in Dubai",
+    title: "Best Beauty Salon in Dubai | Hair Braiding near me",
     description: "Welcome to Ultimate Blend Ladies Beauty Salon in Dubai. We offer premium hair braiding, hairdressing, nails, makeup, and skincare services.",
     schema: BASE_SCHEMA
   },
