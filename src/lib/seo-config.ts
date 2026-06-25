@@ -1,5 +1,5 @@
 export const SITE_URL = "https://www.ultimateblendladiessalon.com";
-export const OG_IMAGE = `${SITE_URL}/og-image.png`;
+export const OG_IMAGE = `${SITE_URL}/og-image-v2.png`;
 export const SITE_NAME = "Ultimate Blend Ladies Beauty Salon";
 
 export const FAQ_ITEMS = [
