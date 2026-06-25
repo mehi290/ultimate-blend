@@ -41,3 +41,4 @@ Disallow: /booking/confirm
 Disallow: /booking/cancel
 
 Sitemap: https://www.ultimateblendladiessalon.com/sitemap.xml
+Sitemap: https://www.ultimateblendladiessalon.com/video-sitemap.xml

@@ -23,6 +23,16 @@ const BASE_SCHEMA = {
   "image": OG_IMAGE,
   "telephone": "+971556173486",
   "priceRange": "$$",
+  "video": [
+    {
+      "@type": "VideoObject",
+      "name": "Ultimate Blend Ladies Beauty Salon Showcase",
+      "description": "Experience premium hair braiding, nails, makeup, and facial services in Deira, Dubai.",
+      "thumbnailUrl": "https://www.ultimateblendladiessalon.com/og-image-v2.png",
+      "uploadDate": "2026-06-25T12:00:00+04:00",
+      "contentUrl": "https://www.ultimateblendladiessalon.com/final%20hero%20ultimate%20compressed%20final.mp4"
+    }
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": "25.2725",
