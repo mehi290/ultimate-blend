@@ -21,7 +21,7 @@ interface SEOConfig {
 
 const SEO_MAP: Record<string, SEOConfig> = {
   "/": {
-    title: "Best Beauty Salon in Dubai | Hair Braiding near me",
+    title: "Best Beauty Salon in Dubai - if you are looking for Hair Braiding & Hairdressing Services near me or Boho Braiding & African Braiding near me - Ultimate Blend Ladies Beauty Salon is the place to be",
     description: "Welcome to Ultimate Blend Ladies Beauty Salon in Dubai. We offer premium hair braiding, hairdressing, nails, makeup, and skincare services.",
     schema: BASE_SCHEMA
   },
