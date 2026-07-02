@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -7,26 +7,27 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
 
-// Pages
+// Main Landing Page (statically imported to prevent any landing page delay)
 import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import Booking from "./pages/Booking.tsx";
-import BookingConfirm from "./pages/BookingConfirm.tsx";
-import BookingCancel from "./pages/BookingCancel.tsx";
-import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
-import TermsConditions from "./pages/TermsConditions.tsx";
-import Blog from "./pages/Blog.tsx";
-import BlogPost from "./pages/BlogPost.tsx";
 
-// Admin Pages
-import AdminLogin from "./pages/admin/Login.tsx";
-import AdminDashboard from "./pages/admin/Dashboard.tsx";
-import AdminBookings from "./pages/admin/Bookings.tsx";
-import AdminServices from "./pages/admin/Services.tsx";
-import AdminAvailability from "./pages/admin/Availability.tsx";
-import AdminCustomers from "./pages/admin/Customers.tsx";
-import AdminGallery from "./pages/admin/Gallery.tsx";
-import AdminDashboardNew from "./pages/AdminDashboard.tsx";
+// Lazy-loaded Pages (code-split to optimize initial JS bundle size)
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+const Booking = lazy(() => import("./pages/Booking.tsx"));
+const BookingConfirm = lazy(() => import("./pages/BookingConfirm.tsx"));
+const BookingCancel = lazy(() => import("./pages/BookingCancel.tsx"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
+const TermsConditions = lazy(() => import("./pages/TermsConditions.tsx"));
+const Blog = lazy(() => import("./pages/Blog.tsx"));
+const BlogPost = lazy(() => import("./pages/BlogPost.tsx"));
+
+// Lazy-loaded Admin Pages
+const AdminLogin = lazy(() => import("./pages/admin/Login.tsx"));
+const AdminBookings = lazy(() => import("./pages/admin/Bookings.tsx"));
+const AdminServices = lazy(() => import("./pages/admin/Services.tsx"));
+const AdminAvailability = lazy(() => import("./pages/admin/Availability.tsx"));
+const AdminCustomers = lazy(() => import("./pages/admin/Customers.tsx"));
+const AdminGallery = lazy(() => import("./pages/admin/Gallery.tsx"));
+const AdminDashboardNew = lazy(() => import("./pages/AdminDashboard.tsx"));
 
 import { AnalyticsTracker } from "@/components/site/AnalyticsTracker";
 
@@ -52,41 +53,47 @@ const App = () => (
       <Analytics />
       <BrowserRouter>
         <AnalyticsTracker />
-        <Routes>
-          {/* Client Routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/about" element={<Index />} />
-          <Route path="/services" element={<Index />} />
-          <Route path="/services/:category" element={<Index />} />
-          <Route path="/testimonials" element={<Index />} />
-          <Route path="/ourwork" element={<Index />} />
-          <Route path="/contactus" element={<Index />} />
-          <Route path="/salon-near-me" element={<Index />} />
-          <Route path="/home-service-dubai" element={<Index />} />
-          <Route path="/terms-conditions" element={<TermsConditions />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/faq" element={<Index />} />
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/booking/confirm" element={<BookingConfirm />} />
-          <Route path="/booking/cancel" element={<BookingCancel />} />
+        <Suspense fallback={
+          <div className="min-h-screen bg-black flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-[#9F3F5C] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        }>
+          <Routes>
+            {/* Client Routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<Index />} />
+            <Route path="/services" element={<Index />} />
+            <Route path="/services/:category" element={<Index />} />
+            <Route path="/testimonials" element={<Index />} />
+            <Route path="/ourwork" element={<Index />} />
+            <Route path="/contactus" element={<Index />} />
+            <Route path="/salon-near-me" element={<Index />} />
+            <Route path="/home-service-dubai" element={<Index />} />
+            <Route path="/terms-conditions" element={<TermsConditions />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/faq" element={<Index />} />
+            <Route path="/booking" element={<Booking />} />
+            <Route path="/booking/confirm" element={<BookingConfirm />} />
+            <Route path="/booking/cancel" element={<BookingCancel />} />
 
-          <Route path="/chat" element={<ChatRedirect />} />
+            <Route path="/chat" element={<ChatRedirect />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminDashboardNew />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboardNew />} />
-          <Route path="/admin/bookings" element={<AdminBookings />} />
-          <Route path="/admin/services" element={<AdminServices />} />
-          <Route path="/admin/availability" element={<AdminAvailability />} />
-          <Route path="/admin/customers" element={<AdminCustomers />} />
-          <Route path="/admin/gallery" element={<AdminGallery />} />
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminDashboardNew />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboardNew />} />
+            <Route path="/admin/bookings" element={<AdminBookings />} />
+            <Route path="/admin/services" element={<AdminServices />} />
+            <Route path="/admin/availability" element={<AdminAvailability />} />
+            <Route path="/admin/customers" element={<AdminCustomers />} />
+            <Route path="/admin/gallery" element={<AdminGallery />} />
 
-          {/* Catch-all route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
