@@ -6,6 +6,16 @@ import { SEO } from "@/components/site/SEO";
 
 export const BLOG_POSTS = [
   {
+    slug: "boho-braids-dubai",
+    title: "Boho Braids in Dubai: Styles, Knotless Options, Aftercare and Where to Get Them in 2026",
+    excerpt: "Your complete 2026 guide to boho braids in Dubai. Explore knotless options, human hair curls, weather-proof maintenance, styles, and where to book.",
+    date: "October 18, 2026",
+    readTime: "9 min read",
+    image: "/images/blog/boho-braids-dubai-featured.webp",
+    isVideo: false,
+    content: "" // Full dedicated interactive experience served on /blog/boho-braids-dubai
+  },
+  {
     slug: "aftercare-tips-knotless-braids",
     title: "5 Essential Aftercare Tips for Knotless Braids",
     excerpt: "Learn how to wash, sleep with, and oil your knotless braids to extend their lifespan, protect your scalp, and keep them looking fresh for weeks.",
@@ -119,25 +129,33 @@ const Blog = () => {
       />
       <Sidebar />
       <main className="md:pl-[88px] pt-14 md:pt-0 bg-[#FAF6F8]">
-        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
-          <h1 className="font-editorial text-4xl md:text-5xl text-[#9F3F5C] mb-4 text-center">
-            Ultimate Blend Beauty Blog
-          </h1>
-          <p className="text-center text-gray-500 font-sans max-w-xl mx-auto mb-16 text-sm md:text-base">
-            Expert hair braiding care tips, home salon guides, and beauty trends directly from our professional stylists in Dubai.
-          </p>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-20">
+          
+          {/* Header */}
+          <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
+            <span className="text-xs font-display text-[#9F3F5C] uppercase tracking-widest font-semibold block mb-2">
+              Salon Journal & Styling Advice
+            </span>
+            <h1 className="font-editorial text-4xl sm:text-5xl md:text-6xl text-[#9F3F5C] mb-4 font-medium">
+              Ultimate Blend Beauty Blog
+            </h1>
+            <p className="text-gray-600 font-sans text-sm sm:text-base leading-relaxed">
+              Expert hair braiding care tips, protective styling inspiration, and beauty guides directly from our certified stylists in Dubai.
+            </p>
+          </div>
 
+          {/* Grid of Other Posts */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {BLOG_POSTS.map((post) => (
               <article 
                 key={post.slug}
-                className="bg-white border border-pink-100/30 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                className="bg-white border border-pink-100/40 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-shadow flex flex-col group"
               >
                 <div className="aspect-[16/10] w-full relative overflow-hidden bg-neutral-900">
                   {post.isVideo ? (
                     <video 
                       src={post.image}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       muted
                       loop
                       autoPlay
@@ -147,32 +165,34 @@ const Blog = () => {
                     <img 
                       src={post.image}
                       alt={post.title}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
                     />
                   )}
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
-                  <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+                  <div className="flex items-center gap-3 text-xs text-gray-400 mb-3 font-sans">
                     <span>{post.date}</span>
                     <span>•</span>
                     <span>{post.readTime}</span>
                   </div>
-                  <h2 className="font-editorial text-xl text-[#8F3E59] leading-snug mb-3 hover:text-[#9F3F5C]">
+                  <h2 className="font-editorial text-xl text-[#8F3E59] group-hover:text-[#9F3F5C] leading-snug mb-3 transition-colors">
                     <Link to={`/blog/${post.slug}`}>{post.title}</Link>
                   </h2>
-                  <p className="text-xs text-gray-600 leading-relaxed mb-6 flex-grow">
+                  <p className="text-xs text-gray-600 leading-relaxed mb-6 flex-grow font-sans">
                     {post.excerpt}
                   </p>
                   <Link 
                     to={`/blog/${post.slug}`}
-                    className="text-xs font-semibold text-[#9F3F5C] hover:text-[#8E3852] underline uppercase tracking-wider"
+                    className="text-xs font-semibold text-[#9F3F5C] hover:text-[#8E3852] underline uppercase tracking-wider font-display"
                   >
-                    Read Article
+                    Read Article →
                   </Link>
                 </div>
               </article>
             ))}
           </div>
+
         </div>
         <Footer />
       </main>

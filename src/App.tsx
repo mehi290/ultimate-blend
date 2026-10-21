@@ -19,6 +19,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions.tsx"));
 const Blog = lazy(() => import("./pages/Blog.tsx"));
 const BlogPost = lazy(() => import("./pages/BlogPost.tsx"));
+const BohoBraidsDubai = lazy(() => import("./pages/blog/BohoBraidsDubai.tsx"));
 
 // Lazy-loaded Admin Pages
 const AdminLogin = lazy(() => import("./pages/admin/Login.tsx"));
@@ -72,6 +73,7 @@ const App = () => (
             <Route path="/terms-conditions" element={<TermsConditions />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/boho-braids-dubai" element={<BohoBraidsDubai />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/faq" element={<Index />} />
             <Route path="/booking" element={<Booking />} />

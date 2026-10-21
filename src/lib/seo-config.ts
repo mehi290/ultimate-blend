@@ -1,7 +1,7 @@
 export const SITE_URL = "https://www.ultimateblendladiessalon.com";
 export const OG_IMAGE = `${SITE_URL}/og-image-v2.png`;
 export const SITE_NAME = "Ultimate Blend Ladies Beauty Salon";
-export const LAST_UPDATED = "June 25, 2026";
+export const LAST_UPDATED = "October 20, 2026";
 
 export const FAQ_ITEMS = [
   {
