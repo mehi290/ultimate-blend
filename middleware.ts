@@ -513,7 +513,7 @@ const BOHO_BRAIDS_PRERENDER_HTML = `<article class="prerendered-article" style="
   <section style="margin-top:36px;padding:24px;background:#fdf8fa;border:1px solid #f0e0e8;border-radius:14px;">
     <h3 style="font-size:22px;color:#9F3F5C;margin-top:0;">Visit Ultimate Blend Ladies Beauty Salon</h3>
     <p><strong>Address:</strong> City Stay Premium Hotel Building, Shop 4, 4th Street, Naif, Deira, Dubai, UAE</p>
-    <p><strong>Hours:</strong> Open daily 9:00 AM – 11:30 PM (opening time: [OPENING TIME])</p>
+    <p><strong>Hours:</strong> Open daily from 9:00 AM to 11:30 PM</p>
     <p><strong>Telephone:</strong> <a href="tel:+971556173486" style="color:#9F3F5C;font-weight:bold;">+971 55 617 3486</a></p>
     <p><a href="https://maps.google.com/?q=City+Stay+Premium+Hotel+Building+-+Shop+4+-+4th+St+-+Naif+-+Deira+-+Dubai" target="_blank" rel="noopener noreferrer" style="color:#9F3F5C;font-weight:600;">Get Directions on Google Maps &rarr;</a></p>
   </section>
@@ -739,20 +739,20 @@ export default async function middleware(request: Request) {
 
     // Rewrite standard tags in HTML
     html = html.replace(/<title>[^]*?<\/title>/, `<title>${configObj.title}</title>`);
-    html = html.replace(/<meta name="description" content="[^]*?"\s*\/?>/, `<meta name="description" content="${configObj.description}" />`);
-    html = html.replace(/<link rel="canonical" href="[^]*?"\s*\/?>/, `<link rel="canonical" href="${SITE_URL}${pathname}" />`);
+    html = html.replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/, `<meta name="description" content="${configObj.description}" />`);
+    html = html.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/, `<link rel="canonical" href="${SITE_URL}${pathname}" />`);
 
     // OG Tags
     const ogImg = configObj.ogImage || OG_IMAGE;
-    html = html.replace(/<meta property="og:title" content="[^]*?"\s*\/?>/, `<meta property="og:title" content="${configObj.title}" />`);
-    html = html.replace(/<meta property="og:description" content="[^]*?"\s*\/?>/, `<meta property="og:description" content="${configObj.description}" />`);
-    html = html.replace(/<meta property="og:url" content="[^]*?"\s*\/?>/, `<meta property="og:url" content="${SITE_URL}${pathname}" />`);
-    html = html.replace(/<meta property="og:image" content="[^]*?"\s*\/?>/, `<meta property="og:image" content="${ogImg}" />`);
+    html = html.replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/, `<meta property="og:title" content="${configObj.title}" />`);
+    html = html.replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/, `<meta property="og:description" content="${configObj.description}" />`);
+    html = html.replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/, `<meta property="og:url" content="${SITE_URL}${pathname}" />`);
+    html = html.replace(/<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>/, `<meta property="og:image" content="${ogImg}" />`);
 
     // Twitter Tags
-    html = html.replace(/<meta name="twitter:title" content="[^]*?"\s*\/?>/, `<meta name="twitter:title" content="${configObj.title}" />`);
-    html = html.replace(/<meta name="twitter:description" content="[^]*?"\s*\/?>/, `<meta name="twitter:description" content="${configObj.description}" />`);
-    html = html.replace(/<meta name="twitter:image" content="[^]*?"\s*\/?>/, `<meta name="twitter:image" content="${ogImg}" />`);
+    html = html.replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/, `<meta name="twitter:title" content="${configObj.title}" />`);
+    html = html.replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/, `<meta name="twitter:description" content="${configObj.description}" />`);
+    html = html.replace(/<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?>/, `<meta name="twitter:image" content="${ogImg}" />`);
 
     // Prerender article content into #root for search engine crawlers without JavaScript
     if (configObj.prerenderHtml) {

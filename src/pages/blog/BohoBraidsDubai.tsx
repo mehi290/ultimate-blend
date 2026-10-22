@@ -1047,7 +1047,7 @@ export default function BohoBraidsDubai() {
                       </div>
                       <div>
                         <strong className="block text-gray-900 text-xs font-display uppercase tracking-wider text-[#9F3F5C] mb-1">Opening Hours:</strong>
-                        <p>Open daily 9:00 AM – 11:30 PM (opening time: [OPENING TIME])</p>
+                        <p>Open daily from 9:00 AM to 11:30 PM</p>
                       </div>
                       <div>
                         <strong className="block text-gray-900 text-xs font-display uppercase tracking-wider text-[#9F3F5C] mb-1">Telephone:</strong>
